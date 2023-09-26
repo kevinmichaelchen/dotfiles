@@ -1,0 +1,42 @@
+# Tea installs packages into ~/local/bin
+export PATH=$PATH:$HOME/bin:$HOME/local/bin
+
+export ZSH="$HOME/.oh-my-zsh"
+
+ZSH_THEME="robbyrussell"
+
+# Auto-update the ZSH every 7 days
+zstyle ':omz:update' frequency 7
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(
+  rust
+  z
+  git
+  golang
+  zsh-autosuggestions
+)
+
+# TEA
+unset TEA_PREFIX
+source <(tea --shellcode)  #docs.tea.xyz/shellcode
+export TEA_DIR=$HOME/.tea
+
+# ALIASES
+alias tree="eza --tree"
+alias ls="eza -lag"
+
+# Go
+export PATH=$PATH:$(go env GOPATH)/bin
+
+# Git-Grab is an opinionated way of cloning Git repos.
+# https://github.com/wezm/git-grab
+export GRAB_HOME=$HOME/dev
+
+# ZSH Plugins
+source $ZSH/oh-my-zsh.sh
+
