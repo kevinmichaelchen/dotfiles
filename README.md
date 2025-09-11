@@ -12,10 +12,14 @@ This repository combines the best of both worlds:
 
 ```
 ~/dotfiles/
-├── home-manager/           # Nix/Home-Manager configurations
+├── nix-darwin/            # macOS system configuration (includes Home-Manager)
+│   ├── flake.nix          # Flake with nix-darwin, Home-Manager, and nix-homebrew
+│   └── configuration.nix  # System-level macOS configuration
+│
+├── home-manager/          # Standalone Home-Manager (for non-macOS systems)
 │   ├── flake.nix          # Flake definition for reproducible builds
 │   ├── flake.lock         # Locked dependencies
-│   └── home.nix           # Main Home-Manager configuration
+│   └── home.nix           # User packages and configuration
 │
 ├── chezmoi/               # Chezmoi-managed personal configs
 │   ├── .chezmoiignore     # Files for Chezmoi to ignore
@@ -32,6 +36,20 @@ This repository combines the best of both worlds:
     └── update.sh          # Update both systems
 ```
 
+## 🏗️ Architecture
+
+### macOS Systems
+On macOS, we use **nix-darwin** as the primary configuration manager with:
+- **nix-darwin**: System-level configuration (dock, Finder, keyboard settings)
+- **nix-homebrew**: Declarative Homebrew management (for macOS-only tools like vfkit)
+- **Home-Manager**: Runs as a module within nix-darwin for user packages
+- **Chezmoi**: Personal dotfile management
+
+### Non-macOS Systems (Linux)
+On Linux, we use:
+- **Home-Manager**: Standalone user environment management
+- **Chezmoi**: Personal dotfile management
+
 ## 🛠️ Technologies
 
 ### Nix
@@ -40,6 +58,13 @@ This repository combines the best of both worlds:
 - **Reproducibility**: Same configuration produces identical environments
 - **Rollbacks**: Easy reversion to previous configurations
 - **No dependency hell**: Each package gets its exact dependencies
+
+### nix-darwin
+[nix-darwin](https://github.com/LnL7/nix-darwin) provides declarative macOS system configuration:
+- System preferences and defaults
+- Homebrew package management
+- Service management
+- Integration with Home-Manager
 
 ### Home-Manager
 [Home-Manager](https://github.com/nix-community/home-manager) is a Nix-based tool for managing user environments. It handles:
@@ -90,19 +115,26 @@ The bootstrap script will:
 
 #### Update Everything
 ```bash
-dot-update  # Pulls latest changes and applies both Home-Manager and Chezmoi configs
+# On macOS
+darwin-rebuild switch --flake ~/dotfiles/nix-darwin
+
+# On Linux
+home-manager switch --flake ~/dotfiles/home-manager
+
+# Or use the shortcut (works on any system)
+dot-update  # Pulls latest changes and applies appropriate configuration
 ```
 
-#### Manage Packages (via Home-Manager)
+#### Manage Packages
 ```bash
 # Edit package list
 hme  # Opens home.nix in your editor
 
-# Apply changes
-hm   # Rebuild and switch to new configuration
+# Apply changes (macOS)
+darwin-rebuild switch --flake ~/dotfiles/nix-darwin
 
-# Update and apply
-hmu  # Update flake.lock and rebuild
+# Apply changes (Linux)
+home-manager switch --flake ~/dotfiles/home-manager
 ```
 
 #### Manage Personal Configs (via Chezmoi)
