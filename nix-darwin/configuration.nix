@@ -43,12 +43,14 @@
     
     # Taps
     taps = [
-      "cfergeau/crc"
+      # No additional taps needed - vfkit is in homebrew-core
     ];
     
     # Brews (formulae)
     brews = [
-      "vfkit"  # Required for podman on macOS
+      # vfkit: lightweight hypervisor using macOS Virtualization.framework
+      # Required by podman for running Linux VMs on macOS (especially Apple Silicon)
+      "vfkit"
     ];
     
     # Casks (GUI applications)
