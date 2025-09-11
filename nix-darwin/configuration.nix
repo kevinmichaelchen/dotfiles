@@ -1,11 +1,8 @@
 { config, pkgs, ... }:
 
 {
-  # Auto upgrade nix package and the daemon service
-  services.nix-daemon.enable = true;
-  
-  # Necessary for using flakes on this system
-  nix.settings.experimental-features = "nix-command flakes";
+  # Disable nix-darwin's Nix management since we're using Determinate
+  nix.enable = false;
 
   # Create /etc/zshrc that loads the nix-darwin environment
   programs.zsh.enable = true;
@@ -22,6 +19,9 @@
   
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  # REQUIRED: Set the primary user for system defaults and homebrew
+  system.primaryUser = "kchen";
 
   # User configuration
   users.users.kchen = {

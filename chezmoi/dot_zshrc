@@ -25,7 +25,9 @@ zstyle ':completion:*' menu select                          # Highlight selectio
 # Environment variables
 export EDITOR="vim"
 export VOLTA_HOME="$HOME/.volta"
-export PATH="$HOME/.local/bin:$VOLTA_HOME/bin:$PATH"
+# Only append to PATH if these directories aren't already there
+[[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$PATH:$HOME/.local/bin"
+[[ ":$PATH:" != *":$VOLTA_HOME/bin:"* ]] && export PATH="$PATH:$VOLTA_HOME/bin"
 
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh

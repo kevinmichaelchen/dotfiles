@@ -17,9 +17,23 @@
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
     };
+    
+    # Homebrew tap repositories
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+    homebrew-crc = {
+      url = "github:cfergeau/homebrew-crc";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, nix-homebrew }: {
+  outputs = { self, nixpkgs, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-crc }: {
     darwinConfigurations."MLJLWV4J4TLC" = nix-darwin.lib.darwinSystem {
       modules = [
         ./configuration.nix
@@ -43,12 +57,9 @@
             
             # Declaratively manage taps
             taps = {
-              "homebrew/homebrew-core" = nixpkgs;
-              "homebrew/homebrew-cask" = nixpkgs;
-              "cfergeau/homebrew-crc" = {
-                url = "github:cfergeau/homebrew-crc";
-                flake = false;
-              };
+              "homebrew/homebrew-core" = homebrew-core;
+              "homebrew/homebrew-cask" = homebrew-cask;
+              "cfergeau/homebrew-crc" = homebrew-crc;
             };
             
             mutableTaps = false;
