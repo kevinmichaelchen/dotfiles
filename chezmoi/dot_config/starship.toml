@@ -1,6 +1,7 @@
 # Starship prompt configuration managed by Chezmoi
 
 add_newline = false
+command_timeout = 1000  # Increase timeout to 1000ms (from default 500ms) to prevent Node.js timeouts
 
 [character]
 success_symbol = "[➜](bold green)"

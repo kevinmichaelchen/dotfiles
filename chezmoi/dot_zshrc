@@ -25,6 +25,10 @@ zstyle ':completion:*' menu select                          # Highlight selectio
 # Environment variables
 export EDITOR="vim"
 export VOLTA_HOME="$HOME/.volta"
+
+# Fix PATH for nix-darwin (macOS path_helper overrides /etc/zshenv)
+[[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
+
 # Only append to PATH if these directories aren't already there
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$PATH:$HOME/.local/bin"
 [[ ":$PATH:" != *":$VOLTA_HOME/bin:"* ]] && export PATH="$PATH:$VOLTA_HOME/bin"
