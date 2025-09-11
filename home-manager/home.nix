@@ -39,6 +39,8 @@
     rust-analyzer
     rustc
     rustfmt
+  ] ++ lib.optionals pkgs.stdenv.isDarwin [
+    vfkit  # Required for podman on macOS
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
