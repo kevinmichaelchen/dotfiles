@@ -28,6 +28,7 @@
     jq
     pnpm
     podman
+    podman-compose
     ripgrep
     volta
     yq
