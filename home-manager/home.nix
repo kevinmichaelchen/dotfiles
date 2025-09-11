@@ -18,26 +18,26 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    awscli2
+    bun
     chezmoi
+    eza
+    fd
+    git-town
+    jq
+    pnpm
     podman
     ripgrep
-    jq
-    yq
-    git-town
-    fd
     volta
-    bun
-    pnpm
-    eza
+    yq
     zoxide
-    awscli2
     
     # Rust development tools
-    rustc
     cargo
-    rustfmt
-    rust-analyzer
     clippy
+    rust-analyzer
+    rustc
+    rustfmt
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
