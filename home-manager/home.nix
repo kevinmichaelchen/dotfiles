@@ -24,6 +24,7 @@
     eza
     fd
     git-town
+    gum
     jq
     pnpm
     podman
