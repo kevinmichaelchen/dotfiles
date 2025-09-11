@@ -23,6 +23,7 @@
     chezmoi
     eza
     fd
+    gh
     git-town
     gum
     jq
