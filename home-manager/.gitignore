@@ -1,0 +1,25 @@
+# Nix build results
+result
+result-*
+
+# Home Manager generations
+*.backup
+
+# macOS
+.DS_Store
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+.tmp/
+
+# Secrets - NEVER commit these!
+*.secret
+secrets/
+.env
