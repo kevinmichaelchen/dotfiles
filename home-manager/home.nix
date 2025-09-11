@@ -29,6 +29,7 @@
     bun
     pnpm
     eza
+    awscli2
     
     # Rust development tools
     rustc
