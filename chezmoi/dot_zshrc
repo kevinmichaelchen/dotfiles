@@ -34,5 +34,8 @@ export PATH="$HOME/.local/bin:$VOLTA_HOME/bin:$PATH"
 # Initialize Starship prompt
 eval "$(starship init zsh)"
 
+# Initialize zoxide (smarter cd)
+eval "$(zoxide init zsh)"
+
 # Load machine-specific configuration if it exists
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

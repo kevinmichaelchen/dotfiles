@@ -29,6 +29,7 @@
     bun
     pnpm
     eza
+    zoxide
     awscli2
     
     # Rust development tools
