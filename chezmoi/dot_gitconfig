@@ -1,0 +1,18 @@
+[gpg]
+	program = bpb
+[user]
+	name = Kevin Chen
+	email = kevin.chen@aspiraconnect.com
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+[core]
+	editor = subl -n -w
+	ignorecase = false
+[includeIf "gitdir:~/dev/github.com/kevinmichaelchen/"]
+    path = ~/.gitconfig-kevinmichaelchen
+[pager]
+	branch = false
+[commit]
+	gpgsign = true
+[git-town]
+	sync-feature-strategy = merge

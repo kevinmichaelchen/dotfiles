@@ -1,0 +1,8 @@
+# Ignore Nix/Home-Manager files
+home-manager/
+scripts/
+.git/
+README.md
+PLAN.md
+*.nix
+flake.lock

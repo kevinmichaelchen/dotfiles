@@ -18,6 +18,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    chezmoi
     podman
     ripgrep
     jq
@@ -140,10 +141,21 @@
       # ripgrep with path sorting
       rg = "rg --sort path";
       
+      # Dotfile management
+      dot = "cd ~/dotfiles";
+      dot-update = "cd ~/dotfiles && ./scripts/update.sh";
+      
       # home-manager aliases
-      hm = "home-manager switch --flake ~/.config/home-manager";
-      hmu = "nix flake update ~/.config/home-manager && home-manager switch --flake ~/.config/home-manager";
-      hme = "cd ~/.config/home-manager && $EDITOR home.nix";
+      hm = "home-manager switch --flake ~/dotfiles/home-manager";
+      hmu = "nix flake update ~/dotfiles/home-manager && home-manager switch --flake ~/dotfiles/home-manager";
+      hme = "cd ~/dotfiles/home-manager && $EDITOR home.nix";
+      
+      # chezmoi aliases
+      cm = "chezmoi";
+      cma = "chezmoi apply";
+      cmd = "chezmoi diff";
+      cme = "chezmoi edit";
+      cmu = "chezmoi update";
       
       # git aliases
       gs = "git status";
@@ -190,6 +202,9 @@
       # Volta setup
       export VOLTA_HOME="$HOME/.volta"
       export PATH="$VOLTA_HOME/bin:$PATH"
+      
+      # Load personal configuration managed by Chezmoi
+      [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
     '';
   };
 }
