@@ -27,6 +27,7 @@
     fd
     volta
     bun
+    pnpm
     eza
     
     # Rust development tools

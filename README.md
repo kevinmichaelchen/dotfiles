@@ -81,7 +81,7 @@ cd ~/dotfiles
 ```
 
 The bootstrap script will:
-1. Install Nix using the Determinate Systems installer
+1. Install Nix using the [Determinate Systems](https://determinate.systems/) installer
 2. Set up Home-Manager
 3. Apply the Nix configuration (installing all packages)
 4. Initialize Chezmoi with your personal configs
@@ -137,7 +137,7 @@ Daily update script that:
 
 ## 🎯 Philosophy
 
-Following the "use Nix less" principle for better iteration speed and simplicity.
+Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle for better iteration speed and simplicity.
 
 ### What Goes Where?
 

@@ -27,8 +27,9 @@ export EDITOR="vim"
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$HOME/.local/bin:$VOLTA_HOME/bin:$PATH"
 
-# Load git aliases
+# Load shell-agnostic aliases
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
+[[ -f ~/.config/shell/pnpm.sh ]] && source ~/.config/shell/pnpm.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
