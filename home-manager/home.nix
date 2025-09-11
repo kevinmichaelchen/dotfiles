@@ -76,135 +76,39 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  # Starship prompt
-  programs.starship = {
-    enable = true;
-    settings = {
-      add_newline = false;
-      
-      character = {
-        success_symbol = "[➜](bold green)";
-        error_symbol = "[➜](bold red)";
-      };
-      
-      directory = {
-        truncation_length = 3;
-        truncate_to_repo = true;
-      };
-      
-      git_branch = {
-        symbol = "🌱 ";
-      };
-      
-      git_status = {
-        ahead = "⇡\${count}";
-        diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
-        behind = "⇣\${count}";
-      };
-      
-      nodejs = {
-        symbol = "⬢ ";
-      };
-      
-      python = {
-        symbol = "🐍 ";
-      };
-      
-      rust = {
-        symbol = "🦀 ";
-      };
-      
-      time = {
-        disabled = false;
-        format = "🕙[$time]($style) ";
-        time_format = "%T";
-      };
-    };
-  };
+  # Starship prompt - just enable it, config is in Chezmoi
+  programs.starship.enable = true;
 
-  # Zsh configuration
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
+  # Zsh - let Chezmoi manage the config file
+  programs.zsh.enable = false;  # We'll manage zsh config via Chezmoi
+  
+  # Shell aliases for all shells (stable, rarely change)
+  home.shellAliases = {
+    # eza aliases (ls replacement)
+    ls = "eza --icons --group-directories-first";
+    ll = "eza --icons --group-directories-first -la";
+    l = "eza --icons --group-directories-first -l";
+    la = "eza --icons --group-directories-first -a";
+    lt = "eza --icons --group-directories-first --tree --level=2";
+    tree = "eza --tree";
     
-    shellAliases = {
-      # eza aliases (ls replacement)
-      ls = "eza --icons --group-directories-first";
-      ll = "eza --icons --group-directories-first -la";
-      l = "eza --icons --group-directories-first -l";
-      la = "eza --icons --group-directories-first -a";
-      lt = "eza --icons --group-directories-first --tree --level=2";
-      tree = "eza --tree";
-      
-      # ripgrep with path sorting
-      rg = "rg --sort path";
-      
-      # Dotfile management
-      dot = "cd ~/dotfiles";
-      dot-update = "cd ~/dotfiles && ./scripts/update.sh";
-      
-      # home-manager aliases
-      hm = "home-manager switch --flake ~/dotfiles/home-manager";
-      hmu = "nix flake update ~/dotfiles/home-manager && home-manager switch --flake ~/dotfiles/home-manager";
-      hme = "cd ~/dotfiles/home-manager && $EDITOR home.nix";
-      
-      # chezmoi aliases
-      cm = "chezmoi";
-      cma = "chezmoi apply";
-      cmd = "chezmoi diff";
-      cme = "chezmoi edit";
-      cmu = "chezmoi update";
-      
-      # git aliases
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git log --oneline --graph";
-    };
+    # ripgrep with path sorting
+    rg = "rg --sort path";
     
-    history = {
-      size = 10000;
-      path = "$HOME/.zsh_history";
-      ignoreDups = true;
-      ignoreSpace = true;
-      share = true;
-    };
+    # Dotfile management
+    dot = "cd ~/dotfiles";
+    dot-update = "cd ~/dotfiles && ./scripts/update.sh";
     
-    oh-my-zsh = {
-      enable = true;
-      plugins = [ "git" "aws" ];
-      theme = "robbyrussell";
-    };
+    # Home-Manager aliases
+    hm = "home-manager switch --flake ~/dotfiles/home-manager";
+    hmu = "nix flake update ~/dotfiles/home-manager && home-manager switch --flake ~/dotfiles/home-manager";
+    hme = "cd ~/dotfiles/home-manager && $EDITOR home.nix";
     
-    initExtra = ''
-      # Custom zsh configuration
-      export PATH="$HOME/.local/bin:$PATH"
-      
-      # Better directory navigation
-      setopt AUTO_CD
-      setopt AUTO_PUSHD
-      setopt PUSHD_IGNORE_DUPS
-      setopt PUSHD_SILENT
-      
-      # Better history
-      setopt HIST_VERIFY
-      setopt HIST_REDUCE_BLANKS
-      
-      # Enable extended globbing
-      setopt EXTENDED_GLOB
-      
-      # Case-insensitive completion
-      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
-      
-      # Volta setup
-      export VOLTA_HOME="$HOME/.volta"
-      export PATH="$VOLTA_HOME/bin:$PATH"
-      
-      # Load personal configuration managed by Chezmoi
-      [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
-    '';
+    # Chezmoi aliases
+    cm = "chezmoi";
+    cma = "chezmoi apply";
+    cmd = "chezmoi diff";
+    cme = "chezmoi edit";
+    cmu = "chezmoi update";
   };
 }

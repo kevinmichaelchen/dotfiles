@@ -1,0 +1,37 @@
+# ZSH configuration managed by Chezmoi
+
+# ZSH Options
+setopt AUTO_CD              # cd by typing directory name
+setopt AUTO_PUSHD           # Make cd push the old directory onto the stack
+setopt PUSHD_IGNORE_DUPS    # Don't push duplicate directories
+setopt PUSHD_SILENT         # Don't print the directory stack after pushd/popd
+setopt HIST_VERIFY          # Don't execute immediately upon history expansion
+setopt HIST_REDUCE_BLANKS   # Remove superfluous blanks from history
+setopt EXTENDED_GLOB        # Use extended globbing syntax
+setopt INTERACTIVE_COMMENTS # Allow comments in interactive shell
+
+# History configuration
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE="$HOME/.zsh_history"
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+
+# ZSH-specific completion settings
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # Case-insensitive completion
+zstyle ':completion:*' menu select                          # Highlight selection in completion menu
+
+# Environment variables
+export EDITOR="vim"
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$HOME/.local/bin:$VOLTA_HOME/bin:$PATH"
+
+# Load git aliases
+[[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
+
+# Initialize Starship prompt
+eval "$(starship init zsh)"
+
+# Load machine-specific configuration if it exists
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

@@ -20,7 +20,12 @@ This repository combines the best of both worlds:
 ├── chezmoi/               # Chezmoi-managed personal configs
 │   ├── .chezmoiignore     # Files for Chezmoi to ignore
 │   ├── dot_gitconfig      # Git configuration
-│   └── dot_vimrc          # Vim configuration
+│   ├── dot_vimrc          # Vim configuration
+│   ├── dot_zshrc          # Zsh configuration
+│   └── dot_config/        # .config directory files
+│       ├── shell/
+│       │   └── git.sh     # Shell-agnostic git aliases
+│       └── starship.toml  # Starship prompt configuration
 │
 └── scripts/               # Helper automation scripts
     ├── bootstrap.sh       # Initial machine setup
@@ -132,27 +137,31 @@ Daily update script that:
 
 ## 🎯 Philosophy
 
+Following the "use Nix less" principle for better iteration speed and simplicity.
+
 ### What Goes Where?
 
 **Home-Manager** manages:
-- Package installations (ripgrep, fd, chezmoi, etc.)
-- Shell configuration (zsh, starship)
+- Package installations (ripgrep, fd, chezmoi, zsh, starship, etc.)
+- Enabling shells and tools
+- Stable shell aliases (that rarely change)
 - Development tools (rustc, cargo, volta, etc.)
-- System-wide environment variables
 
 **Chezmoi** manages:
+- Shell configuration (.zshrc, starship.toml)
 - Personal configuration files (.gitconfig, .vimrc)
+- Git aliases (via shell-agnostic git.sh)
 - Machine-specific settings
 - Secrets and API keys (encrypted)
-- Quick-iteration personal configs
+- Quick-iteration configs
 
 ### Best Practices
 
-1. **Frequent personal config changes** → Edit via Chezmoi for instant application
+1. **Shell configs & prompts** → Edit via Chezmoi for instant application
 2. **New software packages** → Add to home.nix for reproducible installation
-3. **Secrets** → Use Chezmoi's encryption features
-4. **Cross-platform configs** → Use Chezmoi templates
-5. **Development environments** → Define in Home-Manager
+3. **Frequently edited configs** → Manage with Chezmoi
+4. **Stable aliases** → Keep in Home-Manager
+5. **Cross-shell compatibility** → Use shared scripts like git.sh
 
 ## 🔧 Useful Aliases
 
