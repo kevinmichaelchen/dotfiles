@@ -26,6 +26,7 @@
     gh
     git
     git-town
+    glow
     gum
     jq
     pnpm
