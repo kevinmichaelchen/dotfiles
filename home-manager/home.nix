@@ -110,12 +110,20 @@
   # Starship prompt - just enable it, config is in Chezmoi
   programs.starship.enable = true;
 
-  # Zsh - minimal setup for packages, let Chezmoi manage config
+  # Zsh - home-manager manages packages and sources Chezmoi config
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;      # Installs zsh-autosuggestions package
     syntaxHighlighting.enable = true;  # Installs zsh-syntax-highlighting package
     enableCompletion = true;            # Sets up completion system
+    
+    # Source the Chezmoi-managed custom configuration
+    initExtra = ''
+      # Load custom zsh configuration managed by Chezmoi
+      if [[ -f ~/.config/zsh/custom.zsh ]]; then
+        source ~/.config/zsh/custom.zsh
+      fi
+    '';
   };
   
   # Shell aliases for all shells (stable, rarely change)
