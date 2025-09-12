@@ -101,6 +101,7 @@
   home.sessionVariables = {
     EDITOR = "vim";
     VOLTA_HOME = "$HOME/.volta";
+    GRAB_HOME = "$HOME/dev";
   };
 
   # Let Home Manager install and manage itself.
@@ -109,8 +110,13 @@
   # Starship prompt - just enable it, config is in Chezmoi
   programs.starship.enable = true;
 
-  # Zsh - let Chezmoi manage the config file
-  programs.zsh.enable = false;  # We'll manage zsh config via Chezmoi
+  # Zsh - minimal setup for packages, let Chezmoi manage config
+  programs.zsh = {
+    enable = true;
+    autosuggestion.enable = true;      # Installs zsh-autosuggestions package
+    syntaxHighlighting.enable = true;  # Installs zsh-syntax-highlighting package
+    enableCompletion = true;            # Sets up completion system
+  };
   
   # Shell aliases for all shells (stable, rarely change)
   home.shellAliases = {
