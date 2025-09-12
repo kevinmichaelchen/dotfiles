@@ -36,6 +36,7 @@ export VOLTA_HOME="$HOME/.volta"
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
 [[ -f ~/.config/shell/pnpm.sh ]] && source ~/.config/shell/pnpm.sh
+[[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"

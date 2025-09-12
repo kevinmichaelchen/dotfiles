@@ -1,0 +1,1 @@
+alias zed='/Applications/Zed.app/Contents/MacOS/cli'
