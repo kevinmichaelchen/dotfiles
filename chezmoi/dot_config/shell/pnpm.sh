@@ -36,6 +36,7 @@ alias pnlsg='pnpm list --global'
 alias pnlsg1='pnpm list --global --depth=1'
 
 # Install/update aliases
+alias pin='pnpm install'
 alias pni='pnpm install'
 alias pnif='pnpm install --frozen-lockfile'
 alias pnup='pnpm update'
