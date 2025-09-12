@@ -42,6 +42,29 @@
     rust-analyzer
     rustc
     rustfmt
+    
+    # Custom Rust package from crates.io/GitHub
+    (rustPlatform.buildRustPackage rec {
+      pname = "git-grab";
+      version = "3.0.0";
+      
+      src = fetchFromGitHub {
+        owner = "wezm";
+        repo = "git-grab";
+        rev = version;
+        hash = "sha256-MsJDfmWU6LyK7M0LjYQufIpKmtS4f2hgo4Yi/x1HsrU=";
+      };
+      
+      cargoHash = "sha256-nJBgKrgfmLzHVZzVUah2vS+fjNzJp5fNMzzsFu6roug=";
+      
+      doCheck = false;  # Tests fail in sandbox (pbcopy not available)
+      
+      meta = with lib; {
+        description = "Clone a git repository into a standard location organised by domain and path";
+        homepage = "https://github.com/wezm/git-grab";
+        license = licenses.mit;
+      };
+    })
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
