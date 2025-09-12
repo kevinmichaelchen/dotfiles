@@ -25,11 +25,14 @@ This repository combines the best of both worlds:
 │   ├── .chezmoiignore     # Files for Chezmoi to ignore
 │   ├── dot_gitconfig      # Git configuration
 │   ├── dot_vimrc          # Vim configuration
-│   ├── dot_zshrc          # Zsh configuration
 │   └── dot_config/        # .config directory files
+│       ├── git/
+│       │   └── kevinmichaelchen  # Personal git config for GitHub repos
 │       ├── shell/
 │       │   └── git.sh     # Shell-agnostic git aliases
-│       └── starship.toml  # Starship prompt configuration
+│       ├── starship.toml  # Starship prompt configuration
+│       └── zsh/
+│           └── custom.zsh # Zsh configuration
 │
 └── scripts/               # Helper automation scripts
     ├── bootstrap.sh       # Initial machine setup
@@ -175,12 +178,13 @@ Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle fo
 
 **Home-Manager** manages:
 - Package installations (ripgrep, fd, chezmoi, zsh, starship, etc.)
-- Enabling shells and tools
+- Enabling shells and tools (zsh with autosuggestions, syntax highlighting)
 - Stable shell aliases (that rarely change)
 - Development tools (rustc, cargo, volta, etc.)
+- The base .zshrc file (for proper plugin initialization)
 
 **Chezmoi** manages:
-- Shell configuration (.zshrc, starship.toml)
+- Shell configuration (~/.config/zsh/custom.zsh, starship.toml)
 - Personal configuration files (.gitconfig, .vimrc)
 - Git aliases (via shell-agnostic git.sh)
 - Machine-specific settings

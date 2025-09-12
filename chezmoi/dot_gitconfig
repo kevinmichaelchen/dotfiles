@@ -9,7 +9,7 @@
 	editor = subl -n -w
 	ignorecase = false
 [includeIf "gitdir:~/dev/github.com/kevinmichaelchen/"]
-    path = ~/.gitconfig-kevinmichaelchen
+    path = ~/.config/git/kevinmichaelchen
 [pager]
 	branch = false
 [commit]
