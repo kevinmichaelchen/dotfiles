@@ -24,6 +24,7 @@
     eza
     fd
     gh
+    git
     git-town
     gum
     jq

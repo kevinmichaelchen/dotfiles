@@ -122,6 +122,7 @@ alias gpf!='git push --force'
 alias gpoat='git push origin --all && git push origin --tags'
 alias gpod='git push origin --delete'
 alias gpr='git pull --rebase'
+alias gpsup='git push --set-upstream origin $(git_current_branch)'
 alias gpu='git push upstream'
 alias gpv='git push --verbose'
 
