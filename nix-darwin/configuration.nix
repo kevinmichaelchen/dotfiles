@@ -55,7 +55,8 @@
     
     # Casks (GUI applications)
     casks = [
-      # Add any GUI apps you want managed by Homebrew here
+      # Terminal emulator
+      "ghostty"
     ];
   };
 
