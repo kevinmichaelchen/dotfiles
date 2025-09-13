@@ -30,7 +30,7 @@
   };
 
   outputs = { self, nixpkgs, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask }: {
-    darwinConfigurations."MLJLWV4J4TLC" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."default" = nix-darwin.lib.darwinSystem {
       modules = [
         ./configuration.nix
         
@@ -50,6 +50,9 @@
             # Apple Silicon uses a different prefix
             enableRosetta = true;
             user = "kchen";
+
+            # Automatically migrate existing Homebrew installations
+            autoMigrate = true;
             
             # Declaratively manage taps
             taps = {
