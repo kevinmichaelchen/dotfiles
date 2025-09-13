@@ -32,8 +32,8 @@ fi
 # Check if on macOS
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo -e "${MAGENTA}🍎 Detected macOS${NC}"
-    NEXT_COMMAND="sudo nix run nix-darwin -- switch --flake ~/dotfiles/nix-darwin"
-    UPDATE_COMMAND="darwin-rebuild switch --flake ~/dotfiles/nix-darwin"
+    NEXT_COMMAND="sudo nix run nix-darwin -- switch --flake ~/dotfiles/nix-darwin#default"
+    UPDATE_COMMAND="darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default"
 else
     echo -e "${MAGENTA}🐧 Detected Linux/Unix${NC}"
     NEXT_COMMAND="nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager && nix-channel --update && home-manager switch --flake ~/dotfiles/home-manager"

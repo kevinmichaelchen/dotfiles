@@ -109,17 +109,20 @@ cd ~/dotfiles
 ```
 
 The bootstrap script will:
-1. Install Nix using the [Determinate Systems](https://determinate.systems/) installer
-2. Set up Home-Manager
-3. Apply the Nix configuration (installing all packages)
-4. Initialize Chezmoi with your personal configs
+1. Clone the dotfiles repository (if not already present)
+2. Install Nix using the [Determinate Systems](https://determinate.systems/) installer (if needed)
+3. Display clear next steps for completing the setup
+
+After running the bootstrap script, you'll need to:
+1. Apply the system configuration (command provided by the script)
+2. Initialize Chezmoi after packages are installed
 
 ### Daily Usage
 
 #### Update Everything
 ```bash
 # On macOS
-darwin-rebuild switch --flake ~/dotfiles/nix-darwin
+darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
 
 # On Linux
 home-manager switch --flake ~/dotfiles/home-manager
@@ -134,7 +137,7 @@ dot-update  # Pulls latest changes and applies appropriate configuration
 hme  # Opens home.nix in your editor
 
 # Apply changes (macOS)
-darwin-rebuild switch --flake ~/dotfiles/nix-darwin
+darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
 
 # Apply changes (Linux)
 home-manager switch --flake ~/dotfiles/home-manager
@@ -159,10 +162,12 @@ chezmoi add ~/.some-config
 
 ### `bootstrap.sh`
 Initial setup script for new machines. It:
+- Checks for and clones the dotfiles repository if needed
 - Installs Nix (if not present) using Determinate Systems installer
-- Sets up Home-Manager
-- Applies the full configuration
-- Initializes Chezmoi
+- Provides colorful output with clear next steps
+- Shows the exact commands to run for your system (macOS vs Linux)
+
+Note: The script prepares your system but doesn't run commands requiring sudo. You'll need to run the provided commands manually to complete the setup.
 
 ### `update.sh`
 Daily update script that:
