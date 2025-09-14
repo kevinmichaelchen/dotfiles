@@ -52,7 +52,7 @@
     
     # Casks (GUI applications)
     casks = [
-      # Terminal emulator
+      # Terminal emulator (requires Homebrew since Nix doesn't support Darwin builds)
       "ghostty"
     ];
   };

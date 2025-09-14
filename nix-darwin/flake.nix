@@ -75,7 +75,18 @@
               "homebrew/homebrew-cask" = homebrew-cask;
             };
 
-            mutableTaps = false;
+            # IMPORTANT: mutableTaps must be true to avoid errors with casks like ghostty
+            # When false, nix-darwin tries to exclusively control taps and will fail with:
+            # "Error: Refusing to untap homebrew/cask because it contains installed formulae"
+            #
+            # Why we use Homebrew for Ghostty instead of Nix:
+            # Per https://github.com/ghostty-org/ghostty/discussions/2824, Ghostty cannot
+            # be packaged with Nix on macOS due to limited Nix support for building macOS
+            # app bundles and the requirement for universal binaries. The Ghostty maintainer
+            # recommends using official binary releases (available via Homebrew cask) for
+            # macOS users. This pattern applies to many macOS GUI apps that require code
+            # signing and notarization.
+            mutableTaps = true;
           };
         }
       ];
