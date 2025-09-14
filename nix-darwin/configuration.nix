@@ -20,14 +20,11 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # REQUIRED: Set the primary user for system defaults and homebrew
-  system.primaryUser = "kchen";
+  # REQUIRED: The primary user will be set by the flake configuration
+  # system.primaryUser = "username";  # Set in flake.nix
 
-  # User configuration
-  users.users.kchen = {
-    name = "kchen";
-    home = "/Users/kchen";
-  };
+  # User configuration will be set by the flake
+  # users.users.<username> = { ... };  # Set in flake.nix
 
   # Homebrew configuration
   homebrew = {

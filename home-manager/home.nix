@@ -1,10 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "kchen";
-  home.homeDirectory = "/Users/kchen";
+  # These will be set by the Darwin configuration dynamically
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -97,7 +96,7 @@
   #
   # or
   #
-  #  /etc/profiles/per-user/kchen/etc/profile.d/hm-session-vars.sh
+  #  /etc/profiles/per-user/<username>/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
     EDITOR = "vim";
@@ -119,7 +118,7 @@
     enableCompletion = true;            # Sets up completion system
     
     # Source the Chezmoi-managed custom configuration
-    initExtra = ''
+    initContent = ''
       # Load custom zsh configuration managed by Chezmoi
       if [[ -f ~/.config/zsh/custom.zsh ]]; then
         source ~/.config/zsh/custom.zsh
