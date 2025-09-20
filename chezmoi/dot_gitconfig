@@ -16,3 +16,5 @@
 	gpgsign = true
 [git-town]
 	sync-feature-strategy = merge
+[init]
+	defaultBranch = main
