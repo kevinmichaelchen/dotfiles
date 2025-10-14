@@ -33,6 +33,7 @@ export VOLTA_HOME="$HOME/.volta"
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$PATH:$HOME/.local/bin"
 [[ ":$PATH:" != *":$VOLTA_HOME/bin:"* ]] && export PATH="$PATH:$VOLTA_HOME/bin"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
+[[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
 
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh

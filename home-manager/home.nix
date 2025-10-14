@@ -18,6 +18,7 @@
   # environment.
   home.packages = with pkgs; [
     awscli2
+    bat
     bun
     chezmoi
     eza
@@ -26,12 +27,15 @@
     git
     git-town
     glow
+    go
     gum
     jq
     pnpm
     podman
     podman-compose
+    postgresql.pg_config
     ripgrep
+    tokei
     volta
     yq
     zoxide
