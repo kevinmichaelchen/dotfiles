@@ -54,6 +54,9 @@
     casks = [
       # Terminal emulator (requires Homebrew since Nix doesn't support Darwin builds)
       "ghostty"
+
+      # Docker Desktop for macOS
+      "docker"
     ];
   };
 
