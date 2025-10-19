@@ -36,6 +36,7 @@
     postgresql.pg_config
     ripgrep
     tokei
+    uv
     volta
     yq
     zoxide
