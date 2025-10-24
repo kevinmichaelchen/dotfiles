@@ -34,6 +34,8 @@
     podman
     podman-compose
     postgresql.pg_config
+    python3
+    python3Packages.pip
     ripgrep
     tokei
     uv

@@ -34,10 +34,12 @@ export VOLTA_HOME="$HOME/.volta"
 [[ ":$PATH:" != *":$VOLTA_HOME/bin:"* ]] && export PATH="$PATH:$VOLTA_HOME/bin"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
 [[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
+[[ ":$PATH:" != *":$HOME/.deno/bin:"* ]] && export PATH="$PATH:$HOME/.deno/bin"
 
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
 [[ -f ~/.config/shell/pnpm.sh ]] && source ~/.config/shell/pnpm.sh
+[[ -f ~/.config/shell/python.sh ]] && source ~/.config/shell/python.sh
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 
 # Initialize Starship prompt
