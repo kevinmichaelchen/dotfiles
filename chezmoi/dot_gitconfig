@@ -21,6 +21,12 @@
 	navigate = true
 	dark = true
 	line-numbers = true
-	syntax-theme = DarkNeon
+	syntax-theme = Dracula
+	minus-style = "syntax #5c0f1f"
+	minus-emph-style = "syntax #8b192c"
+	plus-style = "syntax #1d4d2c"
+	plus-emph-style = "syntax #2d6b42"
+	minus-non-emph-style = "syntax auto"
+	plus-non-emph-style = "syntax auto"
 [merge]
 	conflictStyle = zdiff3
