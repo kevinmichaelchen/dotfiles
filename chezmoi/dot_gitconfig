@@ -1,5 +1,3 @@
-[gpg]
-	program = bpb
 [user]
 	name = Kevin Chen
 	email = kevin.chen@aspiraconnect.com
@@ -8,13 +6,21 @@
 [core]
 	editor = subl -n -w
 	ignorecase = false
+	pager = delta
 [includeIf "gitdir:~/dev/github.com/kevinmichaelchen/"]
     path = ~/.config/git/kevinmichaelchen
 [pager]
 	branch = false
-[commit]
-	gpgsign = true
 [git-town]
 	sync-feature-strategy = merge
 [init]
 	defaultBranch = main
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	dark = true
+	line-numbers = true
+	syntax-theme = DarkNeon
+[merge]
+	conflictStyle = zdiff3

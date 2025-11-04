@@ -21,6 +21,7 @@
     bat
     bun
     chezmoi
+    delta
     eza
     fd
     gh
