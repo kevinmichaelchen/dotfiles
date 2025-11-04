@@ -29,7 +29,11 @@ This repository combines the best of both worlds:
 │       ├── git/
 │       │   └── kevinmichaelchen  # Personal git config for GitHub repos
 │       ├── shell/
-│       │   └── git.sh     # Shell-agnostic git aliases
+│       │   ├── bat.sh     # bat aliases and functions (cat, batdiff, help)
+│       │   ├── git.sh     # Shell-agnostic git aliases
+│       │   ├── pnpm.sh    # PNPM configuration
+│       │   ├── python.sh  # Python/UV configuration
+│       │   └── zed.sh     # Zed editor configuration
 │       ├── starship.toml  # Starship prompt configuration
 │       └── zsh/
 │           └── custom.zsh # Zsh configuration
@@ -191,7 +195,7 @@ Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle fo
 **Chezmoi** manages:
 - Shell configuration (~/.config/zsh/custom.zsh, starship.toml)
 - Personal configuration files (.gitconfig, .vimrc)
-- Git aliases (via shell-agnostic git.sh)
+- Shell aliases and functions (via shell-agnostic scripts: bat.sh, git.sh, pnpm.sh, python.sh, zed.sh)
 - Machine-specific settings
 - Secrets and API keys (encrypted)
 - Quick-iteration configs
