@@ -29,6 +29,7 @@
     glow
     go
     gum
+    jira-cli-go
     jq
     pnpm
     podman
@@ -123,7 +124,7 @@
     autosuggestion.enable = true;      # Installs zsh-autosuggestions package
     syntaxHighlighting.enable = true;  # Installs zsh-syntax-highlighting package
     enableCompletion = true;            # Sets up completion system
-    
+
     # Source the Chezmoi-managed custom configuration
     initContent = ''
       # Load custom zsh configuration managed by Chezmoi
@@ -132,7 +133,43 @@
       fi
     '';
   };
-  
+
+  # fzf - fuzzy finder with shell integration
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+
+    # Use fd for faster file search
+    defaultCommand = "fd --type f --hidden --strip-cwd-prefix --exclude .git";
+
+    # CTRL-T: File and directory selection with preview
+    fileWidgetCommand = "fd --type f --type d --hidden --strip-cwd-prefix --exclude .git";
+    fileWidgetOptions = [
+      "--preview 'if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'"
+      "--bind 'ctrl-/:change-preview-window(down|hidden|)'"
+    ];
+
+    # ALT-C: Directory navigation with tree preview
+    changeDirWidgetCommand = "fd --type d --hidden --strip-cwd-prefix --exclude .git";
+    changeDirWidgetOptions = [
+      "--preview 'eza --tree --color=always {} | head -200'"
+    ];
+
+    # CTRL-R: Command history search
+    historyWidgetOptions = [
+      "--preview 'echo {}' --preview-window up:3:hidden:wrap"
+      "--bind 'ctrl-/:toggle-preview'"
+    ];
+
+    # Default options for all fzf invocations
+    defaultOptions = [
+      "--height 40%"
+      "--layout=reverse"
+      "--border"
+      "--info=inline"
+    ];
+  };
+
   # Shell aliases for all shells (stable, rarely change)
   home.shellAliases = {
     # eza aliases (ls replacement)
