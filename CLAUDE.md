@@ -1,0 +1,1 @@
+- Always use the GitHub CLI or the GitHub MCP instead of using Fetch.
