@@ -44,6 +44,7 @@ export VOLTA_HOME="$HOME/.volta"
 [[ -f ~/.config/shell/python.sh ]] && source ~/.config/shell/python.sh
 [[ -f ~/.config/shell/testcontainers.sh ]] && source ~/.config/shell/testcontainers.sh
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
+[[ -f ~/.config/shell/github.sh ]] && source ~/.config/shell/github.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
