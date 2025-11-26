@@ -30,6 +30,7 @@ export VOLTA_HOME="$HOME/.volta"
 [[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
 
 # Only append to PATH if these directories aren't already there
+[[ ":$PATH:" != *":$HOME/.opencode/bin:"* ]] && export PATH="$PATH:$HOME/.opencode/bin"
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$PATH:$HOME/.local/bin"
 [[ ":$PATH:" != *":$VOLTA_HOME/bin:"* ]] && export PATH="$PATH:$VOLTA_HOME/bin"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
