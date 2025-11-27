@@ -40,6 +40,7 @@ export VOLTA_HOME="$HOME/.volta"
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/bat.sh ]] && source ~/.config/shell/bat.sh
 [[ -f ~/.config/shell/claude.sh ]] && source ~/.config/shell/claude.sh
+[[ -f ~/.config/shell/exa.sh ]] && source ~/.config/shell/exa.sh
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
 [[ -f ~/.config/shell/pnpm.sh ]] && source ~/.config/shell/pnpm.sh
 [[ -f ~/.config/shell/python.sh ]] && source ~/.config/shell/python.sh
