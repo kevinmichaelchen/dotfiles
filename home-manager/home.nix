@@ -28,6 +28,7 @@
     gh
     git
     git-town
+    _1password-cli
     glow
     go
     gum

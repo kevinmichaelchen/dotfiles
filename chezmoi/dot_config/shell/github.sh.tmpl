@@ -1,0 +1,10 @@
+#!/bin/sh
+# GitHub CLI (gh) aliases
+# Shell-agnostic - can be sourced by bash, zsh, etc.
+
+export GITHUB_PERSONAL_ACCESS_TOKEN='{{ onepasswordRead "op://Private/GitHub/GitHub Personal Access Token" }}'
+
+alias pr-approve='gh pr review --approve'
+alias pr-web='gh pr view --web'
+alias pr-checkout='gh pr checkout'
+alias pr-diff='gh pr diff'
