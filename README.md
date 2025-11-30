@@ -121,6 +121,22 @@ After running the bootstrap script, you'll need to:
 1. Apply the system configuration (command provided by the script)
 2. Initialize Chezmoi after packages are installed
 
+### Onboarding
+
+After the initial setup, complete these steps to enable 1Password CLI integration:
+
+1. **Download 1Password for macOS**
+   - Download from [1Password.com](https://1password.com/downloads/mac/) or the Mac App Store
+
+2. **Enable 1Password CLI integration**
+   - Open 1Password → Settings → Developer
+   - Enable "Integrate with 1Password CLI"
+
+3. **Apply Chezmoi configuration**
+   ```bash
+   chezmoi apply --source=$HOME/dotfiles/chezmoi
+   ```
+
 ### Daily Usage
 
 #### Update Everything
