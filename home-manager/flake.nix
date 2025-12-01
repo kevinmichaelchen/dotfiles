@@ -14,7 +14,12 @@
     { nixpkgs, home-manager, ... }:
     let
       system = "aarch64-darwin";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+          "1password-cli"
+        ];
+      };
 
       # Helper function to create a home-manager configuration for a specific user
       mkHomeConfig = username: home-manager.lib.homeManagerConfiguration {
