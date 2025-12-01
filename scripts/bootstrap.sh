@@ -21,10 +21,11 @@ else
     echo -e "${GREEN}✓${NC} Dotfiles repository already exists at ~/dotfiles"
 fi
 
-# Install Nix (if not present) using Determinate installer
+# Check if Nix is installed
 if ! command -v nix &> /dev/null; then
-    echo -e "${BLUE}📦 Installing Nix package manager...${NC}"
-    curl -fsSL https://install.determinate.systems/nix | sh -s -- install --determinate
+    echo -e "${RED}✗${NC} Nix is not installed"
+    echo -e "${YELLOW}  Please install Nix first: ${BOLD}https://docs.determinate.systems/${NC}"
+    exit 1
 else
     echo -e "${GREEN}✓${NC} Nix is already installed"
 fi
@@ -36,8 +37,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     UPDATE_COMMAND="darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default"
 else
     echo -e "${MAGENTA}🐧 Detected Linux/Unix${NC}"
-    NEXT_COMMAND="nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager && nix-channel --update && home-manager switch --flake ~/dotfiles/home-manager"
-    UPDATE_COMMAND="home-manager switch --flake ~/dotfiles/home-manager"
+    NEXT_COMMAND="nix run home-manager -- switch --flake ~/dotfiles/home-manager"
+    UPDATE_COMMAND="nix run home-manager -- switch --flake ~/dotfiles/home-manager"
 fi
 
 echo -e "\n${GREEN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

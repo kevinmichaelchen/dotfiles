@@ -91,7 +91,7 @@ On Linux, we use:
 
 ### Prerequisites
 - Git
-- curl
+- [Nix](https://docs.determinate.systems/) (install via Determinate Systems)
 
 ### Initial Setup
 
@@ -114,7 +114,7 @@ cd ~/dotfiles
 
 The bootstrap script will:
 1. Clone the dotfiles repository (if not already present)
-2. Install Nix using the [Determinate Systems](https://determinate.systems/) installer (if needed)
+2. Verify Nix is installed (exits with instructions if not)
 3. Display clear next steps for completing the setup
 
 After running the bootstrap script, you'll need to:
