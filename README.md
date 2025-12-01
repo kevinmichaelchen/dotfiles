@@ -144,8 +144,8 @@ After the initial setup, complete these steps to enable 1Password CLI integratio
 # On macOS
 darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
 
-# On Linux
-home-manager switch --flake ~/dotfiles/home-manager
+# On Linux (standalone Home-Manager)
+nix run home-manager -- switch --flake ~/dotfiles/home-manager
 
 # Or use the shortcut (works on any system)
 dot-update  # Pulls latest changes and applies appropriate configuration
@@ -160,7 +160,7 @@ hme  # Opens home.nix in your editor
 darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
 
 # Apply changes (Linux)
-home-manager switch --flake ~/dotfiles/home-manager
+nix run home-manager -- switch --flake ~/dotfiles/home-manager
 ```
 
 #### Manage Personal Configs (via Chezmoi)
