@@ -115,6 +115,21 @@
     GRAB_HOME = "$HOME/dev";
   };
 
+  # Declaratively manage Volta packages
+  # These are installed/updated on every `home-manager switch`
+  home.activation.voltaPackages = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    export VOLTA_HOME="$HOME/.volta"
+    export PATH="$VOLTA_HOME/bin:$PATH"
+    if command -v volta &> /dev/null; then
+      volta install node@24 || true
+      volta install @anthropic-ai/claude-code@latest || true
+      volta install @beads/bd@latest || true
+      volta install @charmland/crush@latest || true
+      volta install @google/gemini-cli@latest || true
+      volta install @intellectronica/ruler@latest || true
+    fi
+  '';
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -195,11 +210,11 @@
     hmu = "(cd ~/dotfiles/home-manager && nix flake update) && home-manager switch --flake ~/dotfiles/home-manager";
     hme = "cd ~/dotfiles/home-manager && $EDITOR home.nix";
     
-    # Chezmoi aliases
-    cm = "chezmoi";
-    cma = "chezmoi apply";
-    cmd = "chezmoi diff";
-    cme = "chezmoi edit";
-    cmu = "chezmoi update";
+    # Chezmoi aliases (use ~/dotfiles/chezmoi as source)
+    cm = "chezmoi --source=$HOME/dotfiles/chezmoi";
+    cma = "chezmoi apply --source=$HOME/dotfiles/chezmoi";
+    cmd = "chezmoi diff --source=$HOME/dotfiles/chezmoi";
+    cme = "chezmoi edit --source=$HOME/dotfiles/chezmoi";
+    cmu = "chezmoi update --source=$HOME/dotfiles/chezmoi";
   };
 }

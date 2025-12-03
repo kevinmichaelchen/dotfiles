@@ -48,6 +48,7 @@ export VOLTA_HOME="$HOME/.volta"
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 [[ -f ~/.config/shell/github.sh ]] && source ~/.config/shell/github.sh
 [[ -f ~/.config/shell/hygraph.sh ]] && source ~/.config/shell/hygraph.sh
+[[ -f ~/.config/shell/context7.sh ]] && source ~/.config/shell/context7.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"

@@ -137,6 +137,8 @@ After the initial setup, complete these steps to enable 1Password CLI integratio
    chezmoi apply --source=$HOME/dotfiles/chezmoi
    ```
 
+   Note: After applying Home-Manager, you can use the `cma` alias instead.
+
 ### Daily Usage
 
 #### Update Everything
@@ -233,7 +235,7 @@ The configuration includes these helpful aliases:
 - `hm` - Apply Home-Manager changes
 - `hmu` - Update and apply Home-Manager
 - `hme` - Edit Home-Manager config
-- `cm` - Chezmoi command
+- `cm` - Chezmoi command (uses ~/dotfiles/chezmoi as source)
 - `cma` - Apply Chezmoi changes
 - `cmd` - Show Chezmoi diff
 - `cme` - Edit file with Chezmoi
