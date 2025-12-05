@@ -37,6 +37,7 @@
     pnpm
     podman
     podman-compose
+    krunkit  # GPU-accelerated VM provider for Podman on Apple Silicon
     postgresql.pg_config
     python3
     python3Packages.pip
@@ -113,6 +114,8 @@
     EDITOR = "vim";
     VOLTA_HOME = "$HOME/.volta";
     GRAB_HOME = "$HOME/dev";
+    # Use libkrun for GPU-accelerated Podman VMs on Apple Silicon
+    CONTAINERS_MACHINE_PROVIDER = "libkrun";
   };
 
   # Declaratively manage Volta packages

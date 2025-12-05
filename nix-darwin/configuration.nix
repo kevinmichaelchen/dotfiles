@@ -38,25 +38,15 @@
       cleanup = "zap";
     };
     
-    # Taps
-    taps = [
-      # No additional taps needed - vfkit is in homebrew-core
-    ];
-    
     # Brews (formulae)
     brews = [
-      # vfkit: lightweight hypervisor using macOS Virtualization.framework
-      # Required by podman for running Linux VMs on macOS (especially Apple Silicon)
-      "vfkit"
+      # krunkit is now installed via Nix (home-manager/home.nix)
     ];
-    
+
     # Casks (GUI applications)
     casks = [
       # Terminal emulator (requires Homebrew since Nix doesn't support Darwin builds)
       "ghostty"
-
-      # Docker Desktop for macOS
-      "docker"
     ];
   };
 
