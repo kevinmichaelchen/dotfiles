@@ -8,6 +8,10 @@ result-*
 # macOS
 .DS_Store
 
+# Mise local config (created by `mise use` in project directories)
+mise.toml
+.mise.toml
+
 # Editor directories and files
 .idea
 .vscode

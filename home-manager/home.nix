@@ -44,7 +44,7 @@
     ripgrep
     tokei
     uv
-    volta
+    mise
     yq
     zoxide
     
@@ -112,26 +112,11 @@
   #
   home.sessionVariables = {
     EDITOR = "vim";
-    VOLTA_HOME = "$HOME/.volta";
     GRAB_HOME = "$HOME/dev";
     # Use libkrun for GPU-accelerated Podman VMs on Apple Silicon
     CONTAINERS_MACHINE_PROVIDER = "libkrun";
   };
 
-  # Declaratively manage Volta packages
-  # These are installed/updated on every `home-manager switch`
-  home.activation.voltaPackages = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    export VOLTA_HOME="$HOME/.volta"
-    export PATH="$VOLTA_HOME/bin:$PATH"
-    if command -v volta &> /dev/null; then
-      volta install node@24 || true
-      volta install @anthropic-ai/claude-code@latest || true
-      volta install @beads/bd@latest || true
-      volta install @charmland/crush@latest || true
-      volta install @google/gemini-cli@latest || true
-      volta install @intellectronica/ruler@latest || true
-    fi
-  '';
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

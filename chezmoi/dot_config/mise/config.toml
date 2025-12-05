@@ -1,0 +1,12 @@
+# Mise global configuration
+# Managed by Chezmoi - edit via `cme ~/.config/mise/config.toml`
+# Apply with `mise install` after changes
+
+[tools]
+node = "24"
+
+# npm global packages
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@charmland/crush" = "latest"
+"npm:@google/gemini-cli" = "latest"
+"npm:@intellectronica/ruler" = "latest"

@@ -34,6 +34,8 @@ This repository combines the best of both worlds:
 │       │   ├── pnpm.sh    # PNPM configuration
 │       │   ├── python.sh  # Python/UV configuration
 │       │   └── zed.sh     # Zed editor configuration
+│       ├── mise/
+│       │   └── config.toml   # Mise version manager config (node, npm packages)
 │       ├── starship.toml  # Starship prompt configuration
 │       └── zsh/
 │           └── custom.zsh # Zsh configuration
@@ -139,6 +141,12 @@ After the initial setup, complete these steps to enable 1Password CLI integratio
 
    Note: After applying Home-Manager, you can use the `cma` alias instead.
 
+4. **Set up mise (Node.js and npm packages)**
+   ```bash
+   mise use node@24      # Install and activate Node.js
+   mise install          # Install npm packages from ~/.config/mise/config.toml
+   ```
+
 ### Daily Usage
 
 #### Update Everything
@@ -207,13 +215,14 @@ Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle fo
 - Package installations (ripgrep, fd, chezmoi, zsh, starship, etc.)
 - Enabling shells and tools (zsh with autosuggestions, syntax highlighting)
 - Stable shell aliases (that rarely change)
-- Development tools (rustc, cargo, volta, etc.)
+- Development tools (rustc, cargo, mise, etc.)
 - The base .zshrc file (for proper plugin initialization)
 
 **Chezmoi** manages:
 - Shell configuration (~/.config/zsh/custom.zsh, starship.toml)
 - Personal configuration files (.gitconfig, .vimrc)
 - Shell aliases and functions (via shell-agnostic scripts: bat.sh, git.sh, pnpm.sh, python.sh, zed.sh)
+- Mise configuration (~/.config/mise/config.toml for Node.js and npm global packages)
 - Machine-specific settings
 - Secrets and API keys (encrypted)
 - Quick-iteration configs
