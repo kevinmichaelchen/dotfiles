@@ -21,6 +21,7 @@
     bat
     bun
     chezmoi
+    cloudflared
     d2
     delta
     eza
@@ -192,11 +193,6 @@
     # Dotfile management
     dot = "cd ~/dotfiles";
     dot-update = "cd ~/dotfiles && ./scripts/update.sh";
-    
-    # Home-Manager aliases
-    hm = "home-manager switch --flake ~/dotfiles/home-manager";
-    hmu = "(cd ~/dotfiles/home-manager && nix flake update) && home-manager switch --flake ~/dotfiles/home-manager";
-    hme = "cd ~/dotfiles/home-manager && $EDITOR home.nix";
     
     # Chezmoi aliases (use ~/dotfiles/chezmoi as source)
     cm = "chezmoi --source=$HOME/dotfiles/chezmoi";

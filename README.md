@@ -241,9 +241,10 @@ The configuration includes these helpful aliases:
 
 - `dot` - Navigate to dotfiles directory
 - `dot-update` - Update everything
-- `hm` - Apply Home-Manager changes
-- `hmu` - Update and apply Home-Manager
-- `hme` - Edit Home-Manager config
+- `dr` - Apply nix-darwin changes (includes Home-Manager)
+- `dru` - Update flake and apply nix-darwin
+- `dre` - Edit nix-darwin configuration.nix
+- `hme` - Edit Home-Manager home.nix
 - `cm` - Chezmoi command (uses ~/dotfiles/chezmoi as source)
 - `cma` - Apply Chezmoi changes
 - `cmd` - Show Chezmoi diff
@@ -256,7 +257,7 @@ The configuration includes these helpful aliases:
 ```bash
 hme                    # Edit home.nix
 # Add package to the list
-hm                     # Apply changes
+dr                     # Apply changes
 ```
 
 ### Modifying personal config
