@@ -43,9 +43,11 @@
     python3
     python3Packages.pip
     ripgrep
+    tmux
     tokei
     uv
     mise
+    mosh
     yq
     zoxide
     
