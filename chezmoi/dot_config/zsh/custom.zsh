@@ -35,6 +35,7 @@ export EDITOR="vim"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
 [[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
 [[ ":$PATH:" != *":$HOME/.deno/bin:"* ]] && export PATH="$PATH:$HOME/.deno/bin"
+[[ ":$PATH:" != *":$HOME/.bun/bin:"* ]] && export PATH="$PATH:$HOME/.bun/bin"
 
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/bat.sh ]] && source ~/.config/shell/bat.sh
