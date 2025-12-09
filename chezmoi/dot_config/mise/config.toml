@@ -4,6 +4,8 @@
 
 [tools]
 node = "24"
+pnpm = "latest"
+bun = "latest"
 
 # npm global packages
 "npm:@anthropic-ai/claude-code" = "latest"

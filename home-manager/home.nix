@@ -19,7 +19,6 @@
   home.packages = with pkgs; [
     awscli2
     bat
-    bun
     chezmoi
     cloudflared
     d2
@@ -35,7 +34,6 @@
     gum
     jira-cli-go
     jq
-    pnpm
     podman
     podman-compose
     krunkit  # GPU-accelerated VM provider for Podman on Apple Silicon
