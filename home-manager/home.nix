@@ -41,6 +41,7 @@
     python3
     python3Packages.pip
     ripgrep
+    sesh
     tmux
     tokei
     uv

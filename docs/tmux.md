@@ -5,20 +5,65 @@ window.
 
 ## Quick Reference
 
-| Action             | Shortcut                                          |
-| ------------------ | ------------------------------------------------- |
-| Prefix key         | `Ctrl+b`                                          |
-| Split horizontally | `prefix %`                                        |
-| Split vertically   | `prefix "`                                        |
-| Switch pane        | `prefix arrow-key` or click                       |
-| Close pane         | `prefix x` or `exit`                              |
-| New window         | `prefix c`                                        |
-| Next/prev window   | `prefix n` / `prefix p`                           |
-| List windows       | `prefix w`                                        |
-| Detach session     | `prefix d`                                        |
-| Enter copy mode    | `prefix [`                                        |
-| Paste buffer       | `prefix ]`                                        |
-| Reload config      | `prefix :` then `source ~/.config/tmux/tmux.conf` |
+| Action               | Shortcut                    |
+| -------------------- | --------------------------- |
+| Prefix key           | `Ctrl+b`                    |
+| Split horizontally   | `prefix %`                  |
+| Split vertically     | `prefix "`                  |
+| Switch pane          | `prefix arrow-key` or click |
+| Close pane           | `prefix x`                  |
+| New window           | `prefix c`                  |
+| Next/prev window     | `prefix n` / `prefix p`     |
+| List windows         | `prefix w`                  |
+| Detach session       | `prefix d`                  |
+| Enter copy mode      | `prefix [`                  |
+| Paste buffer         | `prefix ]`                  |
+| Reload config        | `prefix r`                  |
+| Show all keybindings | `prefix ?`                  |
+
+> **Note:** "Prefix" means press `Ctrl+b`, release, then press the next key.
+
+## Sesh: Smart Session Manager
+
+We use [Sesh][sesh] for intelligent session management. It integrates with
+[zoxide][zoxide] to quickly jump to your most-used directories.
+
+### Sesh Keybindings
+
+| Action                 | Shortcut   |
+| ---------------------- | ---------- |
+| Open session picker    | `prefix T` |
+| Switch to last session | `prefix L` |
+
+### Session Picker Controls
+
+When the sesh picker is open (`prefix T`):
+
+| Key         | Action                        |
+| ----------- | ----------------------------- |
+| `Ctrl+a`    | Show all sources              |
+| `Ctrl+t`    | Show tmux sessions only       |
+| `Ctrl+g`    | Show configured sessions only |
+| `Ctrl+x`    | Show zoxide directories       |
+| `Ctrl+f`    | Find directories in ~         |
+| `Ctrl+d`    | Kill highlighted session      |
+| `Tab`       | Move down                     |
+| `Shift+Tab` | Move up                       |
+
+### Sesh Configuration
+
+Create `~/.config/sesh/sesh.toml` for custom sessions:
+
+```toml
+[[session]]
+name = "dotfiles"
+path = "~/dotfiles"
+startup_command = "nvim"
+
+[[session]]
+name = "projects"
+path = "~/dev"
+```
 
 ## Our Configuration
 
@@ -33,6 +78,12 @@ setw -g pane-base-index 1
 
 # Enable mouse support
 set -g mouse on
+
+# Skip "kill-pane 1? (y/n)" prompt
+bind-key x kill-pane
+
+# Don't exit tmux when closing a session
+set -g detach-on-destroy off
 ```
 
 ### Mouse Support
@@ -100,9 +151,9 @@ Or use `pbcopy`:
 bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
 ```
 
-## Sessions
+## Sessions (without Sesh)
 
-Sessions persist even if you close your terminal.
+If you need to manage sessions manually:
 
 ```bash
 # List sessions
@@ -120,15 +171,18 @@ tmux kill-session -t myproject
 
 ## Useful Links
 
+- [Sesh - Smart session manager][sesh]
 - [tmux GitHub][tmux-github]
 - [tmux Cheat Sheet][cheatsheet]
 - [TPM - Tmux Plugin Manager][tpm]
 - [Rose Pine tmux theme][rose-pine-tmux]
+- [zoxide - Smarter cd][zoxide]
 - [Awesome tmux - plugin list][awesome-tmux]
 
+[sesh]: https://github.com/joshmedeski/sesh
+[zoxide]: https://github.com/ajeetdsouza/zoxide
 [tmux-github]: https://github.com/tmux/tmux
 [cheatsheet]: https://tmuxcheatsheet.com/
 [tpm]: https://github.com/tmux-plugins/tpm
 [rose-pine-tmux]: https://github.com/rose-pine/tmux
 [awesome-tmux]: https://github.com/rothgar/awesome-tmux
-[maintainer-issue]: https://github.com/NHDaly/tmux-better-mouse-mode/issues/41
