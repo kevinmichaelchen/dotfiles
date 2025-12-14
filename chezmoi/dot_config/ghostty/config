@@ -1,0 +1,5 @@
+font-family = "TX-02"
+theme = light:rose-pine-dawn,dark:rose-pine
+window-padding-x = 7,12
+window-padding-y = 7,12
+selection-invert-fg-bg = true
