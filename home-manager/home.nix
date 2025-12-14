@@ -44,6 +44,7 @@
     sesh
     tmux
     tokei
+    typst
     uv
     mise
     mosh
