@@ -1,7 +1,3 @@
-
-
-<!-- Source: .ruler/AGENTS.md -->
-
 # AGENTS.md
 
 A unified approach to managing system configuration using Nix/Home-Manager for reproducible package management and Chezmoi for personal dotfile synchronization.
