@@ -205,8 +205,9 @@ alias gwtrm='git worktree remove'
 
 # Helper functions that some aliases depend on
 # These need to be defined for certain aliases to work
+
 git_current_branch() {
-  git branch --show-current 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null
+  command git branch --show-current 2>/dev/null || command git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
 git_main_branch() {
