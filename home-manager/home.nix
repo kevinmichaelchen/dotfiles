@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -58,28 +58,8 @@
     rustc
     rustfmt
     
-    # Custom Rust package from crates.io/GitHub
-    (rustPlatform.buildRustPackage rec {
-      pname = "git-grab";
-      version = "3.0.0";
-      
-      src = fetchFromGitHub {
-        owner = "wezm";
-        repo = "git-grab";
-        rev = version;
-        hash = "sha256-MsJDfmWU6LyK7M0LjYQufIpKmtS4f2hgo4Yi/x1HsrU=";
-      };
-      
-      cargoHash = "sha256-nJBgKrgfmLzHVZzVUah2vS+fjNzJp5fNMzzsFu6roug=";
-      
-      doCheck = false;  # Tests fail in sandbox (pbcopy not available)
-      
-      meta = with lib; {
-        description = "Clone a git repository into a standard location organised by domain and path";
-        homepage = "https://github.com/wezm/git-grab";
-        license = licenses.mit;
-      };
-    })
+    # Remote repository management (clones to $GHQ_ROOT/github.com/org/repo)
+    ghq
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -115,7 +95,7 @@
   #
   home.sessionVariables = {
     EDITOR = "vim";
-    GRAB_HOME = "$HOME/dev";
+    GHQ_ROOT = "$HOME/dev";
     # Use libkrun for GPU-accelerated Podman VMs on Apple Silicon
     CONTAINERS_MACHINE_PROVIDER = "libkrun";
   };
