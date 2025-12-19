@@ -42,6 +42,7 @@
     python3Packages.pip
     ripgrep
     sesh
+    surrealdb
     tmux
     tokei
     typst
