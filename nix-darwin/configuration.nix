@@ -40,7 +40,7 @@
     
     # Brews (formulae)
     brews = [
-      # krunkit is now installed via Nix (home-manager/home.nix)
+      "ripgrep"
     ];
 
     # Casks (GUI applications)
