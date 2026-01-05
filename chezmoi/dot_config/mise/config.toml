@@ -3,13 +3,77 @@
 # Apply with `mise install` after changes
 
 [tools]
+
+# ============================================================================
+# Core Language Runtimes
+# ============================================================================
 node = "24"
+python = "latest"
+go = "latest"
+rust = "latest"
+
+# ============================================================================
+# Node.js Tools & Package Managers
+# ============================================================================
 pnpm = "latest"
 bun = "latest"
 
-# npm global packages
+# npm global packages (anthropic CLI tools)
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@charmland/crush" = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@intellectronica/ruler" = "latest"
 "npm:@openai/codex" = "latest"
+
+# ============================================================================
+# Development Tools from Cargo (Rust tools)
+# ============================================================================
+"cargo:bat" = "latest"          # cat replacement with syntax highlighting
+"cargo:delta" = "latest"        # git diff viewer
+"cargo:eza" = "latest"          # ls replacement
+"cargo:fd" = "latest"           # find replacement
+"cargo:glow" = "latest"         # markdown renderer
+"cargo:gum" = "latest"          # shell prompt tool
+"cargo:tokei" = "latest"        # code statistics
+"cargo:zoxide" = "latest"       # z replacement (smarter cd)
+
+# ============================================================================
+# Tools from GitHub Releases (Go & other binaries)
+# ============================================================================
+"github:twpayne/chezmoi" = "latest"    # dotfile management (Go)
+"github:x-motemen/ghq" = "latest"      # repository management (Go)
+"github:cli/cli" = "latest"            # GitHub CLI (gh) (Go)
+"github:jqlang/jq" = "latest"          # JSON processor
+
+# ============================================================================
+# Tools from Aqua (GitHub releases with verification)
+# ============================================================================
+"aqua:mikefarah/yq" = "latest"  # YAML processor
+"aqua:terrastruct/d2" = "latest"  # Diagram language
+"aqua:typst/typst" = "latest"   # Typesetting system
+"aqua:astral-sh/uv" = "latest"  # Python package manager
+
+# ============================================================================
+# Tools from npm (Node.js packages)
+# ============================================================================
+"npm:wrangler" = "latest"       # Cloudflare Workers CLI
+
+# ============================================================================
+# Notes on Tools NOT Migrated to Mise
+# ============================================================================
+# The following tools remain in Nix/Homebrew as they are system-level:
+#   - git: macOS system package
+#   - git-town: advanced git workflows (keep in Nix if needed)
+#   - _1password-cli: 1Password CLI (keep in Nix if needed)
+#   - cloudflared: Cloudflare tunnel daemon (system package - wrangler is Workers CLI)
+#   - podman: container runtime (system package)
+#   - podman-compose: docker-compose alternative (system package)
+#   - krunkit: GPU acceleration for Podman (Apple Silicon specific, Nix only)
+#   - postgresql.pg_config: system library (system package)
+#   - python3Packages.pip: handled by Python runtime
+#   - sesh: terminal session manager (check if needed)
+#   - tmux: terminal multiplexer (Homebrew or Nix)
+#   - mise: core tool (keep in Nix)
+#   - mosh: remote shell (Homebrew or Nix)
+#   - fzf: managed via home-manager programs.fzf
+#   - ripgrep: already in Homebrew (configuration.nix)
