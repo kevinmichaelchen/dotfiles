@@ -19,6 +19,10 @@
   # Note: Development tools (python, go, rust, node, etc.) are now managed by Mise
   # See MISE_MIGRATION.md for details on which tools were migrated
   home.packages = with pkgs; [
+    # Bootstrap tools (needed before mise can install anything)
+    chezmoi  # Must be in Nix - applies mise.toml config before mise install runs
+    mise     # Must be in Nix - installs other dev tools
+
     # System packages (not available or not suitable for Mise)
     cloudflared
     git
@@ -32,7 +36,6 @@
     python3Packages.pip
     sesh
     tmux
-    mise
     mosh
   ];
 

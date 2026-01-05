@@ -29,18 +29,22 @@ bun = "latest"
 # Development Tools from Cargo (Rust tools)
 # ============================================================================
 "cargo:bat" = "latest"          # cat replacement with syntax highlighting
-"cargo:delta" = "latest"        # git diff viewer
+"cargo:git-delta" = "latest"    # git diff viewer (crate name is git-delta)
 "cargo:eza" = "latest"          # ls replacement
-"cargo:fd" = "latest"           # find replacement
-"cargo:glow" = "latest"         # markdown renderer
-"cargo:gum" = "latest"          # shell prompt tool
+"cargo:fd-find" = "latest"      # find replacement (crate name is fd-find)
 "cargo:tokei" = "latest"        # code statistics
 "cargo:zoxide" = "latest"       # z replacement (smarter cd)
 
 # ============================================================================
+# Go Tools from GitHub (charmbracelet tools are Go, not Rust)
+# ============================================================================
+"github:charmbracelet/glow" = "latest"  # markdown renderer (Go)
+"github:charmbracelet/gum" = "latest"   # shell prompt tool (Go)
+
+# ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
-"github:twpayne/chezmoi" = "latest"    # dotfile management (Go)
+# Note: chezmoi is in Nix (bootstrap tool - needed to apply this config)
 "github:x-motemen/ghq" = "latest"      # repository management (Go)
 "github:cli/cli" = "latest"            # GitHub CLI (gh) (Go)
 "github:jqlang/jq" = "latest"          # JSON processor
@@ -61,19 +65,24 @@ bun = "latest"
 # ============================================================================
 # Notes on Tools NOT Migrated to Mise
 # ============================================================================
-# The following tools remain in Nix/Homebrew as they are system-level:
+# The following tools remain in Nix/Homebrew:
+#
+# Bootstrap tools (must be in Nix to avoid chicken-and-egg):
+#   - chezmoi: applies this config before mise can run
+#   - mise: installs the tools defined here
+#
+# System-level packages (not available or not suitable for Mise):
 #   - git: macOS system package
-#   - git-town: advanced git workflows (keep in Nix if needed)
-#   - _1password-cli: 1Password CLI (keep in Nix if needed)
-#   - cloudflared: Cloudflare tunnel daemon (system package - wrangler is Workers CLI)
-#   - podman: container runtime (system package)
-#   - podman-compose: docker-compose alternative (system package)
-#   - krunkit: GPU acceleration for Podman (Apple Silicon specific, Nix only)
-#   - postgresql.pg_config: system library (system package)
+#   - git-town: advanced git workflows
+#   - _1password-cli: 1Password CLI
+#   - cloudflared: Cloudflare tunnel daemon (wrangler is Workers CLI, different tool)
+#   - podman: container runtime
+#   - podman-compose: docker-compose alternative
+#   - krunkit: GPU acceleration for Podman (Apple Silicon specific)
+#   - postgresql.pg_config: system library
 #   - python3Packages.pip: handled by Python runtime
-#   - sesh: terminal session manager (check if needed)
-#   - tmux: terminal multiplexer (Homebrew or Nix)
-#   - mise: core tool (keep in Nix)
-#   - mosh: remote shell (Homebrew or Nix)
+#   - sesh: terminal session manager
+#   - tmux: terminal multiplexer
+#   - mosh: remote shell
 #   - fzf: managed via home-manager programs.fzf
 #   - ripgrep: already in Homebrew (configuration.nix)
