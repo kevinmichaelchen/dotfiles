@@ -3,13 +3,86 @@
 # Apply with `mise install` after changes
 
 [tools]
+
+# ============================================================================
+# Core Language Runtimes
+# ============================================================================
 node = "24"
+python = "latest"
+go = "latest"
+rust = "latest"
+
+# ============================================================================
+# Node.js Tools & Package Managers
+# ============================================================================
 pnpm = "latest"
 bun = "latest"
 
-# npm global packages
+# npm global packages (anthropic CLI tools)
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@charmland/crush" = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@intellectronica/ruler" = "latest"
 "npm:@openai/codex" = "latest"
+
+# ============================================================================
+# Development Tools from Cargo (Rust tools)
+# ============================================================================
+"cargo:bat" = "latest"          # cat replacement with syntax highlighting
+"cargo:git-delta" = "latest"    # git diff viewer (crate name is git-delta)
+"cargo:eza" = "latest"          # ls replacement
+"cargo:fd-find" = "latest"      # find replacement (crate name is fd-find)
+"cargo:tokei" = "latest"        # code statistics
+"cargo:zoxide" = "latest"       # z replacement (smarter cd)
+
+# ============================================================================
+# Go Tools from GitHub (charmbracelet tools are Go, not Rust)
+# ============================================================================
+"github:charmbracelet/glow" = "latest"  # markdown renderer (Go)
+"github:charmbracelet/gum" = "latest"   # shell prompt tool (Go)
+
+# ============================================================================
+# Tools from GitHub Releases (Go & other binaries)
+# ============================================================================
+# Note: chezmoi is in Nix (bootstrap tool - needed to apply this config)
+"github:x-motemen/ghq" = "latest"      # repository management (Go)
+"github:cli/cli" = "latest"            # GitHub CLI (gh) (Go)
+"aqua:jqlang/jq" = "latest"            # JSON processor (aqua has prebuilt binaries)
+
+# ============================================================================
+# Tools from Aqua (GitHub releases with verification)
+# ============================================================================
+"aqua:mikefarah/yq" = "latest"  # YAML processor
+"aqua:terrastruct/d2" = "latest"  # Diagram language
+"aqua:typst/typst" = "latest"   # Typesetting system
+"aqua:astral-sh/uv" = "latest"  # Python package manager
+
+# ============================================================================
+# Tools from npm (Node.js packages)
+# ============================================================================
+"npm:wrangler" = "latest"       # Cloudflare Workers CLI
+
+# ============================================================================
+# Notes on Tools NOT Migrated to Mise
+# ============================================================================
+# The following tools remain in Nix/Homebrew:
+#
+# Bootstrap tools (must be in Nix to avoid chicken-and-egg):
+#   - chezmoi: applies this config before mise can run
+#   - mise: installs the tools defined here
+#
+# System-level packages (not available or not suitable for Mise):
+#   - git: macOS system package
+#   - git-town: advanced git workflows
+#   - _1password-cli: 1Password CLI
+#   - cloudflared: Cloudflare tunnel daemon (wrangler is Workers CLI, different tool)
+#   - podman: container runtime
+#   - podman-compose: docker-compose alternative
+#   - krunkit: GPU acceleration for Podman (Apple Silicon specific)
+#   - postgresql.pg_config: system library
+#   - python3Packages.pip: handled by Python runtime
+#   - sesh: terminal session manager
+#   - tmux: terminal multiplexer
+#   - mosh: remote shell
+#   - fzf: managed via home-manager programs.fzf
+#   - ripgrep: already in Homebrew (configuration.nix)
