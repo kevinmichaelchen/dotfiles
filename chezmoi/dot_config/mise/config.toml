@@ -47,7 +47,7 @@ bun = "latest"
 # Note: chezmoi is in Nix (bootstrap tool - needed to apply this config)
 "github:x-motemen/ghq" = "latest"      # repository management (Go)
 "github:cli/cli" = "latest"            # GitHub CLI (gh) (Go)
-"github:jqlang/jq" = "latest"          # JSON processor
+"aqua:jqlang/jq" = "latest"            # JSON processor (aqua has prebuilt binaries)
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
