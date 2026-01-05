@@ -16,49 +16,24 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
+  # Note: Development tools (python, go, rust, node, etc.) are now managed by Mise
+  # See MISE_MIGRATION.md for details on which tools were migrated
   home.packages = with pkgs; [
-    awscli2
-    bat
-    chezmoi
+    # System packages (not available or not suitable for Mise)
     cloudflared
-    d2
-    delta
-    eza
-    fd
-    gh
     git
     git-town
     _1password-cli
-    glow
-    go
-    gum
     jira-cli-go
-    jq
     podman
     podman-compose
     krunkit  # GPU-accelerated VM provider for Podman on Apple Silicon
     postgresql.pg_config
-    python3
     python3Packages.pip
     sesh
     tmux
-    tokei
-    typst
-    uv
     mise
     mosh
-    yq
-    zoxide
-    
-    # Rust development tools
-    cargo
-    clippy
-    rust-analyzer
-    rustc
-    rustfmt
-    
-    # Remote repository management (clones to $GHQ_ROOT/github.com/org/repo)
-    ghq
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

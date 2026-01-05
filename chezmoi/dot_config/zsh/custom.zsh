@@ -25,13 +25,16 @@ zstyle ':completion:*' menu select                          # Highlight selectio
 # Environment variables
 export EDITOR="vim"
 
+# Initialize mise FIRST so its PATH entries come before Nix's
+eval "$(mise activate zsh)"
+
 # Fix PATH for nix-darwin (macOS path_helper overrides /etc/zshenv)
+# Add Nix paths AFTER mise so mise tools take precedence
 [[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
 
 # Only append to PATH if these directories aren't already there
 [[ ":$PATH:" != *":$HOME/.opencode/bin:"* ]] && export PATH="$PATH:$HOME/.opencode/bin"
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$PATH:$HOME/.local/bin"
-[[ ":$PATH:" != *":$HOME/.local/share/mise/shims:"* ]] && export PATH="$PATH:$HOME/.local/share/mise/shims"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
 [[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
 [[ ":$PATH:" != *":$HOME/.deno/bin:"* ]] && export PATH="$PATH:$HOME/.deno/bin"
@@ -56,9 +59,6 @@ eval "$(starship init zsh)"
 
 # Initialize zoxide (smarter cd)
 eval "$(zoxide init zsh)"
-
-# Initialize mise (version manager)
-eval "$(mise activate zsh)"
 
 # Load machine-specific configuration if it exists
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
