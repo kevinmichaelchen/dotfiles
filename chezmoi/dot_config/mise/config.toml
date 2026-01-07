@@ -40,6 +40,7 @@ bun = "latest"
 # ============================================================================
 "github:charmbracelet/glow" = "latest"  # markdown renderer (Go)
 "github:charmbracelet/gum" = "latest"   # shell prompt tool (Go)
+"github:steveyegge/beads" = "latest"    # distributed graph issue tracker (Go)
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
