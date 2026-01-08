@@ -57,6 +57,7 @@ bun = "latest"
 "aqua:terrastruct/d2" = "latest"  # Diagram language
 "aqua:typst/typst" = "latest"   # Typesetting system
 "aqua:astral-sh/uv" = "latest"  # Python package manager
+"aqua:planetscale/cli" = "latest"  # PlanetScale database CLI (pscale)
 
 # ============================================================================
 # Tools from npm (Node.js packages)
