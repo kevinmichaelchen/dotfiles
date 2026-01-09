@@ -40,6 +40,7 @@
     
     # Brews (formulae)
     brews = [
+      "libpq"  # PostgreSQL client (psql) without full server
       "ripgrep"
     ];
 

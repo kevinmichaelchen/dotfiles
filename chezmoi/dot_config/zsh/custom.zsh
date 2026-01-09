@@ -39,6 +39,8 @@ eval "$(mise activate zsh)"
 [[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
 [[ ":$PATH:" != *":$HOME/.deno/bin:"* ]] && export PATH="$PATH:$HOME/.deno/bin"
 [[ ":$PATH:" != *":$HOME/.bun/bin:"* ]] && export PATH="$PATH:$HOME/.bun/bin"
+# libpq is keg-only (not symlinked) to avoid conflicts with full PostgreSQL
+[[ -d "/opt/homebrew/opt/libpq/bin" ]] && [[ ":$PATH:" != *":/opt/homebrew/opt/libpq/bin:"* ]] && export PATH="$PATH:/opt/homebrew/opt/libpq/bin"
 
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/bat.sh ]] && source ~/.config/shell/bat.sh
