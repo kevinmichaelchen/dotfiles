@@ -42,6 +42,7 @@
     brews = [
       "libpq"  # PostgreSQL client (psql) without full server
       "ripgrep"
+      "webp"   # WebP image format tools (cwebp, dwebp)
     ];
 
     # Casks (GUI applications)
