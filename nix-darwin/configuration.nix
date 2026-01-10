@@ -41,6 +41,7 @@
     # Brews (formulae)
     brews = [
       "libpq"  # PostgreSQL client (psql) without full server
+      "pipx"   # Install Python CLI tools in isolated environments
       "ripgrep"
       "webp"   # WebP image format tools (cwebp, dwebp)
     ];

@@ -55,6 +55,8 @@ eval "$(mise activate zsh)"
 [[ -f ~/.config/shell/hygraph.sh ]] && source ~/.config/shell/hygraph.sh
 [[ -f ~/.config/shell/context7.sh ]] && source ~/.config/shell/context7.sh
 [[ -f ~/.config/shell/jira.sh ]] && source ~/.config/shell/jira.sh
+[[ -f ~/.config/shell/nia.sh ]] && source ~/.config/shell/nia.sh
+[[ -f ~/.config/shell/perplexity.sh ]] && source ~/.config/shell/perplexity.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
