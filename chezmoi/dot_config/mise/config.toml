@@ -42,6 +42,7 @@ bun = "latest"
 "github:charmbracelet/gum" = "latest"   # shell prompt tool (Go)
 "github:steveyegge/beads" = "latest"    # distributed graph issue tracker (Go)
 "go:golang.org/x/vuln/cmd/govulncheck" = "latest"  # Go vulnerability scanner
+"go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"  # Go linter aggregator
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
