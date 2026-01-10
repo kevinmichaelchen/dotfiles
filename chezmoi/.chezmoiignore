@@ -6,3 +6,9 @@ README.md
 PLAN.md
 *.nix
 flake.lock
+
+# OpenCode runtime files (managed by opencode/bun)
+.config/opencode/node_modules
+.config/opencode/bun.lock
+.config/opencode/antigravity-accounts.json
+.config/opencode/.gitignore
