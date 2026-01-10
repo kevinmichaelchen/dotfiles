@@ -8,9 +8,9 @@
     "code-explorer": { "model": "openai/gpt-4.1" },
     "code-reviewer": { "model": "openai/gpt-4.1" },
     "frontend-ui-ux-engineer": { "model": "google/gemini-3-pro-high" },
-    "explore": { "model": "opencode/glm-4.7-free" },
-    "librarian": { "model": "opencode/glm-4.7-free" },
-    "document-writer": { "model": "opencode/glm-4.7-free" },
+    "explore": { "model": "cerebras/zai-glm-4.7" },
+    "librarian": { "model": "cerebras/zai-glm-4.7" },
+    "document-writer": { "model": "cerebras/zai-glm-4.7" },
     "multimodal-looker": { "model": "google/gemini-2.5-flash" }
   }
 }
