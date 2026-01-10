@@ -2,105 +2,118 @@
 
 ## Overview
 
-This configuration optimizes cost-effectiveness while maintaining high-quality
-output by allocating models based on task complexity, frequency, and required
-capabilities. Anthropic models are avoided in favor of OpenAI, Google, and
-Cerebras.
+This configuration prioritizes **code review quality** while optimizing for
+speed where it matters. Models are assigned based on task criticality, with
+code-focused tasks using OpenAI's Codex variants and high-throughput tasks
+using Cerebras for speed.
 
 ## Available Model Tiers
 
-### Paid Models (Subscription-based)
+### OpenAI Codex (Code-Optimized)
 
-- **OpenAI**: GPT-5.2, GPT-5.1, GPT-4.1
-- **Google**: Gemini 3 Pro, Gemini 2.5 Flash
+- **gpt-5.2-codex**: Top-tier reasoning + code optimization
+- **gpt-5.1-codex-max**: Strong code capability, maximum at 5.1
+- **gpt-5.1-codex-mini**: Lighter, faster, still code-optimized
+
+### OpenAI General
+
+- **gpt-5.2**: Best pure reasoning (non-code-specific)
 
 ### Fast Models (Cerebras)
 
-- **Cerebras**: zai-glm-4.7 (~1,000-1,700 tokens/sec)
+| Model | SWE-bench | Speed | Cost (in/out) | Use Case |
+|-------|-----------|-------|---------------|----------|
+| **GLM 4.7** | 73.8% | ~1,000 t/s | $2.25/$2.75 | Quality exploration (≈ Haiku 4.5) |
+| **GPT OSS 120B** | 62.4% | ~3,000 t/s | $0.35/$0.75 | Speed-first tasks |
+
+**Note:** Cerebras free tier has a 1M token/day limit. Paid tier recommended for heavy use
+
+### Specialized (Google)
+
+- **gemini-3-pro-high**: Strong for creative/visual/UI work
+- **gemini-2.5-flash**: Fast multimodal (vision) capability
 
 ## Agent Assignments
 
-### Tier 1: Critical Reasoning & Architecture (High Cost, Low Frequency)
+### Tier 1: Mission Critical (gpt-5.2 / gpt-5.2-codex)
 
-| Agent            | Model            | Why                                                                                                                           |
-| ---------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `oracle`         | `openai/gpt-5.2` | Best available reasoning for high-impact architecture decisions. Used sparingly (~5-10% of tasks), so cost impact is minimal. |
-| `code-architect` | `openai/gpt-5.1` | Strong at comprehensive blueprint generation and implementation planning.                                                     |
+| Agent            | Model                  | Why                                                                    |
+| ---------------- | ---------------------- | ---------------------------------------------------------------------- |
+| `oracle`         | `openai/gpt-5.2`       | Pure reasoning for high-stakes decisions. Not code-specific.           |
+| `code-architect` | `openai/gpt-5.2-codex` | Architecture decisions need both strong reasoning AND code expertise.  |
+| `code-reviewer`  | `openai/gpt-5.2-codex` | **Sacrosanct.** No compromises on catching bugs and security issues.   |
 
-### Tier 2: High-Quality Code & Analysis (Mid-High Cost, Medium Frequency)
+### Tier 2: General Purpose (gpt-5.2)
 
-| Agent                     | Model                      | Why                                                                                                   |
-| ------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `general`                 | `openai/gpt-4.1`           | Balanced capability for most coding tasks. Good sweet spot of quality vs cost.                        |
-| `code-explorer`           | `openai/gpt-4.1`           | Deep codebase analysis requires strong reasoning to trace execution paths and map architecture.       |
-| `code-reviewer`           | `openai/gpt-4.1`           | Bug detection, security analysis, and quality assessment benefit from strong analytical capabilities. |
-| `frontend-ui-ux-engineer` | `google/gemini-3-pro-high` | Gemini 3 excels at visual reasoning and UI/UX tasks. Optimized for design and layout decisions.       |
+| Agent     | Model            | Why                                                         |
+| --------- | ---------------- | ----------------------------------------------------------- |
+| `general` | `openai/gpt-5.2` | Balanced capability for everyday tasks. Best general model. |
 
-### Tier 3: High-Frequency Search & Retrieval (Fast, High Frequency)
+### Tier 3: High-Throughput Exploration (Cerebras)
 
-| Agent       | Model                  | Why                                                                                                 |
-| ----------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
-| `explore`   | `cerebras/zai-glm-4.7` | ~1000 tok/sec. Codebase search and pattern matching don't require top-tier reasoning. High-volume.  |
-| `librarian` | `cerebras/zai-glm-4.7` | Retrieval-focused tasks (parsing docs, finding OSS examples) benefit from speed over sophistication.|
+| Agent           | Model                   | Why                                                                     |
+| --------------- | ----------------------- | ----------------------------------------------------------------------- |
+| `explore`       | `cerebras/gpt-oss-120b` | Pure file search/pattern matching. 3x faster, 6x cheaper. Speed > quality. |
+| `librarian`     | `cerebras/zai-glm-4.7`  | Retrieval needs understanding. GLM 4.7 ≈ Haiku 4.5 quality.             |
+| `code-explorer` | `cerebras/zai-glm-4.7`  | Understanding code paths needs Haiku-level capability.                  |
 
-### Tier 4: Structured & Repetitive Tasks (Fast, Medium-High Frequency)
+### Tier 4: Specialized Tasks
 
-| Agent               | Model                     | Why                                                                                                |
-| ------------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
-| `document-writer`   | `cerebras/zai-glm-4.7`    | Template-driven documentation generation follows predictable patterns.                             |
-| `multimodal-looker` | `google/gemini-2.5-flash` | Fast media extraction (PDFs, images). Flash variant is faster and sufficient for extraction tasks. |
+| Agent                     | Model                      | Why                                                              |
+| ------------------------- | -------------------------- | ---------------------------------------------------------------- |
+| `document-writer`         | `openai/gpt-5.1-codex-mini`| Docs often include code examples; codex helps, mini keeps it fast.|
+| `frontend-ui-ux-engineer` | `google/gemini-3-pro-high` | Gemini excels at visual reasoning and creative UI/UX tasks.      |
+| `multimodal-looker`       | `google/gemini-2.5-flash`  | Vision capability required. Flash is fast and sufficient.        |
 
-**Note:** `beads-task-agent` is configured by the [opencode-beads][beads] plugin itself, not oh-my-opencode.
+## Design Principles
 
-[beads]: https://github.com/joshuadavidthomas/opencode-beads
+### Code Review is Sacrosanct
 
-## Decision Heuristics
+The `code-reviewer` agent uses `gpt-5.2-codex`—the absolute best available for
+code analysis. Missing a bug or security issue is far more expensive than the
+model cost.
 
-### Use Paid Models When:
+### Tiered Cerebras Strategy
 
-- **Critical decisions** that affect architecture or system design (oracle,
-  code-architect)
-- **Complex code generation** requiring nuanced understanding (general,
-  code-explorer)
-- **Code review** where missing bugs is expensive (code-reviewer)
-- **Visual/creative work** where aesthetics matter (frontend-ui-ux-engineer)
+Not all exploration is equal:
 
-### Use Cerebras When:
+- **`explore`** uses GPT OSS 120B (3x faster, 6x cheaper) — pure file search
+  and pattern matching where speed matters most
+- **`librarian`** and **`code-explorer`** use GLM 4.7 — these need Haiku-level
+  understanding (73.8% SWE-bench) to properly analyze code and retrieve context
 
-- **Search/grep-like operations** where output is factual retrieval (explore,
-  librarian)
-- **Template-driven output** following predictable formats (document-writer)
-- **High-frequency operations** where speed matters (explore, librarian)
+If you hit something truly complex, escalate to `oracle` or `code-architect`.
 
-## Cost Optimization Strategy
+### Codex for Code, General for Reasoning
 
-1. **Oracle is expensive but rare**: Architecture decisions are infrequent
-   (~5-10% of tasks). Invest heavily here because bad architecture is the most
-   expensive bug.
-2. **Explore/Librarian use Cerebras**: These agents fire constantly for context
-   gathering. GLM 4.7's speed (~1000 tok/sec) makes exploration feel instant.
-3. **Code work uses mid-tier**: GPT-4.1 provides strong coding capability
-   without GPT-5.2's premium cost.
-4. **UI leverages Gemini strengths**: Gemini 3 Pro is exceptional at visual
-   tasks—use it where it shines.
+- Use `-codex` variants for tasks involving code generation, review, or analysis
+- Use non-codex `gpt-5.2` for pure reasoning tasks (oracle, general)
+
+### Gemini for Visual/Creative Work
+
+Google's Gemini models excel at visual and creative tasks. Use them where those
+strengths matter (UI/UX, multimodal).
 
 ## Cerebras Setup
 
-GLM 4.7 on Cerebras ranks as the top open-weight model on SWEbench, τ²bench,
-and LiveCodeBench. The ~10-20x speed boost over hosted alternatives makes
-exploration feel instant.
+Cerebras provides ~10-20x speed boost over hosted alternatives.
 
 **To enable Cerebras:**
 1. Get API key at https://cloud.cerebras.ai
 2. Run `/connect cerebras` in OpenCode
 
-| Metric        | Cerebras Free Tier |
-| ------------- | ------------------ |
-| Speed         | ~1,000-1,700 TPS   |
-| Rate Limits   | 150K TPM           |
-| Daily Limit   | 1M tokens/day      |
+### Pricing
 
-## Future Considerations
+| Model | Speed | Input | Output |
+|-------|-------|-------|--------|
+| GLM 4.7 | ~1,000 t/s | $2.25/M | $2.75/M |
+| GPT OSS 120B | ~3,000 t/s | $0.35/M | $0.75/M |
 
-- Monitor Cerebras rate limits
-- Evaluate new model releases (GPT-6, Gemini 4) as they become available
+### Free Tier Limits
+
+| Metric      | Limit |
+| ----------- | ----- |
+| Rate Limits | 150K TPM |
+| Daily Limit | 1M tokens/day |
+
+**Warning:** Free tier limit can be hit in ~10 minutes of heavy use. Paid tier recommended
