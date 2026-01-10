@@ -11,7 +11,6 @@
     "explore": { "model": "opencode/glm-4.7-free" },
     "librarian": { "model": "opencode/glm-4.7-free" },
     "document-writer": { "model": "opencode/glm-4.7-free" },
-    "beads-task-agent": { "model": "opencode/glm-4.7-free" },
     "multimodal-looker": { "model": "google/gemini-2.5-flash" }
   }
 }

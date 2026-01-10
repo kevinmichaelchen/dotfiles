@@ -51,8 +51,11 @@ capabilities.
 | Agent               | Model                     | Why                                                                                                |
 | ------------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
 | `document-writer`   | `opencode/glm-4.7-free`   | Template-driven documentation generation follows predictable patterns.                             |
-| `beads-task-agent`  | `opencode/glm-4.7-free`   | Completes ready tasks—pattern matching, not deep reasoning.                                        |
 | `multimodal-looker` | `google/gemini-2.5-flash` | Fast media extraction (PDFs, images). Flash variant is faster and sufficient for extraction tasks. |
+
+**Note:** `beads-task-agent` is configured by the [opencode-beads][beads] plugin itself, not oh-my-opencode.
+
+[beads]: https://github.com/joshuadavidthomas/opencode-beads
 
 ## Decision Heuristics
 
