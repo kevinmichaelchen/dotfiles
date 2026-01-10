@@ -90,7 +90,7 @@ capabilities.
 
 ## Cerebras Upgrade Path (For Speed)
 
-If `opencode/glm-4.7-free` feels slow, consider switching to `cerebras/glm-4.7`:
+If `opencode/glm-4.7-free` feels slow, consider switching to `cerebras/zai-glm-4.7`:
 
 | Metric            | OpenCode Free        | Cerebras Direct          |
 | ----------------- | -------------------- | ------------------------ |
@@ -102,7 +102,7 @@ If `opencode/glm-4.7-free` feels slow, consider switching to `cerebras/glm-4.7`:
 **To enable Cerebras:**
 1. Get API key at https://cloud.cerebras.ai
 2. Run `/connect cerebras` in OpenCode
-3. Update `oh-my-opencode.json` agents to use `cerebras/glm-4.7`
+3. Update `oh-my-opencode.json` agents to use `cerebras/zai-glm-4.7`
 
 GLM 4.7 on Cerebras ranks as the top open-weight model on SWEbench, τ²bench,
 and LiveCodeBench. The ~10-20x speed boost makes exploration feel instant.

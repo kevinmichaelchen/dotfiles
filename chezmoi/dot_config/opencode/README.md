@@ -52,7 +52,7 @@ See `oh-my-opencode-rationale.md` for detailed reasoning.
 
 ### Speed Upgrade: Cerebras Direct API
 
-For ~10-20x faster exploration, switch Tier 3/4 agents to `cerebras/glm-4.7`:
+For ~10-20x faster exploration, switch Tier 3/4 agents to `cerebras/zai-glm-4.7`:
 
 | Metric | OpenCode Free | Cerebras Direct |
 |--------|---------------|-----------------|

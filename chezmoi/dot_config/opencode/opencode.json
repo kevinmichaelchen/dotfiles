@@ -10,8 +10,8 @@
   "provider": {
     "cerebras": {
       "models": {
-        "glm-4.7": {
-          "name": "GLM 4.7 (Cerebras)",
+        "zai-glm-4.7": {
+          "name": "Z.ai GLM 4.7 (Cerebras)",
           "limit": {
             "context": 131072,
             "output": 32768
