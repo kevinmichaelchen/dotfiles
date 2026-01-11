@@ -34,6 +34,7 @@ bun = "latest"
 "cargo:fd-find" = "latest"      # find replacement (crate name is fd-find)
 "cargo:tokei" = "latest"        # code statistics
 "cargo:zoxide" = "latest"       # z replacement (smarter cd)
+"cargo:railwayapp" = "latest"   # Railway deployment CLI
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)

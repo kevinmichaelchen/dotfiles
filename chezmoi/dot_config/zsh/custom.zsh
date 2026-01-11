@@ -57,6 +57,7 @@ eval "$(mise activate zsh)"
 [[ -f ~/.config/shell/jira.sh ]] && source ~/.config/shell/jira.sh
 [[ -f ~/.config/shell/nia.sh ]] && source ~/.config/shell/nia.sh
 [[ -f ~/.config/shell/perplexity.sh ]] && source ~/.config/shell/perplexity.sh
+[[ -f ~/.config/shell/railway.sh ]] && source ~/.config/shell/railway.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
