@@ -49,6 +49,7 @@ bun = "latest"
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
 # Note: chezmoi is in Nix (bootstrap tool - needed to apply this config)
+"github:neiii/bridle" = "latest"       # Claude profile switcher (Rust)
 "github:x-motemen/ghq" = "latest"      # repository management (Go)
 "github:cli/cli" = "latest"            # GitHub CLI (gh) (Go)
 "aqua:jqlang/jq" = "latest"            # JSON processor (aqua has prebuilt binaries)
