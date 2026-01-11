@@ -61,6 +61,7 @@ bun = "latest"
 "aqua:typst/typst" = "latest"   # Typesetting system
 "aqua:astral-sh/uv" = "latest"  # Python package manager
 "aqua:planetscale/cli" = "latest"  # PlanetScale database CLI (pscale)
+"aqua:hashicorp/terraform" = "latest"  # Infrastructure as Code
 
 # ============================================================================
 # Tools from npm (Node.js packages)
