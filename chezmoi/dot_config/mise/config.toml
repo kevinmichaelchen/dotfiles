@@ -35,6 +35,7 @@ bun = "latest"
 "cargo:tokei" = "latest"        # code statistics
 "cargo:zoxide" = "latest"       # z replacement (smarter cd)
 "cargo:railwayapp" = "latest"   # Railway deployment CLI
+"cargo:projclean" = "latest"    # Project build artifact cleaner
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
@@ -63,6 +64,7 @@ bun = "latest"
 "aqua:astral-sh/uv" = "latest"  # Python package manager
 "aqua:planetscale/cli" = "latest"  # PlanetScale database CLI (pscale)
 "aqua:hashicorp/terraform" = "latest"  # Infrastructure as Code
+"aqua:ariga/atlas" = "latest"         # Database schema management
 
 # ============================================================================
 # Tools from npm (Node.js packages)
