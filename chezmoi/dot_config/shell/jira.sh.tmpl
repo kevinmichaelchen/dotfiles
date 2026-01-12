@@ -1,6 +1,10 @@
 #!/bin/sh
-# JIRA API configuration
+# Atlassian (JIRA + Confluence) API configuration
 
-export JIRA_API_TOKEN='{{ onepasswordRead "op://Private/JIRA-Aspira/JIRA_API_TOKEN" }}'
 export JIRA_URL='https://aspiraconnect.atlassian.net'
+export JIRA_USERNAME='kevin.chen@aspiraconnect.com'
+export JIRA_API_TOKEN='{{ onepasswordRead "op://Private/JIRA-Aspira/JIRA_API_TOKEN" }}'
+
+export CONFLUENCE_URL='https://aspiraconnect.atlassian.net/wiki'
+export CONFLUENCE_USERNAME='kevin.chen@aspiraconnect.com'
 export CONFLUENCE_API_TOKEN='{{ onepasswordRead "op://Private/JIRA-Aspira/JIRA_API_TOKEN" }}'
