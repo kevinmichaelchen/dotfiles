@@ -2,3 +2,8 @@
     type = "git-repo"
     url = "https://github.com/tmux-plugins/tpm.git"
     refreshPeriod = "168h"
+
+["dev/github.com/kevinmichaelchen/perplexity-mcp"]
+    type = "git-repo"
+    url = "https://github.com/kevinmichaelchen/perplexity-mcp.git"
+    refreshPeriod = "168h"
