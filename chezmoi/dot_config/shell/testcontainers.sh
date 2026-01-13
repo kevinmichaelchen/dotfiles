@@ -3,6 +3,7 @@
 # Shell-agnostic - can be sourced by bash, zsh, etc.
 
 # Update Testcontainers configuration with current Podman socket path
+# Call this manually before running tests that need testcontainers
 update_testcontainers_config() {
   if command -v podman >/dev/null 2>&1; then
     local socket_path
@@ -10,9 +11,12 @@ update_testcontainers_config() {
 
     if [ -n "$socket_path" ]; then
       echo "docker.host=unix://${socket_path}" > "$HOME/.testcontainers.properties"
+      echo "Testcontainers configured for socket: $socket_path"
     fi
   fi
 }
 
-# Update configuration on shell startup
-update_testcontainers_config
+# Alias for convenience
+alias tc-setup='update_testcontainers_config'
+
+# Note: No longer runs on startup (saves ~95ms). Run 'tc-setup' when needed.

@@ -91,6 +91,16 @@
     syntaxHighlighting.enable = true;  # Installs zsh-syntax-highlighting package
     enableCompletion = true;            # Sets up completion system
 
+    # Cache compinit - only regenerate once per day (saves ~700ms per shell)
+    completionInit = ''
+      autoload -Uz compinit
+      if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+        compinit
+      else
+        compinit -C
+      fi
+    '';
+
     # Source the Chezmoi-managed custom configuration
     initContent = ''
       # Load custom zsh configuration managed by Chezmoi

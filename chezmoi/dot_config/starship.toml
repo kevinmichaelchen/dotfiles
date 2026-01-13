@@ -85,6 +85,10 @@ style = "bold foam"
 symbol = "🐍 "
 format = "via [$symbol$version]($style) "
 style = "bold foam"
+# Only detect in actual Python projects (not just any dir with .py files)
+detect_extensions = []
+detect_files = [".python-version", "pyproject.toml", "Pipfile", "requirements.txt", "uv.lock"]
+detect_folders = [".venv", "venv", "__pycache__"]
 
 [rust]
 symbol = "🦀 "
