@@ -4,12 +4,12 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 
 ## Files
 
-| File                         | Purpose                                                        |
-| ---------------------------- | -------------------------------------------------------------- |
-| `opencode.json`              | Main config: plugins, providers, model definitions             |
-| `oh-my-opencode.json`        | [Oh-My-OpenCode][oh-my-opencode] agent model assignments       |
-| `oh-my-opencode-rationale.md`| Documentation explaining model assignment decisions            |
-| `package.json`               | Plugin dependencies (managed by bun)                           |
+| File                          | Purpose                                                  |
+| ----------------------------- | -------------------------------------------------------- |
+| `opencode.json`               | Main config: plugins, providers, model definitions       |
+| `oh-my-opencode.json`         | [Oh-My-OpenCode][oh-my-opencode] agent model assignments |
+| `oh-my-opencode-rationale.md` | Documentation explaining model assignment decisions      |
+| `package.json`                | Plugin dependencies (managed by bun)                     |
 
 ## Providers
 
@@ -31,32 +31,46 @@ Run `/connect` in OpenCode to authenticate with each provider:
 
 ## Plugins
 
-| Plugin                        | Purpose                                      |
-| ----------------------------- | -------------------------------------------- |
-| [oh-my-opencode][oh-my-opencode]              | Agent model routing                         |
-| [opencode-beads][opencode-beads]              | Task management                             |
-| [opencode-openai-codex-auth][codex-auth]      | OpenAI OAuth authentication                 |
-| [opencode-anthropic-auth][anthropic-auth]     | Anthropic authentication                    |
-| [opencode-antigravity-auth][antigravity-auth] | Google AI via Antigravity                   |
+| Plugin                                        | Purpose                     |
+| --------------------------------------------- | --------------------------- |
+| [oh-my-opencode][oh-my-opencode]              | Agent model routing         |
+| [opencode-beads][opencode-beads]              | Task management             |
+| [opencode-openai-codex-auth][codex-auth]      | OpenAI OAuth authentication |
+| [opencode-anthropic-auth][anthropic-auth]     | Anthropic authentication    |
+| [opencode-antigravity-auth][antigravity-auth] | Google AI via Antigravity   |
 
 ## Model Tiers
 
 See `oh-my-opencode-rationale.md` for detailed reasoning.
 
-| Tier | Use Case                          | Models                                   |
-| ---- | --------------------------------- | ---------------------------------------- |
-| 1    | Critical architecture decisions   | GPT-5.2, GPT-5.1                         |
-| 2    | Code generation & review          | GPT-4.1, Gemini 3 Pro                    |
-| 3    | Search & exploration              | GLM 4.7 (OpenCode free)                  |
-| 4    | Documentation & structured tasks  | GLM 4.7, Gemini 2.5 Flash                |
+| Tier | Use Case                         | Models                                  |
+| ---- | -------------------------------- | --------------------------------------- |
+| 1    | Critical architecture decisions  | GPT-5.2, GPT-5.1                        |
+| 2    | Code generation & review         | GPT-4.1, Gemini 3 Pro, MiniMax M2.1     |
+| 3    | Search & exploration             | MiniMax M2.1, GLM 4.7 (OpenCode free)   |
+| 4    | Documentation & structured tasks | GLM 4.7, Gemini 2.5 Flash, MiniMax M2.1 |
 
-### Speed Upgrade: Cerebras Direct API
+### Speed & Cost Upgrade Options
 
-For ~10-20x faster exploration, switch Tier 3/4 agents to `cerebras/zai-glm-4.7`:
+#### MiniMax M2.1 (Free Alternative)
 
-| Metric | OpenCode Free | Cerebras Direct |
-|--------|---------------|-----------------|
-| Speed  | <100 TPS?     | 1,000-1,700 TPS |
+For 4.5x faster exploration with better multilingual support, use
+`opencode/minimax-m2.1-free`:
+
+| Metric    | MiniMax M2.1   | GLM 4.7             |
+| --------- | -------------- | ------------------- |
+| Speed     | ~1,500 TPS     | ~1,000 TPS          |
+| Cost      | Free           | Free tier available |
+| SWE-bench | 74% (Verified) | 73.8%               |
+
+#### Cerebras Direct API
+
+For ~10-20x faster exploration, switch Tier 3/4 agents to
+`cerebras/zai-glm-4.7`:
+
+| Metric | OpenCode Free | Cerebras Direct     |
+| ------ | ------------- | ------------------- |
+| Speed  | <100 TPS?     | 1,000-1,700 TPS     |
 | Cost   | Free          | Free tier available |
 
 See [Cerebras Console][cerebras-console] to get an API key.
