@@ -85,14 +85,16 @@ The `code-reviewer` agent uses `gpt-5.2-codex`—the absolute best available for
 code analysis. Missing a bug or security issue is far more expensive than the
 model cost.
 
-### Tiered Cerebras Strategy
+### Tiered Exploration Strategy
 
 Not all exploration is equal:
 
-- **`explore`** uses GPT OSS 120B (3x faster, 6x cheaper) — pure file search and
-  pattern matching where speed matters most
-- **`librarian`** and **`code-explorer`** use GLM 4.7 — these need Haiku-level
-  understanding (73.8% SWE-bench) to properly analyze code and retrieve context
+- **`explore`** uses MiniMax M2.1 for fast, multilingual search and pattern
+  matching where speed matters most
+- **`librarian`** uses MiniMax M2.1 for multilingual retrieval with advanced
+  interleaved thinking
+- **`code-explorer`** uses GLM 4.7 — deeper reasoning (73.8% SWE-bench) for
+  complex code path analysis
 
 If you hit something truly complex, escalate to `oracle` or `code-architect`.
 
