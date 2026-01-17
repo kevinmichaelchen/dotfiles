@@ -36,6 +36,7 @@ bun = "latest"
 "cargo:zoxide" = "latest"       # z replacement (smarter cd)
 "cargo:railwayapp" = "latest"   # Railway deployment CLI
 "cargo:projclean" = "latest"    # Project build artifact cleaner
+"cargo:dprint" = "latest"       # Fast pluggable code formatter
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
