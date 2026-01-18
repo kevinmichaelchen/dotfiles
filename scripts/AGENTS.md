@@ -11,6 +11,7 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
 | `update.sh`    | Pull latest changes and apply configs |
+| `cleanup.sh`   | Nix store maintenance and GC          |
 
 ## BOOTSTRAP SEQUENCE
 
@@ -146,6 +147,34 @@ The `update.sh` script:
 3. Applies chezmoi configs
 
 Can be run via alias: `dot-update`
+
+## CLEANUP SCRIPT
+
+The `cleanup.sh` script frees disk space by removing old Nix generations and
+garbage collecting unreferenced store paths.
+
+**What it cleans:**
+
+| Target                        | Command                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| darwin-system generations     | `sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system` |
+| home-manager generations      | `nix-env --delete-generations old --profile ~/.local/state/nix/profiles/home-manager` |
+| user profile generations      | `nix-env --delete-generations old`                                       |
+| unreferenced store paths      | `nix-collect-garbage -d`                                                 |
+
+**When to run:**
+
+- When disk space is low (check with `du -sh /nix/store`)
+- After many `darwin-rebuild switch` cycles
+- Periodically (e.g., monthly)
+
+**Note:** This deletes all generations except current. You lose the ability to
+rollback to previous configurations. If you want to keep recent generations:
+
+```bash
+# Keep last 3 generations instead of just current
+sudo nix-env --delete-generations +3 --profile /nix/var/nix/profiles/system
+```
 
 ## DEBUGGING
 
