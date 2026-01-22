@@ -48,6 +48,7 @@
 
     # Casks (GUI applications)
     casks = [
+      "claude-code"  # Native Claude Code CLI
       # Terminal emulator (requires Homebrew since Nix doesn't support Darwin builds)
       "ghostty"
     ];

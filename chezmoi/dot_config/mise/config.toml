@@ -18,8 +18,7 @@ rust = "latest"
 pnpm = "latest"
 bun = "latest"
 
-# npm global packages (anthropic CLI tools)
-"npm:@anthropic-ai/claude-code" = "latest"
+# npm global packages
 "npm:@charmland/crush" = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@intellectronica/ruler" = "latest"
