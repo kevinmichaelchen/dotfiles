@@ -1,0 +1,54 @@
+# Managed by chezmoi. Source: ~/dotfiles/chezmoi/dot_codex/config.toml
+model = "gpt-5.2-codex"
+model_reasoning_effort = "xhigh"
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
+hide_full_access_warning = true
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.2-codex"
+
+[features]
+steer = true
+
+# MCP servers
+[mcp_servers.perplexity]
+command = "perplexity-mcp"
+args = []
+env = { PERPLEXITY_API_KEY = "${PERPLEXITY_API_KEY}" }
+
+[mcp_servers.nia]
+command = "pipx"
+args = ["run", "--no-cache", "nia-mcp-server"]
+env = { NIA_API_KEY = "${NIA_API_KEY}", NIA_API_URL = "https://apigcp.trynia.ai/" }
+startup_timeout_sec = 30
+
+[mcp_servers.codex]
+command = "codex"
+args = ["-m", "gpt-5.2-codex", "mcp-server"]
+
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+headers = { CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}" }
+
+[mcp_servers.deepwiki]
+url = "https://mcp.deepwiki.com/mcp"
+
+[mcp_servers."effect-docs"]
+command = "npx"
+args = ["-y", "effect-mcp@latest"]
+env = {}
+
+[mcp_servers.grep]
+url = "https://mcp.grep.app"
+
+[mcp_servers."nx-mcp"]
+command = "npx"
+args = ["nx-mcp@latest"]
+env = {}
+
+[mcp_servers.atlassian]
+command = "mcp-atlassian"
+args = []
+env = { JIRA_URL = "${JIRA_URL}", JIRA_USERNAME = "${JIRA_USERNAME}", JIRA_API_TOKEN = "${JIRA_API_TOKEN}", CONFLUENCE_URL = "${CONFLUENCE_URL}", CONFLUENCE_USERNAME = "${CONFLUENCE_USERNAME}", CONFLUENCE_API_TOKEN = "${CONFLUENCE_API_TOKEN}" }
