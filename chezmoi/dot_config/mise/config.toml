@@ -70,6 +70,7 @@ bun = "latest"
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
+"npm:peky" = "latest"           # AI agent terminal multiplexer (Claude Code, Codex, etc.)
 "npm:wrangler" = "latest"       # Cloudflare Workers CLI
 
 # ============================================================================

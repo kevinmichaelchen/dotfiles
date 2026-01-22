@@ -1,0 +1,34 @@
+# Peky configuration
+# Managed by Chezmoi - edit via `cme ~/.config/peky/config.yml`
+
+# Dashboard UI settings
+dashboard:
+  project_roots:
+    - ~/projects
+    - ~/code
+    - ~/dotfiles
+  project_roots_allow_nongit: false
+  performance:
+    preset: max
+
+# Tool detection for AI agents
+tool_detection:
+  enabled: true
+  allow:
+    claude: true
+    codex: true
+    lazygit: true
+    gh-dash: true
+  profiles:
+    claude:
+      bracketed_paste: true
+      submit: "\r"
+      submit_delay_ms: 30
+    codex:
+      bracketed_paste: true
+      submit: "\r"
+      submit_delay_ms: 30
+
+# Session restore
+session_restore:
+  enabled: true
