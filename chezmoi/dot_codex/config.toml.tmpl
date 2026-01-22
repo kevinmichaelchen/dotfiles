@@ -16,12 +16,13 @@ steer = true
 [mcp_servers.perplexity]
 command = "perplexity-mcp"
 args = []
-env = { PERPLEXITY_API_KEY = "{{ onepasswordRead "op://Private/Perplexity/PERPLEXITY_API_KEY" }}" }
+env_vars = ["PERPLEXITY_API_KEY"]
 
 [mcp_servers.nia]
 command = "pipx"
 args = ["run", "--no-cache", "nia-mcp-server"]
-env = { NIA_API_KEY = "${NIA_API_KEY}", NIA_API_URL = "https://apigcp.trynia.ai/" }
+env_vars = ["NIA_API_KEY"]
+env = { NIA_API_URL = "https://apigcp.trynia.ai/" }
 startup_timeout_sec = 30
 
 [mcp_servers.codex]
@@ -30,7 +31,7 @@ args = ["-m", "gpt-5.2-codex", "mcp-server"]
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
-headers = { CONTEXT7_API_KEY = "${CONTEXT7_API_KEY}" }
+env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
 
 [mcp_servers.deepwiki]
 url = "https://mcp.deepwiki.com/mcp"
@@ -51,4 +52,4 @@ env = {}
 [mcp_servers.atlassian]
 command = "mcp-atlassian"
 args = []
-env = { JIRA_URL = "${JIRA_URL}", JIRA_USERNAME = "${JIRA_USERNAME}", JIRA_API_TOKEN = "${JIRA_API_TOKEN}", CONFLUENCE_URL = "${CONFLUENCE_URL}", CONFLUENCE_USERNAME = "${CONFLUENCE_USERNAME}", CONFLUENCE_API_TOKEN = "${CONFLUENCE_API_TOKEN}" }
+env_vars = ["JIRA_URL", "JIRA_USERNAME", "JIRA_API_TOKEN", "CONFLUENCE_URL", "CONFLUENCE_USERNAME", "CONFLUENCE_API_TOKEN"]
