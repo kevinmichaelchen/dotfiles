@@ -29,7 +29,7 @@
   # Homebrew configuration
   homebrew = {
     enable = true;
-    
+
     # Automatically update Homebrew and upgrade packages on activation
     onActivation = {
       autoUpdate = true;
@@ -37,11 +37,17 @@
       # Cleanup old versions
       cleanup = "zap";
     };
-    
+
+    # Taps (third-party repositories)
+    taps = [
+      "replicate/tap"
+    ];
+
     # Brews (formulae)
     brews = [
       "libpq"  # PostgreSQL client (psql) without full server
       "pipx"   # Install Python CLI tools in isolated environments
+      "replicate/tap/replicate"  # Replicate CLI for running ML models
       "ripgrep"
       "webp"   # WebP image format tools (cwebp, dwebp)
     ];
