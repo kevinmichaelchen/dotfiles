@@ -58,6 +58,7 @@ eval "$(mise activate zsh)"
 [[ -f ~/.config/shell/nia.sh ]] && source ~/.config/shell/nia.sh
 [[ -f ~/.config/shell/perplexity.sh ]] && source ~/.config/shell/perplexity.sh
 [[ -f ~/.config/shell/railway.sh ]] && source ~/.config/shell/railway.sh
+[[ -f ~/.config/shell/replicate.sh ]] && source ~/.config/shell/replicate.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
