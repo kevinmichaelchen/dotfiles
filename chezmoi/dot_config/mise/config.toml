@@ -37,6 +37,7 @@ bun = "latest"
 "cargo:projclean" = "latest"    # Project build artifact cleaner
 "cargo:dprint" = "latest"       # Fast pluggable code formatter
 "cargo:prek" = "latest"         # pre-commit re-engineered in Rust
+"cargo:sd" = "latest"           # sed replacement (simpler syntax)
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
