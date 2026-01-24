@@ -53,3 +53,8 @@ env = {}
 command = "mcp-atlassian"
 args = []
 env_vars = ["JIRA_URL", "JIRA_USERNAME", "JIRA_API_TOKEN", "CONFLUENCE_URL", "CONFLUENCE_USERNAME", "CONFLUENCE_API_TOKEN"]
+
+[mcp_servers.exa]
+command = "npx"
+args = ["-y", "exa-mcp-server"]
+env_vars = ["EXA_API_KEY"]
