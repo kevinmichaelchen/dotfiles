@@ -137,7 +137,7 @@ style = "love"
 map_symbol = true
 disabled = false
 
-# Machine identifier - shows Tailscale hostname or IP when SSH'd
+# Machine identifier - shows Tailscale hostname or IP
 [custom.machine]
 command = '''
 if command -v tailscale >/dev/null 2>&1; then
@@ -148,7 +148,7 @@ else
   hostname -I 2>/dev/null | awk '{print $1}' || hostname -s
 fi
 '''
-when = '[ -n "$SSH_TTY" ] || [ -n "$SSH_CLIENT" ]'
+when = "true"
 format = "[$output](bold rose):"
 shell = ["bash", "--noprofile", "--norc"]
 
