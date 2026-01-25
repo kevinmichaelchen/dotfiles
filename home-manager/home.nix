@@ -23,6 +23,10 @@
     chezmoi  # Must be in Nix - applies mise.toml config before mise install runs
     mise     # Must be in Nix - installs other dev tools
 
+    # Fonts - installed to ~/Library/Fonts/HomeManager on macOS
+    # See: https://nix-community.github.io/home-manager/options.xhtml#opt-fonts.fontconfig.enable
+    nerd-fonts.jetbrains-mono
+
     # System packages (not available or not suitable for Mise)
     cloudflared
     git
@@ -158,6 +162,9 @@
     
     # ripgrep with path sorting
     rg = "rg --sort path";
+
+    # Font management
+    fonts = "open ~/Library/Fonts/HomeManager";
     
     # Dotfile management
     dot = "cd ~/dotfiles";
@@ -170,4 +177,10 @@
     cme = "chezmoi edit --source=$HOME/dotfiles/chezmoi";
     cmu = "chezmoi update --source=$HOME/dotfiles/chezmoi";
   };
+
+  # Enable fontconfig to make fonts available to applications.
+  # On macOS, fonts are installed to ~/Library/Fonts/HomeManager and
+  # automatically registered with the system font database.
+  # See: https://nix-community.github.io/home-manager/options.xhtml#opt-fonts.fontconfig.enable
+  fonts.fontconfig.enable = true;
 }
