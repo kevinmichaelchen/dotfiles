@@ -20,6 +20,7 @@ muted = "#6e6a86"
 base = "#191724"
 
 format = """
+${custom.machine}\
 $directory\
 $git_branch\
 $git_status\
@@ -135,6 +136,21 @@ format = '[$symbol $common_meaning$signal_name$maybe_int]($style) '
 style = "love"
 map_symbol = true
 disabled = false
+
+# Machine identifier - shows Tailscale hostname or IP when SSH'd
+[custom.machine]
+command = '''
+if command -v tailscale >/dev/null 2>&1; then
+  tailscale status --self --json 2>/dev/null | jq -r '.Self.DNSName | split(".") | .[0]' 2>/dev/null
+elif [[ "$OSTYPE" == darwin* ]]; then
+  ipconfig getifaddr en0 2>/dev/null || hostname -s
+else
+  hostname -I 2>/dev/null | awk '{print $1}' || hostname -s
+fi
+'''
+when = '[ -n "$SSH_TTY" ] || [ -n "$SSH_CLIENT" ]'
+format = "[$output](bold rose):"
+shell = ["bash", "--noprofile", "--norc"]
 
 [battery]
 disabled = true
