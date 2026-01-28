@@ -49,10 +49,12 @@ command = "npx"
 args = ["nx-mcp@latest"]
 env = {}
 
+{{- if eq .chezmoi.hostname "MLJLWV4J4TLC" }}
 [mcp_servers.atlassian]
 command = "mcp-atlassian"
 args = []
 env_vars = ["JIRA_URL", "JIRA_USERNAME", "JIRA_API_TOKEN", "CONFLUENCE_URL", "CONFLUENCE_USERNAME", "CONFLUENCE_API_TOKEN"]
+{{- end }}
 
 [mcp_servers.exa]
 command = "npx"

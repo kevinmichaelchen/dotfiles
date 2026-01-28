@@ -51,6 +51,7 @@ MCP_CONFIG='{
       },
       "type": "stdio"
     },
+{{- if eq .chezmoi.hostname "MLJLWV4J4TLC" }}
     "atlassian": {
       "command": "mcp-atlassian",
       "args": [],
@@ -64,6 +65,7 @@ MCP_CONFIG='{
       },
       "type": "stdio"
     },
+{{- end }}
     "exa": {
       "command": "npx",
       "args": ["-y", "exa-mcp-server"],
