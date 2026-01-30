@@ -155,12 +155,12 @@ garbage collecting unreferenced store paths.
 
 **What it cleans:**
 
-| Target                        | Command                                                                  |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| darwin-system generations     | `sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system` |
-| home-manager generations      | `nix-env --delete-generations old --profile ~/.local/state/nix/profiles/home-manager` |
-| user profile generations      | `nix-env --delete-generations old`                                       |
-| unreferenced store paths      | `nix-collect-garbage -d`                                                 |
+| Target                    | Command                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| darwin-system generations | `sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system`        |
+| home-manager generations  | `nix-env --delete-generations old --profile ~/.local/state/nix/profiles/home-manager` |
+| user profile generations  | `nix-env --delete-generations old`                                                    |
+| unreferenced store paths  | `nix-collect-garbage -d`                                                              |
 
 **When to run:**
 

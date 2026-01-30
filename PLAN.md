@@ -1,13 +1,19 @@
 # Unified Dotfiles Management Plan
+
 ## Home-Manager + Chezmoi Integration Strategy
 
 ### Overview
-This document outlines the plan for managing system configuration using both Home-Manager (Nix) and Chezmoi, leveraging the strengths of each tool for an optimal development workflow.
+
+This document outlines the plan for managing system configuration using both
+Home-Manager (Nix) and Chezmoi, leveraging the strengths of each tool for an
+optimal development workflow.
 
 ## Tool Responsibilities
 
 ### Home-Manager (Nix)
+
 **Purpose**: Package management and system-level configuration
+
 - Installing and managing software packages
 - System environment variables
 - Shell enablement and basic configuration
@@ -15,7 +21,9 @@ This document outlines the plan for managing system configuration using both Hom
 - Reproducible system environments
 
 ### Chezmoi
+
 **Purpose**: Personal dotfile management and synchronization
+
 - Personal configuration files (vim, git, ssh, etc.)
 - Machine-specific templating
 - Secret management (passwords, API keys)
@@ -56,6 +64,7 @@ This document outlines the plan for managing system configuration using both Hom
 ## Configuration Files
 
 ### `.chezmoiignore`
+
 ```
 # Ignore Nix/Home-Manager files
 home-manager/
@@ -68,6 +77,7 @@ flake.lock
 ```
 
 ### Updated `home.nix` Integration
+
 ```nix
 # Install chezmoi via Nix
 home.packages = with pkgs; [
@@ -86,7 +96,7 @@ home.shellAliases = {
   # Dotfile management
   dot = "cd ~/dotfiles";
   dot-update = "cd ~/dotfiles && ./scripts/update.sh";
-  
+
   # Individual tool commands
   hm = "home-manager switch --flake ~/dotfiles/home-manager";
   hmu = "nix flake update ~/dotfiles/home-manager && home-manager switch --flake ~/dotfiles/home-manager";
@@ -101,7 +111,9 @@ home.shellAliases = {
 ## Migration Steps
 
 ### Phase 1: Setup New Structure
+
 1. Create new directory structure at `~/dotfiles/`
+
    ```bash
    mkdir -p ~/dotfiles/{home-manager,chezmoi,scripts}
    cd ~/dotfiles
@@ -109,6 +121,7 @@ home.shellAliases = {
    ```
 
 2. Move existing Home-Manager configuration
+
    ```bash
    cp -r ~/.config/home-manager/* ~/dotfiles/home-manager/
    ```
@@ -116,12 +129,15 @@ home.shellAliases = {
 3. Update flake paths in aliases and scripts
 
 ### Phase 2: Initialize Chezmoi
+
 1. Install chezmoi (via Home-Manager)
+
    ```nix
    home.packages = with pkgs; [ chezmoi ];
    ```
 
 2. Initialize with custom source path
+
    ```bash
    chezmoi init --source ~/dotfiles/chezmoi
    ```
@@ -136,6 +152,7 @@ home.shellAliases = {
 ### Phase 3: Create Helper Scripts
 
 #### `scripts/bootstrap.sh`
+
 ```bash
 #!/usr/bin/env bash
 # Bootstrap script for new machines
@@ -164,6 +181,7 @@ echo "Setup complete!"
 ```
 
 #### `scripts/update.sh`
+
 ```bash
 #!/usr/bin/env bash
 # Update both Home-Manager and Chezmoi
@@ -186,6 +204,7 @@ echo "Update complete!"
 ```
 
 ### Phase 4: Cleanup
+
 1. Archive old `~/.config/home-manager/` directory
 2. Update any remaining references to old paths
 3. Commit everything to git
@@ -194,6 +213,7 @@ echo "Update complete!"
 ## Workflow Examples
 
 ### Daily Development
+
 ```bash
 # Edit a personal config file
 cme ~/.vimrc          # Opens in editor via Chezmoi
@@ -206,6 +226,7 @@ hm                    # Apply Home-Manager changes
 ```
 
 ### New Machine Setup
+
 ```bash
 # One-liner setup
 curl -L https://your-bootstrap-url.sh | bash
@@ -217,6 +238,7 @@ cd ~/dotfiles
 ```
 
 ### Syncing Changes
+
 ```bash
 # After making local changes
 cd ~/dotfiles
@@ -233,6 +255,7 @@ dot-update  # Pulls and applies everything
 ### What Goes Where?
 
 **Home-Manager**:
+
 - Package installations
 - System-wide environment variables
 - Shell/terminal emulator enablement
@@ -240,6 +263,7 @@ dot-update  # Pulls and applies everything
 - System services
 
 **Chezmoi**:
+
 - Personal aliases and functions
 - Editor configurations
 - Git user settings
@@ -248,6 +272,7 @@ dot-update  # Pulls and applies everything
 - Machine-specific configurations
 
 ### Guidelines
+
 1. **Frequent edits** → Chezmoi (fast iteration)
 2. **System packages** → Home-Manager (reproducible)
 3. **Secrets** → Chezmoi with encryption
@@ -255,6 +280,7 @@ dot-update  # Pulls and applies everything
 5. **Complex setup** → Home-Manager modules
 
 ### Version Control
+
 - Single repository for both tools
 - Clear commit messages indicating which tool
 - Tag releases for stable configurations

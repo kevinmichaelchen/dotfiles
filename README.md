@@ -1,10 +1,13 @@
 # Dotfiles
 
-A unified approach to managing system configuration using Nix/Home-Manager for reproducible package management and Chezmoi for personal dotfile synchronization.
+A unified approach to managing system configuration using Nix/Home-Manager for
+reproducible package management and Chezmoi for personal dotfile
+synchronization.
 
 ## 📋 Overview
 
 This repository combines the best of both worlds:
+
 - **Nix/Home-Manager**: Declarative, reproducible system package management
 - **Chezmoi**: Flexible, templated personal configuration management
 
@@ -48,42 +51,59 @@ This repository combines the best of both worlds:
 ## 🏗️ Architecture
 
 ### macOS Systems
+
 On macOS, we use **nix-darwin** as the primary configuration manager with:
+
 - **nix-darwin**: System-level configuration (dock, Finder, keyboard settings)
-- **nix-homebrew**: Declarative Homebrew management (for macOS-only tools like vfkit)
+- **nix-homebrew**: Declarative Homebrew management (for macOS-only tools like
+  vfkit)
 - **Home-Manager**: Runs as a module within nix-darwin for user packages
 - **Chezmoi**: Personal dotfile management
 
 ### Non-macOS Systems (Linux)
+
 On Linux, we use:
+
 - **Home-Manager**: Standalone user environment management
 - **Chezmoi**: Personal dotfile management
 
 ## 🛠️ Technologies
 
 ### Nix
-[Nix](https://nixos.org/) is a powerful package manager that makes package management reliable and reproducible. It provides:
+
+[Nix](https://nixos.org/) is a powerful package manager that makes package
+management reliable and reproducible. It provides:
+
 - **Declarative configuration**: Define your entire system setup in code
 - **Reproducibility**: Same configuration produces identical environments
 - **Rollbacks**: Easy reversion to previous configurations
 - **No dependency hell**: Each package gets its exact dependencies
 
 ### nix-darwin
-[nix-darwin](https://github.com/LnL7/nix-darwin) provides declarative macOS system configuration:
+
+[nix-darwin](https://github.com/LnL7/nix-darwin) provides declarative macOS
+system configuration:
+
 - System preferences and defaults
 - Homebrew package management
 - Service management
 - Integration with Home-Manager
 
 ### Home-Manager
-[Home-Manager](https://github.com/nix-community/home-manager) is a Nix-based tool for managing user environments. It handles:
+
+[Home-Manager](https://github.com/nix-community/home-manager) is a Nix-based
+tool for managing user environments. It handles:
+
 - Installing and configuring user packages
 - Managing dotfiles through Nix
 - Setting up development environments
 - Configuring shells and terminal applications
 
 ### Chezmoi
-[Chezmoi](https://www.chezmoi.io/) is a sophisticated dotfile manager that provides:
+
+[Chezmoi](https://www.chezmoi.io/) is a sophisticated dotfile manager that
+provides:
+
 - **Templating**: Machine-specific configurations
 - **Encryption**: Secure secret management
 - **Version control**: Git-based tracking
@@ -92,6 +112,7 @@ On Linux, we use:
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Git
 - [Nix](https://docs.determinate.systems/) (install via Determinate Systems)
 
@@ -115,26 +136,31 @@ cd ~/dotfiles
 ```
 
 The bootstrap script will:
+
 1. Clone the dotfiles repository (if not already present)
 2. Verify Nix is installed (exits with instructions if not)
 3. Display clear next steps for completing the setup
 
 After running the bootstrap script, you'll need to:
+
 1. Apply the system configuration (command provided by the script)
 2. Initialize Chezmoi after packages are installed
 
 ### Onboarding
 
-After the initial setup, complete these steps to enable 1Password CLI integration:
+After the initial setup, complete these steps to enable 1Password CLI
+integration:
 
 1. **Download 1Password for macOS**
-   - Download from [1Password.com](https://1password.com/downloads/mac/) or the Mac App Store
+   - Download from [1Password.com](https://1password.com/downloads/mac/) or the
+     Mac App Store
 
 2. **Enable 1Password CLI integration**
    - Open 1Password → Settings → Developer
    - Enable "Integrate with 1Password CLI"
 
 3. **Apply Chezmoi configuration**
+
    ```bash
    chezmoi apply --source=$HOME/dotfiles/chezmoi
    ```
@@ -150,6 +176,7 @@ After the initial setup, complete these steps to enable 1Password CLI integratio
 ### Daily Usage
 
 #### Update Everything
+
 ```bash
 # On macOS
 darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
@@ -162,6 +189,7 @@ dot-update  # Pulls latest changes and applies appropriate configuration
 ```
 
 #### Manage Packages
+
 ```bash
 # Edit package list
 hme  # Opens home.nix in your editor
@@ -174,6 +202,7 @@ nix run home-manager -- switch --flake ~/dotfiles/home-manager
 ```
 
 #### Manage Personal Configs (via Chezmoi)
+
 ```bash
 # Edit a config file
 cme ~/.vimrc  # Opens in editor through Chezmoi
@@ -191,27 +220,34 @@ chezmoi add ~/.some-config
 ## 📝 Scripts
 
 ### `bootstrap.sh`
+
 Initial setup script for new machines. It:
+
 - Checks for and clones the dotfiles repository if needed
 - Installs Nix (if not present) using Determinate Systems installer
 - Provides colorful output with clear next steps
 - Shows the exact commands to run for your system (macOS vs Linux)
 
-Note: The script prepares your system but doesn't run commands requiring sudo. You'll need to run the provided commands manually to complete the setup.
+Note: The script prepares your system but doesn't run commands requiring sudo.
+You'll need to run the provided commands manually to complete the setup.
 
 ### `update.sh`
+
 Daily update script that:
+
 - Pulls latest changes from git
 - Updates and applies Home-Manager configuration
 - Applies Chezmoi configuration changes
 
 ## 🎯 Philosophy
 
-Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle for better iteration speed and simplicity.
+Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle
+for better iteration speed and simplicity.
 
 ### What Goes Where?
 
 **Home-Manager** manages:
+
 - Package installations (ripgrep, fd, chezmoi, zsh, starship, etc.)
 - Enabling shells and tools (zsh with autosuggestions, syntax highlighting)
 - Stable shell aliases (that rarely change)
@@ -219,10 +255,13 @@ Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle fo
 - The base .zshrc file (for proper plugin initialization)
 
 **Chezmoi** manages:
+
 - Shell configuration (~/.config/zsh/custom.zsh, starship.toml)
 - Personal configuration files (.gitconfig, .vimrc)
-- Shell aliases and functions (via shell-agnostic scripts: bat.sh, git.sh, pnpm.sh, python.sh, zed.sh)
-- Mise configuration (~/.config/mise/config.toml for Node.js and npm global packages)
+- Shell aliases and functions (via shell-agnostic scripts: bat.sh, git.sh,
+  pnpm.sh, python.sh, zed.sh)
+- Mise configuration (~/.config/mise/config.toml for Node.js and npm global
+  packages)
 - Machine-specific settings
 - Secrets and API keys (encrypted)
 - Quick-iteration configs
@@ -254,6 +293,7 @@ The configuration includes these helpful aliases:
 ## 🔄 Workflow Examples
 
 ### Adding a new package
+
 ```bash
 hme                    # Edit home.nix
 # Add package to the list
@@ -261,12 +301,14 @@ dr                     # Apply changes
 ```
 
 ### Modifying personal config
+
 ```bash
 cme ~/.gitconfig       # Edit via Chezmoi
 cma                    # Apply changes
 ```
 
 ### Syncing to another machine
+
 ```bash
 # On source machine
 git add -A
@@ -286,4 +328,5 @@ dot-update            # Pull and apply everything
 
 ## 📄 License
 
-This repository is for personal configuration management. Feel free to use it as inspiration for your own dotfiles setup!
+This repository is for personal configuration management. Feel free to use it as
+inspiration for your own dotfiles setup!
