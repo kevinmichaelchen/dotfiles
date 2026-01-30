@@ -59,6 +59,8 @@ eval "$(mise activate zsh)"
 [[ -f ~/.config/shell/perplexity.sh ]] && source ~/.config/shell/perplexity.sh
 [[ -f ~/.config/shell/railway.sh ]] && source ~/.config/shell/railway.sh
 [[ -f ~/.config/shell/replicate.sh ]] && source ~/.config/shell/replicate.sh
+[[ -f ~/.config/shell/fireworks.sh ]] && source ~/.config/shell/fireworks.sh
+[[ -f ~/.config/shell/openrouter.sh ]] && source ~/.config/shell/openrouter.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
