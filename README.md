@@ -28,20 +28,27 @@ This repository combines the best of both worlds:
 │   ├── .chezmoiignore     # Files for Chezmoi to ignore
 │   ├── dot_gitconfig      # Git configuration
 │   ├── dot_vimrc          # Vim configuration
-│   └── dot_config/        # .config directory files
-│       ├── git/
-│       │   └── kevinmichaelchen  # Personal git config for GitHub repos
-│       ├── shell/
-│       │   ├── bat.sh     # bat aliases and functions (cat, batdiff, help)
-│       │   ├── git.sh     # Shell-agnostic git aliases
-│       │   ├── pnpm.sh    # PNPM configuration
-│       │   ├── python.sh  # Python/UV configuration
-│       │   └── zed.sh     # Zed editor configuration
-│       ├── mise/
-│       │   └── config.toml   # Mise version manager config (node, npm packages)
-│       ├── starship.toml  # Starship prompt configuration
-│       └── zsh/
-│           └── custom.zsh # Zsh configuration
+│   ├── dot_config/        # .config directory files
+│   │   ├── git/
+│   │   │   └── kevinmichaelchen  # Personal git config for GitHub repos
+│   │   ├── opencode/      # OpenCode AI coding agent config
+│   │   │   ├── opencode.json
+│   │   │   └── oh-my-opencode.json
+│   │   ├── shell/
+│   │   │   ├── bat.sh     # bat aliases and functions (cat, batdiff, help)
+│   │   │   ├── git.sh     # Shell-agnostic git aliases
+│   │   │   ├── openrouter.sh.tmpl  # OpenRouter API key (1Password)
+│   │   │   ├── fireworks.sh.tmpl   # Fireworks API key (1Password)
+│   │   │   └── ...        # Other shell configs
+│   │   ├── mise/
+│   │   │   └── config.toml   # Mise version manager config (node, npm packages)
+│   │   ├── starship.toml  # Starship prompt configuration
+│   │   └── zsh/
+│   │       └── custom.zsh # Zsh configuration
+│   └── dot_local/
+│       └── share/
+│           └── crush/     # Crush AI coding agent config
+│               └── crush.json
 │
 └── scripts/               # Helper automation scripts
     ├── bootstrap.sh       # Initial machine setup

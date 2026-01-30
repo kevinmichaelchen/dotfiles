@@ -1,14 +1,6 @@
+# Dotfiles
 
-
-<!-- Source: .ruler/AGENTS.md -->
-
-# AGENTS.md
-
-**Generated:** 2026-01-09
-**Commit:** 3a02dfb
-**Branch:** main
-
-## OVERVIEW
+## Overview
 
 Unified dotfiles using **nix-darwin + Home-Manager** for declarative package
 management and **Chezmoi** for templated personal configs. macOS-focused
@@ -24,11 +16,15 @@ management and **Chezmoi** for templated personal configs. macOS-focused
 ├── home-manager/         # Standalone HM for Linux (imports home.nix)
 │   └── home.nix          # Shared: packages, aliases, programs
 ├── chezmoi/              # Personal configs (templates, secrets)
-│   └── dot_config/
-│       ├── shell/        # Shell-agnostic aliases (git, bat, etc.)
-│       ├── zsh/          # ZSH config (sources shell/*.sh)
-│       ├── mise/         # Dev tools (node, go, rust, cargo:*)
-│       └── starship.toml # Rose Pine prompt theme
+│   ├── dot_config/
+│   │   ├── shell/        # Shell-agnostic aliases (git, bat, etc.)
+│   │   ├── zsh/          # ZSH config (sources shell/*.sh)
+│   │   ├── mise/         # Dev tools (node, go, rust, cargo:*)
+│   │   ├── opencode/     # OpenCode AI agent config
+│   │   └── starship.toml # Rose Pine prompt theme
+│   └── dot_local/
+│       └── share/
+│           └── crush/    # Crush AI agent config
 └── scripts/              # bootstrap.sh, update.sh
 ```
 
