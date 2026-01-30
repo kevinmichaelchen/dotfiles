@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/kimi-k2.5-free",
+  "model": "openrouter/moonshotai/kimi-k2.5",
   "plugin": [
     "oh-my-opencode",
     "opencode-beads",
@@ -8,12 +8,18 @@
     "opencode-antigravity-auth@1.2.0"
   ],
   "provider": {
-    "opencode": {
+    "openrouter": {
+      "options": {
+        "provider": {
+          "order": ["Fireworks"],
+          "data_collection": "deny"
+        }
+      },
       "models": {
-        "kimi-k2.5-free": {
-          "name": "Kimi K2.5 (Free)",
+        "moonshotai/kimi-k2.5": {
+          "name": "Kimi K2.5 (OpenRouter/Fireworks)",
           "limit": {
-            "context": 256000,
+            "context": 262144,
             "output": 32768
           },
           "modalities": {

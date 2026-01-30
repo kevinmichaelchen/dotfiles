@@ -23,16 +23,20 @@ high-quality, high-throughput general tasks.
 
 | Model         | SWE-bench Verified | SWE-bench Pro | Context | Use Case                     |
 | ------------- | ------------------ | ------------- | ------- | ---------------------------- |
-| **Kimi K2.5** | 76.8%              | 50.7%         | 256K    | General purpose, exploration |
+| **Kimi K2.5** | 76.8%              | 50.7%         | 262K    | General purpose, exploration |
 
 **Kimi K2.5 Advantages:**
 
 - **Best-in-class SWE-bench**: 76.8% Verified (competitive with GPT-5.2 at ~80%)
-- **Massive context**: 256K tokens (~200K words)
+- **Massive context**: 262K tokens
 - **Strong agentic capabilities**: Parallel processing, agent swarms
 - **Multilingual excellence**: 73.0% SWE-multilingual (leads most models)
 - **1T MoE architecture**: 32B activated params for efficiency
 - **Multimodal**: Supports text, images, videos, PDFs
+
+**Data Privacy:** Routed through OpenRouter with Fireworks as provider (US-based,
+no-logs policy) and ZDR (zero data retention) enabled. Avoids direct Moonshot API
+which routes data through China.
 
 ### Legacy Fast Models (Reference)
 
@@ -42,7 +46,7 @@ high-quality, high-throughput general tasks.
 | **MiniMax M2.1** | 74% (Verified) / 72.5% (Multilingual) | ~1,500 t/s | $0.30/$1.20   | Multilingual coding & agentic workflows |
 
 **Note:** Kimi K2.5 outperforms both GLM 4.7 and MiniMax M2.1 on SWE-bench while
-offering 256K context. Preferred for most general tasks.
+offering 262K context. Preferred for most general tasks.
 
 ### Specialized (Google)
 
@@ -68,11 +72,11 @@ offering 256K context. Preferred for most general tasks.
 
 ### Tier 3: General Purpose & Exploration (Kimi K2.5)
 
-| Agent       | Model                     | Why                                                                 |
-| ----------- | ------------------------- | ------------------------------------------------------------------- |
-| `general`   | `opencode/kimi-k2.5-free` | Best free model (76.8% SWE-bench). Strong reasoning + 256K context. |
-| `explore`   | `opencode/kimi-k2.5-free` | High-quality exploration with massive context for large codebases.  |
-| `librarian` | `opencode/kimi-k2.5-free` | Excellent multilingual understanding (73% SWE-multilingual).        |
+| Agent       | Model                            | Why                                                                 |
+| ----------- | -------------------------------- | ------------------------------------------------------------------- |
+| `general`   | `openrouter/moonshotai/kimi-k2.5` | 76.8% SWE-bench. Strong reasoning + 262K context. US-routed.        |
+| `explore`   | `openrouter/moonshotai/kimi-k2.5` | High-quality exploration with massive context for large codebases.  |
+| `librarian` | `openrouter/moonshotai/kimi-k2.5` | Excellent multilingual understanding (73% SWE-multilingual).        |
 
 ### Tier 4: Specialized Visual Tasks (Google)
 
@@ -95,10 +99,11 @@ Kimi K2.5 is the default model and powers most agents because:
 
 - **76.8% SWE-bench Verified** — Outperforms GLM 4.7 (73.8%) and MiniMax M2.1
   (74%)
-- **256K context** — Handles large codebases without truncation
+- **262K context** — Handles large codebases without truncation
 - **Strong agentic capabilities** — Parallel processing, systematic
   problem-solving
 - **Multilingual excellence** — 73% SWE-multilingual for polyglot codebases
+- **US-routed** — Via OpenRouter/Fireworks with ZDR for data privacy
 
 ### Codex for Mission-Critical Code Tasks
 
@@ -114,13 +119,14 @@ strengths matter (UI/UX, multimodal vision tasks).
 
 ### Kimi K2.5 Specs
 
-| Metric           | Value                     |
-| ---------------- | ------------------------- |
-| Architecture     | 1T MoE (32B activated)    |
-| Context Window   | 256K tokens               |
-| SWE-bench        | 76.8% Verified, 50.7% Pro |
-| SWE-multilingual | 73.0%                     |
-| Modalities       | Text, images, video, PDF  |
+| Metric           | Value                              |
+| ---------------- | ---------------------------------- |
+| Architecture     | 1T MoE (32B activated)             |
+| Context Window   | 262K tokens                        |
+| SWE-bench        | 76.8% Verified, 50.7% Pro          |
+| SWE-multilingual | 73.0%                              |
+| Modalities       | Text, images, video, PDF           |
+| Routing          | OpenRouter → Fireworks (US, ZDR)   |
 
 ### Fallback Options
 
