@@ -9,11 +9,11 @@
   ],
   "provider": {
     "openrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OpenRouter",
       "options": {
-        "provider": {
-          "order": ["Fireworks"],
-          "data_collection": "deny"
-        }
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "{env:OPENROUTER_API_KEY}"
       },
       "models": {
         "moonshotai/kimi-k2.5": {
@@ -25,6 +25,12 @@
           "modalities": {
             "input": ["text", "image"],
             "output": ["text"]
+          },
+          "options": {
+            "provider": {
+              "order": ["Fireworks"],
+              "data_collection": "deny"
+            }
           }
         }
       }
