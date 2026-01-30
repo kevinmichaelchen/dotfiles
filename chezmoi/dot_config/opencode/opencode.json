@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "cerebras/zai-glm-4.7",
+  "model": "opencode/kimi-k2.5-free",
   "plugin": [
     "oh-my-opencode",
     "opencode-beads",
@@ -8,6 +8,21 @@
     "opencode-antigravity-auth@1.2.0"
   ],
   "provider": {
+    "opencode": {
+      "models": {
+        "kimi-k2.5-free": {
+          "name": "Kimi K2.5 (Free)",
+          "limit": {
+            "context": 256000,
+            "output": 32768
+          },
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        }
+      }
+    },
     "google": {
       "models": {
         "gemini-3-pro-high": {

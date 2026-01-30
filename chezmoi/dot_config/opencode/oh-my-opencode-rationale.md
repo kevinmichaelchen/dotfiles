@@ -4,8 +4,8 @@
 
 This configuration prioritizes **code review quality** while optimizing for
 speed where it matters. Models are assigned based on task criticality, with
-code-focused tasks using OpenAI's Codex variants and high-throughput tasks using
-Cerebras for speed.
+code-focused tasks using OpenAI's Codex variants and **Kimi K2.5** for
+high-quality, high-throughput general tasks.
 
 ## Available Model Tiers
 
@@ -19,26 +19,30 @@ Cerebras for speed.
 
 - **gpt-5.2**: Best pure reasoning (non-code-specific)
 
-### Fast Models (Cerebras & MiniMax)
+### Kimi K2.5 (Primary Workhorse)
+
+| Model         | SWE-bench Verified | SWE-bench Pro | Context | Use Case                     |
+| ------------- | ------------------ | ------------- | ------- | ---------------------------- |
+| **Kimi K2.5** | 76.8%              | 50.7%         | 256K    | General purpose, exploration |
+
+**Kimi K2.5 Advantages:**
+
+- **Best-in-class SWE-bench**: 76.8% Verified (competitive with GPT-5.2 at ~80%)
+- **Massive context**: 256K tokens (~200K words)
+- **Strong agentic capabilities**: Parallel processing, agent swarms
+- **Multilingual excellence**: 73.0% SWE-multilingual (leads most models)
+- **1T MoE architecture**: 32B activated params for efficiency
+- **Multimodal**: Supports text, images, videos, PDFs
+
+### Legacy Fast Models (Reference)
 
 | Model            | SWE-bench                             | Speed      | Cost (in/out) | Use Case                                |
 | ---------------- | ------------------------------------- | ---------- | ------------- | --------------------------------------- |
 | **GLM 4.7**      | 73.8%                                 | ~1,000 t/s | $2.25/$2.75   | Quality exploration (≈ Haiku 4.5)       |
-| **GPT OSS 120B** | 62.4%                                 | ~3,000 t/s | $0.35/$0.75   | Speed-first tasks                       |
 | **MiniMax M2.1** | 74% (Verified) / 72.5% (Multilingual) | ~1,500 t/s | $0.30/$1.20   | Multilingual coding & agentic workflows |
 
-**MiniMax M2.1 Advantages:**
-
-- **4.5x faster than GLM 4.7**: 66.9 vs 14.8 tokens/sec
-- **2x cheaper**: $0.30/$1.20 vs GLM 4.7's $0.40/$1.50
-- **Multilingual excellence**: 72.5% SWE-multilingual (excels in Rust, Java, Go,
-  C++, Kotlin)
-- **Advanced Interleaved Thinking**: First open-source model with systematic
-  problem-solving
-- **Agentic performance**: 88.6% VIBE-Bench, excels in full-stack dev
-
-**Note:** Cerebras free tier has a 1M token/day limit. MiniMax M2.1 offers
-cost-effective alternative for high-volume use
+**Note:** Kimi K2.5 outperforms both GLM 4.7 and MiniMax M2.1 on SWE-bench while
+offering 256K context. Preferred for most general tasks.
 
 ### Specialized (Google)
 
@@ -55,27 +59,27 @@ cost-effective alternative for high-volume use
 | `code-architect` | `openai/gpt-5.2-codex` | Architecture decisions need both strong reasoning AND code expertise. |
 | `code-reviewer`  | `openai/gpt-5.2-codex` | **Sacrosanct.** No compromises on catching bugs and security issues.  |
 
-### Tier 2: General Purpose & High-Throughput (MiniMax M2.1)
+### Tier 2: Quality-Critical Tasks (GPT-5.2 Codex)
 
-| Agent     | Model                        | Why                                                                                          |
-| --------- | ---------------------------- | -------------------------------------------------------------------------------------------- |
-| `general` | `opencode/minimax-m2.1-free` | Cost-effective balance of speed and capability for everyday tasks. 4.5x faster than GLM 4.7. |
+| Agent             | Model                        | Why                                                   |
+| ----------------- | ---------------------------- | ----------------------------------------------------- |
+| `code-explorer`   | `openai/gpt-5.2-codex-xhigh` | Maximum reasoning for deep code path analysis.        |
+| `document-writer` | `openai/gpt-5.2-codex-high`  | High-quality prose + code examples for documentation. |
 
-### Tier 3: High-Throughput Exploration (MiniMax M2.1)
+### Tier 3: General Purpose & Exploration (Kimi K2.5)
 
-| Agent           | Model                        | Why                                                                                         |
-| --------------- | ---------------------------- | ------------------------------------------------------------------------------------------- |
-| `explore`       | `opencode/minimax-m2.1-free` | Speed-focused exploration with better multilingual understanding. 1.5x faster than GLM 4.7. |
-| `librarian`     | `opencode/minimax-m2.1-free` | Multilingual doc retrieval with Advanced Interleaved Thinking for complex queries.          |
-| `code-explorer` | `cerebras/zai-glm-4.7`       | Understanding code paths needs Haiku-level capability.                                      |
+| Agent       | Model                     | Why                                                                 |
+| ----------- | ------------------------- | ------------------------------------------------------------------- |
+| `general`   | `opencode/kimi-k2.5-free` | Best free model (76.8% SWE-bench). Strong reasoning + 256K context. |
+| `explore`   | `opencode/kimi-k2.5-free` | High-quality exploration with massive context for large codebases.  |
+| `librarian` | `opencode/kimi-k2.5-free` | Excellent multilingual understanding (73% SWE-multilingual).        |
 
-### Tier 4: Specialized Tasks
+### Tier 4: Specialized Visual Tasks (Google)
 
-| Agent                     | Model                       | Why                                                                |
-| ------------------------- | --------------------------- | ------------------------------------------------------------------ |
-| `document-writer`         | `openai/gpt-5.1-codex-mini` | Docs often include code examples; codex helps, mini keeps it fast. |
-| `frontend-ui-ux-engineer` | `google/gemini-3-pro-high`  | Gemini excels at visual reasoning and creative UI/UX tasks.        |
-| `multimodal-looker`       | `google/gemini-2.5-flash`   | Vision capability required. Flash is fast and sufficient.          |
+| Agent                     | Model                      | Why                                                         |
+| ------------------------- | -------------------------- | ----------------------------------------------------------- |
+| `frontend-ui-ux-engineer` | `google/gemini-3-pro-high` | Gemini excels at visual reasoning and creative UI/UX tasks. |
+| `multimodal-looker`       | `google/gemini-2.5-flash`  | Vision capability required. Flash is fast and sufficient.   |
 
 ## Design Principles
 
@@ -85,51 +89,44 @@ The `code-reviewer` agent uses `gpt-5.2-codex`—the absolute best available for
 code analysis. Missing a bug or security issue is far more expensive than the
 model cost.
 
-### Tiered Exploration Strategy
+### Kimi K2.5 as Primary Workhorse
 
-Not all exploration is equal:
+Kimi K2.5 is the default model and powers most agents because:
 
-- **`explore`** uses MiniMax M2.1 for fast, multilingual search and pattern
-  matching where speed matters most
-- **`librarian`** uses MiniMax M2.1 for multilingual retrieval with advanced
-  interleaved thinking
-- **`code-explorer`** uses GLM 4.7 — deeper reasoning (73.8% SWE-bench) for
-  complex code path analysis
+- **76.8% SWE-bench Verified** — Outperforms GLM 4.7 (73.8%) and MiniMax M2.1
+  (74%)
+- **256K context** — Handles large codebases without truncation
+- **Strong agentic capabilities** — Parallel processing, systematic
+  problem-solving
+- **Multilingual excellence** — 73% SWE-multilingual for polyglot codebases
 
-If you hit something truly complex, escalate to `oracle` or `code-architect`.
+### Codex for Mission-Critical Code Tasks
 
-### Codex for Code, General for Reasoning
-
-- Use `-codex` variants for tasks involving code generation, review, or analysis
-- Use non-codex `gpt-5.2` for pure reasoning tasks (oracle, general)
+- Use `-codex` variants for code review and architecture (highest stakes)
+- Use `gpt-5.2` for pure reasoning tasks requiring maximum capability
 
 ### Gemini for Visual/Creative Work
 
 Google's Gemini models excel at visual and creative tasks. Use them where those
-strengths matter (UI/UX, multimodal).
+strengths matter (UI/UX, multimodal vision tasks).
 
-## Cerebras Setup
+## Model Reference
 
-Cerebras provides ~10-20x speed boost over hosted alternatives.
+### Kimi K2.5 Specs
 
-**To enable Cerebras:**
+| Metric           | Value                     |
+| ---------------- | ------------------------- |
+| Architecture     | 1T MoE (32B activated)    |
+| Context Window   | 256K tokens               |
+| SWE-bench        | 76.8% Verified, 50.7% Pro |
+| SWE-multilingual | 73.0%                     |
+| Modalities       | Text, images, video, PDF  |
 
-1. Get API key at https://cloud.cerebras.ai
-2. Run `/connect cerebras` in OpenCode
+### Fallback Options
 
-### Pricing
+If Kimi K2.5 is unavailable, these models provide alternatives:
 
-| Model        | Speed      | Input   | Output  |
-| ------------ | ---------- | ------- | ------- |
-| GLM 4.7      | ~1,000 t/s | $2.25/M | $2.75/M |
-| GPT OSS 120B | ~3,000 t/s | $0.35/M | $0.75/M |
-
-### Free Tier Limits
-
-| Metric      | Limit         |
-| ----------- | ------------- |
-| Rate Limits | 150K TPM      |
-| Daily Limit | 1M tokens/day |
-
-**Warning:** Free tier limit can be hit in ~10 minutes of heavy use. Paid tier
-recommended
+| Model        | SWE-bench | Context | Notes                 |
+| ------------ | --------- | ------- | --------------------- |
+| MiniMax M2.1 | 74%       | ~128K   | Fast, multilingual    |
+| GLM 4.7      | 73.8%     | ~128K   | Cerebras-hosted, fast |

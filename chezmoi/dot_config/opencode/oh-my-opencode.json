@@ -5,12 +5,12 @@
     "oracle": { "model": "openai/gpt-5.2" },
     "code-architect": { "model": "openai/gpt-5.2-codex" },
     "code-reviewer": { "model": "openai/gpt-5.2-codex" },
-    "code-explorer": { "model": "cerebras/zai-glm-4.7" },
-    "general": { "model": "opencode/minimax-m2.1-free" },
+    "code-explorer": { "model": "openai/gpt-5.2-codex-xhigh" },
+    "general": { "model": "opencode/kimi-k2.5-free" },
     "frontend-ui-ux-engineer": { "model": "google/gemini-3-pro-high" },
-    "explore": { "model": "opencode/minimax-m2.1-free" },
-    "librarian": { "model": "opencode/minimax-m2.1-free" },
-    "document-writer": { "model": "openai/gpt-5.1-codex-mini" },
+    "explore": { "model": "opencode/kimi-k2.5-free" },
+    "librarian": { "model": "opencode/kimi-k2.5-free" },
+    "document-writer": { "model": "openai/gpt-5.2-codex-high" },
     "multimodal-looker": { "model": "google/gemini-2.5-flash" }
   }
 }
