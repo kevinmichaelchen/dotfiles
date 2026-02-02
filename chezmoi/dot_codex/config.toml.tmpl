@@ -60,3 +60,8 @@ env_vars = ["JIRA_URL", "JIRA_USERNAME", "JIRA_API_TOKEN", "CONFLUENCE_URL", "CO
 command = "npx"
 args = ["-y", "exa-mcp-server"]
 env_vars = ["EXA_API_KEY"]
+
+[mcp_servers.huggingface]
+command = "huggingface-mcp-server"
+args = []
+env_vars = ["HF_TOKEN"]

@@ -73,6 +73,14 @@ MCP_CONFIG='{
         "EXA_API_KEY": "${EXA_API_KEY}"
       },
       "type": "stdio"
+    },
+    "huggingface": {
+      "command": "huggingface-mcp-server",
+      "args": [],
+      "env": {
+        "HF_TOKEN": "${HF_TOKEN}"
+      },
+      "type": "stdio"
     }
   }
 }'
