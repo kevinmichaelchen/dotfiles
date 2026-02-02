@@ -7,3 +7,8 @@
     type = "git-repo"
     url = "https://github.com/kevinmichaelchen/perplexity-mcp.git"
     refreshPeriod = "168h"
+
+["dev/github.com/kevinmichaelchen/huggingface-mcp-server"]
+    type = "git-repo"
+    url = "https://github.com/kevinmichaelchen/huggingface-mcp-server.git"
+    refreshPeriod = "168h"
