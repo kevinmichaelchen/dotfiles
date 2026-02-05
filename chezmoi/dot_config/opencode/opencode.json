@@ -3,7 +3,6 @@
   "model": "openrouter/moonshotai/kimi-k2.5",
   "plugin": [
     "oh-my-opencode",
-    "opencode-beads",
     "opencode-openai-codex-auth",
     "opencode-antigravity-auth@1.2.0"
   ],

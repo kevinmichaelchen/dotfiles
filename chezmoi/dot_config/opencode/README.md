@@ -34,7 +34,6 @@ Run `/connect` in OpenCode to authenticate with each provider:
 | Plugin                                        | Purpose                     |
 | --------------------------------------------- | --------------------------- |
 | [oh-my-opencode][oh-my-opencode]              | Agent model routing         |
-| [opencode-beads][opencode-beads]              | Task management             |
 | [opencode-openai-codex-auth][codex-auth]      | OpenAI OAuth authentication |
 | [opencode-anthropic-auth][anthropic-auth]     | Anthropic authentication    |
 | [opencode-antigravity-auth][antigravity-auth] | Google AI via Antigravity   |
@@ -103,7 +102,6 @@ opencode /connect cerebras
 [opencode-docs]: https://opencode.ai/docs/
 [opencode-providers]: https://opencode.ai/docs/providers/
 [oh-my-opencode]: https://github.com/code-yeongyu/oh-my-opencode
-[opencode-beads]: https://github.com/opencode-ai/opencode-beads
 [codex-auth]: https://github.com/code-yeongyu/opencode-openai-codex-auth
 [anthropic-auth]: https://www.npmjs.com/package/opencode-anthropic-auth
 [antigravity-auth]: https://www.npmjs.com/package/opencode-antigravity-auth
