@@ -17,7 +17,10 @@ MCP_CONFIG='{
     },
     "deepwiki": {
       "type": "http",
-      "url": "https://mcp.deepwiki.com/mcp"
+      "url": "https://mcp.deepwiki.com/mcp",
+      "headers": {
+        "Accept": "application/json, text/event-stream"
+      }
     },
     "effect-docs": {
       "command": "npx",
