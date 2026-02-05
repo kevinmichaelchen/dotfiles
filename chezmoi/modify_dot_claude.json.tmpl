@@ -85,5 +85,5 @@ MCP_CONFIG='{
   }
 }'
 
-# Read existing file from stdin, merge mcpServers, output result
-jq --argjson mcp "$MCP_CONFIG" '. * $mcp'
+# Read existing file from stdin, replace mcpServers (not merge), preserve other keys
+jq --argjson mcp "$MCP_CONFIG" '.mcpServers = $mcp.mcpServers'
