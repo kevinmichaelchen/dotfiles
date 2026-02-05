@@ -27,9 +27,13 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    homebrew-replicate = {
+      url = "github:replicate/homebrew-tap";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask }:
+  outputs = { self, nixpkgs, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-replicate }:
   let
     # Helper function to create a Darwin configuration for a specific user
     mkDarwinConfig = username: nix-darwin.lib.darwinSystem {
@@ -73,6 +77,7 @@
             taps = {
               "homebrew/homebrew-core" = homebrew-core;
               "homebrew/homebrew-cask" = homebrew-cask;
+              "replicate/homebrew-tap" = homebrew-replicate;
             };
 
             # IMPORTANT: mutableTaps must be true to avoid errors with casks like ghostty

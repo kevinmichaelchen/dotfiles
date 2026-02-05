@@ -39,8 +39,8 @@
     };
 
     # Taps (third-party repositories)
+    # Note: Most taps are managed declaratively in flake.nix via nix-homebrew
     taps = [
-      "replicate/tap"
     ];
 
     # Brews (formulae)

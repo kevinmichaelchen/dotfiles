@@ -4,6 +4,11 @@
 
 set -euo pipefail
 
+# Activate mise so tools installed in run_after_01 are on PATH
+if command -v mise &> /dev/null; then
+  eval "$(mise activate bash --shims)"
+fi
+
 MCP_REPOS=(
   "$HOME/dev/github.com/kevinmichaelchen/perplexity-mcp"
   "$HOME/dev/github.com/kevinmichaelchen/huggingface-mcp-server"
