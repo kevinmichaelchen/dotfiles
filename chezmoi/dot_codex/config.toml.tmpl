@@ -13,6 +13,10 @@ hide_full_access_warning = true
 steer = true
 
 # MCP servers
+[mcp_servers.parallel]
+url = "https://search-mcp.parallel.ai/mcp"
+bearer_token_env_var = "PARALLEL_API_KEY"
+
 [mcp_servers.perplexity]
 command = "perplexity-mcp"
 args = []

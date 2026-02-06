@@ -44,6 +44,13 @@ MCP_CONFIG='{
       "args": ["nx-mcp@latest"],
       "env": {}
     },
+    "parallel": {
+      "type": "http",
+      "url": "https://search-mcp.parallel.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${PARALLEL_API_KEY}"
+      }
+    },
     "perplexity": {
       "command": "perplexity-mcp",
       "args": [],
