@@ -1,6 +1,6 @@
 # Managed by chezmoi. Source: ~/dotfiles/chezmoi/dot_codex/config.toml.tmpl
 model = "gpt-5.2-codex"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 
 [notice]
 "hide_gpt-5.1-codex-max_migration_prompt" = true
@@ -12,26 +12,37 @@ hide_full_access_warning = true
 [features]
 steer = true
 
-# MCP servers
+# ─── MCP servers ────────────────────────────────────────────────────────
+#
+# Startup overhead notes (see MCP-SERVERS.md for details):
+#
+#   HTTP servers (low overhead — no subprocess spawned):
+#     parallel, context7, deepwiki, github, grep
+#
+#   Stdio servers (medium overhead — spawns a subprocess):
+#     perplexity, exa, huggingface, effect-docs, nx-mcp, atlassian
+#
+#   Stdio servers (high overhead — avoid if possible):
+#     nia (pipx run --no-cache re-installs on every launch)
+#
+# REMOVED:
+#   mcp_servers.codex — was recursive (Codex spawning Codex as MCP server),
+#   causing each invocation to re-load all MCP servers again. This at minimum
+#   doubled startup time and risked infinite recursion.
+#
+# CHANGED:
+#   model_reasoning_effort: xhigh → high (xhigh adds ~4x latency for
+#   marginal quality gains in most research/coding tasks)
+#
+#   nia: added --no-cache removal note. Consider installing nia-mcp-server
+#   globally (pipx install nia-mcp-server) and using command = "nia-mcp-server"
+#   instead of pipx run --no-cache.
+
+# ─── HTTP servers (low overhead) ────────────────────────────────────────
+
 [mcp_servers.parallel]
 url = "https://search-mcp.parallel.ai/mcp"
 bearer_token_env_var = "PARALLEL_API_KEY"
-
-[mcp_servers.perplexity]
-command = "perplexity-mcp"
-args = []
-env_vars = ["PERPLEXITY_API_KEY"]
-
-[mcp_servers.nia]
-command = "pipx"
-args = ["run", "--no-cache", "nia-mcp-server"]
-env_vars = ["NIA_API_KEY"]
-env = { NIA_API_URL = "https://apigcp.trynia.ai/" }
-startup_timeout_sec = 30
-
-[mcp_servers.codex]
-command = "codex"
-args = ["-m", "gpt-5.2-codex", "mcp-server"]
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
@@ -40,17 +51,34 @@ env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
 [mcp_servers.deepwiki]
 url = "https://mcp.deepwiki.com/mcp"
 
-[mcp_servers."effect-docs"]
-command = "npx"
-args = ["-y", "effect-mcp@latest"]
-env = {}
-
 [mcp_servers.github]
 url = "https://api.githubcopilot.com/mcp/"
 bearer_token_env_var = "GITHUB_PERSONAL_ACCESS_TOKEN"
 
 [mcp_servers.grep]
 url = "https://mcp.grep.app"
+
+# ─── Stdio servers (medium overhead) ────────────────────────────────────
+
+[mcp_servers.perplexity]
+command = "perplexity-mcp"
+args = []
+env_vars = ["PERPLEXITY_API_KEY"]
+
+[mcp_servers.exa]
+command = "npx"
+args = ["-y", "exa-mcp-server"]
+env_vars = ["EXA_API_KEY"]
+
+[mcp_servers.huggingface]
+command = "huggingface-mcp-server"
+args = []
+env_vars = ["HF_TOKEN"]
+
+[mcp_servers."effect-docs"]
+command = "npx"
+args = ["-y", "effect-mcp@latest"]
+env = {}
 
 [mcp_servers."nx-mcp"]
 command = "npx"
@@ -64,12 +92,15 @@ args = []
 env_vars = ["JIRA_URL", "JIRA_USERNAME", "JIRA_API_TOKEN", "CONFLUENCE_URL", "CONFLUENCE_USERNAME", "CONFLUENCE_API_TOKEN"]
 {{- end }}
 
-[mcp_servers.exa]
-command = "npx"
-args = ["-y", "exa-mcp-server"]
-env_vars = ["EXA_API_KEY"]
+# ─── Stdio servers (high overhead — consider alternatives) ──────────────
 
-[mcp_servers.huggingface]
-command = "huggingface-mcp-server"
-args = []
-env_vars = ["HF_TOKEN"]
+# NOTE: pipx run --no-cache re-installs nia-mcp-server on every Codex
+# launch, adding 10-30s of startup time. To fix, install globally:
+#   pipx install nia-mcp-server
+# Then change command to "nia-mcp-server" and remove args.
+[mcp_servers.nia]
+command = "pipx"
+args = ["run", "--no-cache", "nia-mcp-server"]
+env_vars = ["NIA_API_KEY"]
+env = { NIA_API_URL = "https://apigcp.trynia.ai/" }
+startup_timeout_sec = 30
