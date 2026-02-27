@@ -47,6 +47,7 @@ eval "$(mise activate zsh)"
 [[ -f ~/.config/shell/cerebras.sh ]] && source ~/.config/shell/cerebras.sh
 [[ -f ~/.config/shell/claude.sh ]] && source ~/.config/shell/claude.sh
 [[ -f ~/.config/shell/exa.sh ]] && source ~/.config/shell/exa.sh
+[[ -f ~/.config/shell/firecrawl.sh ]] && source ~/.config/shell/firecrawl.sh
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
 [[ -f ~/.config/shell/pnpm.sh ]] && source ~/.config/shell/pnpm.sh
 [[ -f ~/.config/shell/python.sh ]] && source ~/.config/shell/python.sh
