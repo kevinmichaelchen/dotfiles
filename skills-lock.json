@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "firecrawl": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "computedHash": "e0530de30fe242f0dc9b703c1ca5967a97ba83cde803423f7b2341f7ddd95064"
+    }
+  }
+}
