@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-exec bash "$HOME/.claude/hooks/peon-ping/peon.sh" "$@"
