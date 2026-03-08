@@ -10,8 +10,9 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | File           | Purpose                               |
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
-| `update.sh`    | Pull latest changes and apply configs |
-| `cleanup.sh`   | Nix store maintenance and GC          |
+| `update.sh`       | Pull latest changes and apply configs |
+| `update-tools.sh` | Upgrade Mise tools and Claude Code     |
+| `cleanup.sh`      | Nix store maintenance and GC            |
 
 ## BOOTSTRAP SEQUENCE
 
@@ -144,9 +145,23 @@ The `update.sh` script:
 
 1. Pulls latest git changes
 2. Applies nix-darwin (macOS) or home-manager (Linux)
-3. Applies chezmoi configs
+3. Applies chezmoi configs from `~/dotfiles/chezmoi`
+4. Calls `./scripts/update-tools.sh` for CLI tool upgrades
 
 Can be run via alias: `dot-update`
+
+## UPDATE-TOOLS SCRIPT
+
+The `update-tools.sh` script:
+
+1. Runs `mise upgrade` to update all Mise-managed tools
+2. Runs `mise prune --yes` to remove unused tool versions
+3. Runs `claude update` if Claude Code is installed
+4. Verifies final state with `mise outdated` and `claude --version`
+
+If `mise upgrade` fails on `github:cli/cli` attestation verification, it retries that install once with `MISE_GITHUB_ATTESTATIONS=false` and reruns `mise upgrade`.
+
+Can be run directly: `./scripts/update-tools.sh`
 
 ## CLEANUP SCRIPT
 

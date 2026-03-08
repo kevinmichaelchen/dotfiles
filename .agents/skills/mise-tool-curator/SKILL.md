@@ -13,7 +13,7 @@ Manage tool declarations in `chezmoi/dot_config/mise/config.toml` so runtime own
 2. Choose the most appropriate Mise source type.
 3. Insert/edit the tool in the correct section, preserving organization.
 4. Check for duplicate ownership in `home-manager/home.nix` and `nix-darwin/configuration.nix`.
-5. Provide post-edit apply commands and verification steps.
+5. Provide post-edit apply commands, maintenance commands, and verification steps.
 
 ## Source Selection Heuristics
 | Tool type | Prefer |
@@ -37,4 +37,6 @@ Manage tool declarations in `chezmoi/dot_config/mise/config.toml` so runtime own
 3. Provide commands:
    - `cma`
    - `mise install`
+   - `mise upgrade`
+   - `mise prune --yes`
    - optional verification: `mise ls` or `mise doctor`
