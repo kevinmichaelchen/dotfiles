@@ -59,15 +59,6 @@ MCP_CONFIG='{
       },
       "type": "stdio"
     },
-    "nia": {
-      "command": "pipx",
-      "args": ["run", "--no-cache", "nia-mcp-server"],
-      "env": {
-        "NIA_API_KEY": "${NIA_API_KEY}",
-        "NIA_API_URL": "https://apigcp.trynia.ai/"
-      },
-      "type": "stdio"
-    },
 {{- if eq .chezmoi.hostname "MLJLWV4J4TLC" }}
     "atlassian": {
       "command": "mcp-atlassian",

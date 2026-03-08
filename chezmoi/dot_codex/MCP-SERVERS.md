@@ -36,12 +36,6 @@ download packages or install dependencies on launch. This adds up.
 | nx-mcp | `npx nx-mcp@latest` | Downloads if not cached |
 | atlassian | `mcp-atlassian` | Work laptop only |
 
-### High overhead (avoid or fix)
-
-| Server | Command | Problem | Fix |
-|--------|---------|---------|-----|
-| nia | `pipx run --no-cache nia-mcp-server` | `--no-cache` re-installs on every launch (10-30s) | Install globally: `pipx install nia-mcp-server`, then use `command = "nia-mcp-server"` |
-
 ## Removed servers
 
 ### `codex` (recursive — removed)
@@ -71,8 +65,7 @@ With all servers loaded:
 | HTTP servers | 5 | ~0s |
 | Stdio (local binary) | 2 | ~2-4s |
 | Stdio (npx) | 3 | ~5-15s |
-| Stdio (pipx --no-cache) | 1 | ~10-30s |
-| **Total** | **11** | **~17-49s** |
+| **Total** | **10** | **~7-19s** |
 
 This overhead applies to every Codex invocation, including when Pliny spawns
 Codex for research subtopics.
@@ -81,8 +74,7 @@ Codex for research subtopics.
 
 1. **Prefer HTTP servers** when available (context7, deepwiki, github, grep
    all offer HTTP endpoints).
-2. **Install stdio servers globally** instead of using `npx -y` or
-   `pipx run --no-cache`.
+2. **Install stdio servers globally** instead of using `npx -y`.
 3. **Never add Codex as its own MCP server** — it causes recursive spawning.
 4. **Consider a lighter profile** for automated/scripted usage (e.g., Pliny)
    with fewer MCP servers.
