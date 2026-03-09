@@ -30,10 +30,7 @@ download packages or install dependencies on launch. This adds up.
 | Server | Command | Notes |
 |--------|---------|-------|
 | perplexity | `perplexity-mcp` | Local binary, fast |
-| huggingface | `huggingface-mcp-server` | Local binary, fast |
 | exa | `npx -y exa-mcp-server` | Downloads if not cached |
-| effect-docs | `npx -y effect-mcp@latest` | Downloads if not cached |
-| nx-mcp | `npx nx-mcp@latest` | Downloads if not cached |
 | atlassian | `mcp-atlassian` | Work laptop only |
 
 ## Removed servers
@@ -63,9 +60,9 @@ With all servers loaded:
 | Category | Count | Est. time |
 |----------|:---:|-----------|
 | HTTP servers | 5 | ~0s |
-| Stdio (local binary) | 2 | ~2-4s |
-| Stdio (npx) | 3 | ~5-15s |
-| **Total** | **10** | **~7-19s** |
+| Stdio (local binary) | 1 | ~1-2s |
+| Stdio (npx) | 1 | ~2-5s |
+| **Total** | **7** | **~3-7s** |
 
 This overhead applies to every Codex invocation, including when Pliny spawns
 Codex for research subtopics.

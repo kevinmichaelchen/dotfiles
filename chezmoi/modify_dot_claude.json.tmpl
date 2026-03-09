@@ -22,11 +22,6 @@ MCP_CONFIG='{
         "Accept": "application/json, text/event-stream"
       }
     },
-    "effect-docs": {
-      "command": "npx",
-      "args": ["-y", "effect-mcp@latest"],
-      "env": {}
-    },
     "github": {
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
@@ -37,12 +32,6 @@ MCP_CONFIG='{
     "grep": {
       "type": "http",
       "url": "https://mcp.grep.app"
-    },
-    "nx-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["nx-mcp@latest"],
-      "env": {}
     },
     "parallel": {
       "type": "http",
@@ -79,14 +68,6 @@ MCP_CONFIG='{
       "args": ["-y", "exa-mcp-server"],
       "env": {
         "EXA_API_KEY": "${EXA_API_KEY}"
-      },
-      "type": "stdio"
-    },
-    "huggingface": {
-      "command": "huggingface-mcp-server",
-      "args": [],
-      "env": {
-        "HF_TOKEN": "${HF_TOKEN}"
       },
       "type": "stdio"
     }

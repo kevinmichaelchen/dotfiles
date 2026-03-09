@@ -11,7 +11,6 @@ fi
 
 MCP_REPOS=(
   "$HOME/dev/github.com/kevinmichaelchen/perplexity-mcp"
-  "$HOME/dev/github.com/kevinmichaelchen/huggingface-mcp-server"
 )
 
 if ! command -v uv &> /dev/null; then

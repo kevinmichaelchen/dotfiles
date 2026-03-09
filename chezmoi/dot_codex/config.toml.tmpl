@@ -22,7 +22,7 @@ multi_agent = true
 #     parallel, context7, deepwiki, github, grep
 #
 #   Stdio servers (medium overhead — spawns a subprocess):
-#     perplexity, exa, huggingface, effect-docs, nx-mcp, atlassian
+#     perplexity, exa, atlassian
 #
 # REMOVED:
 #   mcp_servers.codex — was recursive (Codex spawning Codex as MCP server),
@@ -64,21 +64,6 @@ env_vars = ["PERPLEXITY_API_KEY"]
 command = "npx"
 args = ["-y", "exa-mcp-server"]
 env_vars = ["EXA_API_KEY"]
-
-[mcp_servers.huggingface]
-command = "huggingface-mcp-server"
-args = []
-env_vars = ["HF_TOKEN"]
-
-[mcp_servers."effect-docs"]
-command = "npx"
-args = ["-y", "effect-mcp@latest"]
-env = {}
-
-[mcp_servers."nx-mcp"]
-command = "npx"
-args = ["nx-mcp@latest"]
-env = {}
 
 {{- if eq .chezmoi.hostname "MLJLWV4J4TLC" }}
 [mcp_servers.atlassian]
