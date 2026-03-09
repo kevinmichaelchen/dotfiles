@@ -7,6 +7,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 info() {
   echo -e "${GREEN}==>${NC} $*"
@@ -70,33 +71,39 @@ bridge_url() {
   printf 'http://127.0.0.1:%s/mcp\n' "$port"
 }
 
+spec_url() {
+  local filename="$1"
+  printf 'http://127.0.0.1:%s/%s\n' "$OPENAPI_SPEC_PORT" "$filename"
+}
+
 wait_for_health() {
   local name="$1"
-  local port="$2"
+  local url="$2"
   local attempts=0
 
   while (( attempts < 30 )); do
-    if "$CURL_BIN" -fsS "$(health_url "$port")" >/dev/null 2>&1; then
+    if "$CURL_BIN" -fsS "$url" >/dev/null 2>&1; then
       return 0
     fi
     attempts=$((attempts + 1))
     sleep 1
   done
 
-  warn "Bridge $name did not become healthy on port $port"
+  warn "Service $name did not become healthy at $url"
   return 1
 }
 
-start_managed_process() {
+start_managed_process_with_ready_url() {
   local name="$1"
   local port="$2"
-  shift 2
+  local ready_url="$3"
+  shift 3
 
   local log_file="$LOG_DIR/${name}.log"
   local command_file="$COMMAND_DIR/${name}.sh"
   local session_name="executor-mcp-${name}"
 
-  if "$CURL_BIN" -fsS "$(health_url "$port")" >/dev/null 2>&1; then
+  if "$CURL_BIN" -fsS "$ready_url" >/dev/null 2>&1; then
     info "Bridge $name already healthy on $port"
     return 0
   fi
@@ -121,13 +128,21 @@ start_managed_process() {
   info "Starting bridge $name on $port"
   "$TMUX_BIN" new-session -d -s "$session_name" "$command_file"
 
-  if ! wait_for_health "$name" "$port"; then
+  if ! wait_for_health "$name" "$ready_url"; then
     warn "Recent log output for $name:"
     tail -n 40 "$log_file" >&2 || true
     return 1
   fi
 
   return 0
+}
+
+start_managed_process() {
+  local name="$1"
+  local port="$2"
+  shift 2
+
+  start_managed_process_with_ready_url "$name" "$port" "$(health_url "$port")" "$@"
 }
 
 start_stdio_bridge() {
@@ -148,6 +163,21 @@ start_stdio_bridge() {
     --logLevel info
 }
 
+start_static_server() {
+  local name="$1"
+  local port="$2"
+  local directory="$3"
+
+  start_managed_process_with_ready_url \
+    "$name" \
+    "$port" \
+    "http://127.0.0.1:${port}/" \
+    "$PYTHON_BIN" \
+    -m http.server "$port" \
+    --bind 127.0.0.1 \
+    --directory "$directory"
+}
+
 stop_managed_process() {
   local name="$1"
   local session_name="executor-mcp-${name}"
@@ -164,17 +194,6 @@ api_sources() {
   "$CURL_BIN" -fsS \
     -H "x-executor-account-id: $ACCOUNT_ID" \
     "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources"
-}
-
-update_source() {
-  local source_id="$1"
-  local payload="$2"
-  "$CURL_BIN" -fsS \
-    -X PATCH \
-    -H "content-type: application/json" \
-    -H "x-executor-account-id: $ACCOUNT_ID" \
-    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/$source_id" \
-    -d "$payload"
 }
 
 connect_source() {
@@ -320,8 +339,7 @@ ensure_openapi_source() {
   local endpoint="$3"
   local spec_url="$4"
   local auth_json="$5"
-  local default_headers_json="${6:-null}"
-  local sources existing source_id matches connect_payload update_payload result status
+  local sources existing source_id matches connect_payload result status
 
   sources="$(api_sources)"
   existing="$(
@@ -335,14 +353,12 @@ ensure_openapi_source() {
       printf '%s' "$existing" | "$JQ_BIN" -r \
         --arg endpoint "$endpoint" \
         --arg namespace "$namespace" \
-        --arg specUrl "$spec_url" \
-        --argjson defaultHeaders "$default_headers_json" '
+        --arg specUrl "$spec_url" '
           if .endpoint == $endpoint
             and .namespace == $namespace
             and .specUrl == $specUrl
             and .status == "connected"
             and .enabled == true
-            and (.defaultHeaders // null) == $defaultHeaders
           then
             "true"
           else
@@ -388,22 +404,7 @@ ensure_openapi_source() {
     return 1
   fi
 
-  source_id="$(printf '%s' "$result" | "$JQ_BIN" -r '.source.id')"
-  if [[ "$default_headers_json" != "null" ]]; then
-    update_payload="$("$JQ_BIN" -cn \
-      --argjson defaultHeaders "$default_headers_json" '
-        {
-          defaultHeaders: $defaultHeaders,
-          status: "connected",
-          enabled: true
-        }
-      '
-    )"
-    result="$(update_source "$source_id" "$update_payload")"
-  else
-    result="$(printf '%s' "$result" | "$JQ_BIN" -c '.source')"
-  fi
-
+  result="$(printf '%s' "$result" | "$JQ_BIN" -c '.source')"
   status="$(printf '%s' "$result" | "$JQ_BIN" -r '.status // empty' 2>/dev/null || true)"
   if [[ "$status" != "connected" ]]; then
     warn "OpenAPI source $name did not report connected status"
@@ -421,9 +422,8 @@ sync_openapi_source() {
   local endpoint="$3"
   local spec_url="$4"
   local auth_json="$5"
-  local default_headers_json="${6:-null}"
 
-  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" "$default_headers_json" || FAILURES+=("$name")
+  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" || FAILURES+=("$name")
 }
 
 EXECUTOR_BIN="$(require_bin executor "$HOME/.local/share/mise/shims/executor")"
@@ -432,11 +432,14 @@ TMUX_BIN="$(require_bin tmux)"
 JQ_BIN="$(require_bin jq)"
 CURL_BIN="$(require_bin curl)"
 CODEX_BIN="$(require_bin codex "$HOME/.local/share/mise/shims/codex")"
+PYTHON_BIN="$(require_bin python3)"
 
 BASE_URL="${EXECUTOR_BASE_URL:-http://127.0.0.1:8788}"
 STATE_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/executor-mcp-bridges"
 COMMAND_DIR="$STATE_ROOT/commands"
 LOG_DIR="$STATE_ROOT/logs"
+OPENAPI_SPEC_DIR="$SCRIPT_DIR/executor-openapi"
+OPENAPI_SPEC_PORT="${EXECUTOR_OPENAPI_SPEC_PORT:-8821}"
 mkdir -p "$COMMAND_DIR" "$LOG_DIR"
 
 ACCOUNT_ID=""
@@ -446,10 +449,19 @@ SKIPPED=()
 
 ensure_executor
 
+if [[ ! -d "$OPENAPI_SPEC_DIR" ]]; then
+  error "Missing OpenAPI spec directory: $OPENAPI_SPEC_DIR"
+  exit 1
+fi
+
+start_static_server "openapi-specs" "$OPENAPI_SPEC_PORT" "$OPENAPI_SPEC_DIR"
+
 sync_direct_source "deepwiki" "deepwiki" "https://mcp.deepwiki.com/mcp"
 sync_direct_source "grep" "grep" "https://mcp.grep.app/"
 stop_managed_process "parallel"
 remove_matching_sources "parallel" "parallel" >/dev/null || true
+remove_matching_sources "parallel-search" "parallel_search" >/dev/null || true
+remove_matching_sources "parallel-task" "parallel_task" >/dev/null || true
 remove_matching_sources "github" "github" >/dev/null || true
 remove_matching_sources "context7" "context7" >/dev/null || true
 
@@ -469,7 +481,7 @@ if have_env PERPLEXITY_API_KEY; then
     "perplexity-search" \
     "perplexity_search" \
     "https://api.perplexity.ai" \
-    "https://docs.perplexity.ai/openapi.json" \
+    "$(spec_url "perplexity-search.openapi.json")" \
     "$perplexity_auth"
 else
   warn "Skipping perplexity-search: PERPLEXITY_API_KEY is not set"
@@ -485,21 +497,21 @@ if have_env PARALLEL_API_KEY; then
       token: $token
     }
   ')"
-  parallel_default_headers="$("$JQ_BIN" -cn '
-    {
-      "parallel-beta": "search-extract-2025-10-10"
-    }
-  ')"
   sync_openapi_source \
-    "parallel" \
-    "parallel" \
+    "parallel-search" \
+    "parallel_search" \
     "https://api.parallel.ai" \
-    "https://docs.parallel.ai/public-openapi.json" \
-    "$parallel_auth" \
-    "$parallel_default_headers"
+    "$(spec_url "parallel-search.openapi.json")" \
+    "$parallel_auth"
+  sync_openapi_source \
+    "parallel-task" \
+    "parallel_task" \
+    "https://api.parallel.ai" \
+    "$(spec_url "parallel-task.openapi.json")" \
+    "$parallel_auth"
 else
-  warn "Skipping parallel: PARALLEL_API_KEY is not set"
-  SKIPPED+=("parallel")
+  warn "Skipping parallel-search and parallel-task: PARALLEL_API_KEY is not set"
+  SKIPPED+=("parallel-search" "parallel-task")
 fi
 
 sync_stdio_bridge_source "exa" "exa" 8814 "npx -y exa-mcp-server"

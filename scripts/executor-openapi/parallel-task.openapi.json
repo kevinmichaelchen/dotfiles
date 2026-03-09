@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Parallel Task API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.parallel.ai"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/tasks/runs": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Create Task Run",
+        "description": "Initiates a task run.",
+        "operationId": "tasks_runs_post_v1_tasks_runs_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRunInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task run created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskRun"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tasks/runs/{run_id}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Retrieve Task Run",
+        "description": "Retrieves run status by run_id.",
+        "operationId": "tasks_runs_get_v1_tasks_runs_run_id_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task run status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskRun"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "TaskRunInput": {
+        "type": "object",
+        "required": [
+          "processor",
+          "input"
+        ],
+        "properties": {
+          "processor": {
+            "type": "string"
+          },
+          "input": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "previous_interaction_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "source_policy": {
+            "$ref": "#/components/schemas/SourcePolicy"
+          },
+          "task_spec": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        }
+      },
+      "TaskRun": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "status"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string"
+          },
+          "interaction_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "processor": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "modified_at": {
+            "type": "string"
+          }
+        }
+      },
+      "SourcePolicy": {
+        "type": "object",
+        "properties": {
+          "after_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "include_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exclude_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
