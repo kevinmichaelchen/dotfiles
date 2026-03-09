@@ -166,6 +166,27 @@ api_sources() {
     "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources"
 }
 
+update_source() {
+  local source_id="$1"
+  local payload="$2"
+  "$CURL_BIN" -fsS \
+    -X PATCH \
+    -H "content-type: application/json" \
+    -H "x-executor-account-id: $ACCOUNT_ID" \
+    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/$source_id" \
+    -d "$payload"
+}
+
+connect_source() {
+  local payload="$1"
+  "$CURL_BIN" -fsS \
+    -X POST \
+    -H "content-type: application/json" \
+    -H "x-executor-account-id: $ACCOUNT_ID" \
+    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/connect" \
+    -d "$payload"
+}
+
 delete_source() {
   local source_id="$1"
   "$CURL_BIN" -fsS \
@@ -293,6 +314,118 @@ sync_stdio_bridge_source() {
   ensure_source "$name" "$namespace" "$(bridge_url "$port")" || FAILURES+=("$name")
 }
 
+ensure_openapi_source() {
+  local name="$1"
+  local namespace="$2"
+  local endpoint="$3"
+  local spec_url="$4"
+  local auth_json="$5"
+  local default_headers_json="${6:-null}"
+  local sources existing source_id matches connect_payload update_payload result status
+
+  sources="$(api_sources)"
+  existing="$(
+    printf '%s' "$sources" | "$JQ_BIN" -c --arg name "$name" '
+      map(select(.kind == "openapi" and .name == $name)) | first
+    '
+  )"
+
+  if [[ "$existing" != "null" ]]; then
+    matches="$(
+      printf '%s' "$existing" | "$JQ_BIN" -r \
+        --arg endpoint "$endpoint" \
+        --arg namespace "$namespace" \
+        --arg specUrl "$spec_url" \
+        --argjson defaultHeaders "$default_headers_json" '
+          if .endpoint == $endpoint
+            and .namespace == $namespace
+            and .specUrl == $specUrl
+            and .status == "connected"
+            and .enabled == true
+            and (.defaultHeaders // null) == $defaultHeaders
+          then
+            "true"
+          else
+            "false"
+          end
+        '
+    )"
+
+    if [[ "$matches" == "true" ]]; then
+      info "Source $namespace already connected"
+      return 0
+    fi
+
+    source_id="$(printf '%s' "$existing" | "$JQ_BIN" -r '.id')"
+    warn "Replacing existing OpenAPI source $name"
+    delete_source "$source_id"
+  fi
+
+  connect_payload="$("$JQ_BIN" -cn \
+    --arg name "$name" \
+    --arg namespace "$namespace" \
+    --arg endpoint "$endpoint" \
+    --arg specUrl "$spec_url" \
+    --argjson auth "$auth_json" \
+    '
+      {
+        name: $name,
+        kind: "openapi",
+        endpoint: $endpoint,
+        namespace: $namespace,
+        specUrl: $specUrl,
+        auth: $auth
+      }
+    '
+  )"
+
+  info "Connecting OpenAPI source $name"
+  result="$(connect_source "$connect_payload")"
+  status="$(printf '%s' "$result" | "$JQ_BIN" -r '.kind // empty' 2>/dev/null || true)"
+  if [[ "$status" != "connected" ]]; then
+    warn "OpenAPI source $name did not connect cleanly"
+    printf '%s\n' "$result" >&2
+    return 1
+  fi
+
+  source_id="$(printf '%s' "$result" | "$JQ_BIN" -r '.source.id')"
+  if [[ "$default_headers_json" != "null" ]]; then
+    update_payload="$("$JQ_BIN" -cn \
+      --argjson defaultHeaders "$default_headers_json" '
+        {
+          defaultHeaders: $defaultHeaders,
+          status: "connected",
+          enabled: true
+        }
+      '
+    )"
+    result="$(update_source "$source_id" "$update_payload")"
+  else
+    result="$(printf '%s' "$result" | "$JQ_BIN" -c '.source')"
+  fi
+
+  status="$(printf '%s' "$result" | "$JQ_BIN" -r '.status // empty' 2>/dev/null || true)"
+  if [[ "$status" != "connected" ]]; then
+    warn "OpenAPI source $name did not report connected status"
+    printf '%s\n' "$result" >&2
+    return 1
+  fi
+
+  info "Connected source $namespace -> $endpoint"
+  return 0
+}
+
+sync_openapi_source() {
+  local name="$1"
+  local namespace="$2"
+  local endpoint="$3"
+  local spec_url="$4"
+  local auth_json="$5"
+  local default_headers_json="${6:-null}"
+
+  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" "$default_headers_json" || FAILURES+=("$name")
+}
+
 EXECUTOR_BIN="$(require_bin executor "$HOME/.local/share/mise/shims/executor")"
 SUPERGATEWAY_BIN="$(require_bin supergateway "$HOME/.local/share/mise/shims/supergateway")"
 TMUX_BIN="$(require_bin tmux)"
@@ -320,7 +453,55 @@ remove_matching_sources "parallel" "parallel" >/dev/null || true
 remove_matching_sources "github" "github" >/dev/null || true
 remove_matching_sources "context7" "context7" >/dev/null || true
 
-sync_stdio_bridge_source "perplexity" "perplexity" 8813 "perplexity-mcp"
+stop_managed_process "perplexity"
+remove_matching_sources "perplexity" "perplexity" >/dev/null || true
+
+if have_env PERPLEXITY_API_KEY; then
+  perplexity_auth="$("$JQ_BIN" -cn --arg token "$PERPLEXITY_API_KEY" '
+    {
+      kind: "bearer",
+      headerName: "Authorization",
+      prefix: "Bearer ",
+      token: $token
+    }
+  ')"
+  sync_openapi_source \
+    "perplexity-search" \
+    "perplexity_search" \
+    "https://api.perplexity.ai" \
+    "https://docs.perplexity.ai/openapi.json" \
+    "$perplexity_auth"
+else
+  warn "Skipping perplexity-search: PERPLEXITY_API_KEY is not set"
+  SKIPPED+=("perplexity-search")
+fi
+
+if have_env PARALLEL_API_KEY; then
+  parallel_auth="$("$JQ_BIN" -cn --arg token "$PARALLEL_API_KEY" '
+    {
+      kind: "bearer",
+      headerName: "x-api-key",
+      prefix: "",
+      token: $token
+    }
+  ')"
+  parallel_default_headers="$("$JQ_BIN" -cn '
+    {
+      "parallel-beta": "search-extract-2025-10-10"
+    }
+  ')"
+  sync_openapi_source \
+    "parallel" \
+    "parallel" \
+    "https://api.parallel.ai" \
+    "https://docs.parallel.ai/public-openapi.json" \
+    "$parallel_auth" \
+    "$parallel_default_headers"
+else
+  warn "Skipping parallel: PARALLEL_API_KEY is not set"
+  SKIPPED+=("parallel")
+fi
+
 sync_stdio_bridge_source "exa" "exa" 8814 "npx -y exa-mcp-server"
 
 if command -v mcp-atlassian >/dev/null 2>&1 && have_env JIRA_URL JIRA_USERNAME JIRA_API_TOKEN CONFLUENCE_URL CONFLUENCE_USERNAME CONFLUENCE_API_TOKEN; then

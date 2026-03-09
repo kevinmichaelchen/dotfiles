@@ -169,9 +169,9 @@ Can be run directly: `./scripts/update-tools.sh`
 The `executor-sync-mcp.sh` script:
 
 1. Ensures the local `executor` daemon is running
-2. Starts local `supergateway` bridges for stdio MCP servers
-3. Adds or reconciles MCP sources in the active `executor` workspace by namespace
-4. Removes retired executor-managed sources like `parallel`, `github`, and `context7`
+2. Starts local `supergateway` bridges for the stdio-backed sources that still need them
+3. Adds or reconciles executor sources in the active workspace, including direct MCP sources and OpenAPI sources like `perplexity-search` and `parallel`
+4. Removes retired executor-managed sources like `github` and `context7`
 5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
 
 Can be run directly: `./scripts/executor-sync-mcp.sh`
