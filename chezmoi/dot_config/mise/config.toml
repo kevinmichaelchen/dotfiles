@@ -23,6 +23,8 @@ bun = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@intellectronica/ruler" = "latest"
 "npm:@openai/codex" = "latest"
+"npm:executor" = "latest"
+"npm:supergateway" = "latest"
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)

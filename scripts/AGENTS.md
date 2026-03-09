@@ -10,6 +10,7 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | File           | Purpose                               |
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
+| `executor-sync-mcp.sh` | Sync MCP sources into local executor |
 | `update.sh`       | Pull latest changes and apply configs |
 | `update-tools.sh` | Upgrade Mise tools and Claude Code     |
 | `cleanup.sh`      | Nix store maintenance and GC            |
@@ -162,6 +163,18 @@ The `update-tools.sh` script:
 If `mise upgrade` fails on `github:cli/cli` attestation verification, it retries that install once with `MISE_GITHUB_ATTESTATIONS=false` and reruns `mise upgrade`.
 
 Can be run directly: `./scripts/update-tools.sh`
+
+## EXECUTOR-SYNC-MCP SCRIPT
+
+The `executor-sync-mcp.sh` script:
+
+1. Ensures the local `executor` daemon is running
+2. Starts local `supergateway` bridges for stdio MCP servers
+3. Adds or reconciles MCP sources in the active `executor` workspace by namespace
+4. Removes retired executor-managed sources like `parallel`, `github`, and `context7`
+5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
+
+Can be run directly: `./scripts/executor-sync-mcp.sh`
 
 ## CLEANUP SCRIPT
 
