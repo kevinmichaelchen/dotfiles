@@ -19,12 +19,15 @@ multi_agent = true
 # Startup overhead notes (see MCP-SERVERS.md for details):
 #
 #   HTTP servers (low overhead — no subprocess spawned):
-#     parallel, context7, deepwiki, github, grep
+#     executor
 #
 #   Stdio servers (medium overhead — spawns a subprocess):
-#     perplexity, exa, atlassian
+#     exa, atlassian
 #
 # REMOVED:
+#   mcp_servers.parallel and mcp_servers.perplexity — now routed through
+#   executor so Codex uses the same shared tool plane as Claude.
+#   mcp_servers.context7 and mcp_servers.github — pruned from Codex config.
 #   mcp_servers.codex — was recursive (Codex spawning Codex as MCP server),
 #   causing each invocation to re-load all MCP servers again. This at minimum
 #   doubled startup time and risked infinite recursion.
@@ -35,30 +38,10 @@ multi_agent = true
 
 # ─── HTTP servers (low overhead) ────────────────────────────────────────
 
-[mcp_servers.parallel]
-url = "https://search-mcp.parallel.ai/mcp"
-bearer_token_env_var = "PARALLEL_API_KEY"
-
-[mcp_servers.context7]
-url = "https://mcp.context7.com/mcp"
-env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
-
-[mcp_servers.deepwiki]
-url = "https://mcp.deepwiki.com/mcp"
-
-[mcp_servers.github]
-url = "https://api.githubcopilot.com/mcp/"
-bearer_token_env_var = "GITHUB_PERSONAL_ACCESS_TOKEN"
-
-[mcp_servers.grep]
-url = "https://mcp.grep.app"
+[mcp_servers.executor]
+url = "http://127.0.0.1:8788/mcp"
 
 # ─── Stdio servers (medium overhead) ────────────────────────────────────
-
-[mcp_servers.perplexity]
-command = "perplexity-mcp"
-args = []
-env_vars = ["PERPLEXITY_API_KEY"]
 
 [mcp_servers.exa]
 command = "npx"

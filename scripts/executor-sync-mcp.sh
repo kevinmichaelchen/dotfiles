@@ -431,7 +431,6 @@ SUPERGATEWAY_BIN="$(require_bin supergateway "$HOME/.local/share/mise/shims/supe
 TMUX_BIN="$(require_bin tmux)"
 JQ_BIN="$(require_bin jq)"
 CURL_BIN="$(require_bin curl)"
-CODEX_BIN="$(require_bin codex "$HOME/.local/share/mise/shims/codex")"
 PYTHON_BIN="$(require_bin python3)"
 
 BASE_URL="${EXECUTOR_BASE_URL:-http://127.0.0.1:8788}"
@@ -464,6 +463,8 @@ remove_matching_sources "parallel-search" "parallel_search" >/dev/null || true
 remove_matching_sources "parallel-task" "parallel_task" >/dev/null || true
 remove_matching_sources "github" "github" >/dev/null || true
 remove_matching_sources "context7" "context7" >/dev/null || true
+stop_managed_process "codex"
+remove_matching_sources "codex" "codex" >/dev/null || true
 
 stop_managed_process "perplexity"
 remove_matching_sources "perplexity" "perplexity" >/dev/null || true
@@ -538,9 +539,6 @@ else
   warn "Skipping nia: NIA_API_KEY is not set"
   SKIPPED+=("nia")
 fi
-
-printf -v codex_command '%q mcp-server' "$CODEX_BIN"
-sync_stdio_bridge_source "codex" "codex" 8820 "$codex_command"
 
 NX_MCP_WORKSPACE="${NX_MCP_WORKSPACE:-}"
 if [[ -n "$NX_MCP_WORKSPACE" ]]; then
