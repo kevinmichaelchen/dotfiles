@@ -51,6 +51,18 @@ require_bin() {
   printf '%s\n' "$resolved"
 }
 
+prefer_fallback_bin() {
+  local name="$1"
+  local fallback="${2:-}"
+
+  if [[ -n "$fallback" && -x "$fallback" ]]; then
+    printf '%s\n' "$fallback"
+    return 0
+  fi
+
+  require_bin "$name"
+}
+
 have_env() {
   local key
   for key in "$@"; do
@@ -426,8 +438,8 @@ sync_openapi_source() {
   ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" || FAILURES+=("$name")
 }
 
-EXECUTOR_BIN="$(require_bin executor "$HOME/.local/share/mise/shims/executor")"
-SUPERGATEWAY_BIN="$(require_bin supergateway "$HOME/.local/share/mise/shims/supergateway")"
+EXECUTOR_BIN="$(prefer_fallback_bin executor "$HOME/.local/share/mise/shims/executor")"
+SUPERGATEWAY_BIN="$(prefer_fallback_bin supergateway "$HOME/.local/share/mise/shims/supergateway")"
 TMUX_BIN="$(require_bin tmux)"
 JQ_BIN="$(require_bin jq)"
 CURL_BIN="$(require_bin curl)"

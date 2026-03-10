@@ -8,9 +8,31 @@ set -euo pipefail
 # Uses environment variables for secrets (set via shell/*.sh.tmpl files)
 MCP_CONFIG='{
   "mcpServers": {
-    "executor": {
+    "deepwiki": {
       "type": "http",
-      "url": "http://127.0.0.1:8788/mcp"
+      "url": "https://mcp.deepwiki.com/mcp",
+      "headers": {
+        "Accept": "application/json, text/event-stream"
+      }
+    },
+    "grep": {
+      "type": "http",
+      "url": "https://mcp.grep.app"
+    },
+    "parallel": {
+      "type": "http",
+      "url": "https://search-mcp.parallel.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${PARALLEL_API_KEY}"
+      }
+    },
+    "perplexity": {
+      "command": "npx",
+      "args": ["-y", "@perplexity-ai/mcp-server"],
+      "env": {
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
+      },
+      "type": "stdio"
     },
 {{- if eq .chezmoi.hostname "MLJLWV4J4TLC" }}
     "atlassian": {

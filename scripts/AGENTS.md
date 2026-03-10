@@ -10,7 +10,6 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | File           | Purpose                               |
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
-| `executor-launchd-sync.sh` | Load shell env and run executor sync under launchd |
 | `executor-sync-mcp.sh` | Sync MCP sources into local executor |
 | `update.sh`       | Pull latest changes and apply configs |
 | `update-tools.sh` | Upgrade Mise tools and Claude Code     |
@@ -176,16 +175,7 @@ The `executor-sync-mcp.sh` script:
 5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
 
 Can be run directly: `./scripts/executor-sync-mcp.sh`
-
-## EXECUTOR-LAUNCHD-SYNC SCRIPT
-
-The `executor-launchd-sync.sh` script:
-
-1. Recreates the minimal PATH launchd needs for Mise-managed CLIs
-2. Sources the shell fragments that export API credentials for executor-managed sources
-3. Runs `./scripts/executor-sync-mcp.sh`
-
-It is the entrypoint used by the macOS LaunchAgent that keeps executor available after login.
+It is currently a manual workflow rather than a login-time default.
 
 ## CLEANUP SCRIPT
 

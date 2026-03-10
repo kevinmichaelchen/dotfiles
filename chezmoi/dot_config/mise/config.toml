@@ -21,7 +21,6 @@ bun = "latest"
 # npm global packages
 "npm:@charmland/crush" = "latest"
 "npm:@google/gemini-cli" = "latest"
-"npm:@intellectronica/ruler" = "latest"
 "npm:@openai/codex" = "latest"
 "npm:executor" = "latest"
 "npm:supergateway" = "latest"

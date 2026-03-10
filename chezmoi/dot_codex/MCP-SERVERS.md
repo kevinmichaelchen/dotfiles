@@ -19,28 +19,31 @@ download packages or install dependencies on launch. This adds up.
 
 | Server | URL |
 |--------|-----|
-| executor | `http://127.0.0.1:8788/mcp` |
+| parallel | `https://search-mcp.parallel.ai/mcp` |
+| deepwiki | `https://mcp.deepwiki.com/mcp` |
+| grep | `https://mcp.grep.app` |
 
 ### Medium overhead (Stdio)
 
 | Server | Command | Notes |
 |--------|---------|-------|
+| perplexity | `npx -y @perplexity-ai/mcp-server` | Official upstream package |
 | exa | `npx -y exa-mcp-server` | Downloads if not cached |
 | atlassian | `mcp-atlassian` | Work laptop only |
 
 ## Removed servers
 
-### `parallel` and `perplexity` (moved behind `executor`)
-
-Codex no longer connects to Parallel or Perplexity directly. Those tools are
-now exposed through the local executor control plane, which also keeps the same
-tool inventory aligned across Codex and Claude.
-
 ### `context7` and `github` (pruned)
 
-These direct MCP entries were removed from Codex's default profile. `github`
-is covered well enough by `gh`, and `context7` was retired from the active tool
+These direct MCP entries were removed from Codex's default profile. `github` is
+covered well enough by `gh`, and `context7` was retired from the active tool
 set.
+
+### `executor` (manual experiment)
+
+Executor remains in the toolchain for experimentation, but it is not wired into
+Codex's default MCP profile until its runtime is boring enough to trust as the
+primary path.
 
 ### `codex` (recursive — removed)
 
@@ -66,19 +69,19 @@ With all servers loaded:
 
 | Category | Count | Est. time |
 |----------|:---:|-----------|
-| HTTP servers | 1 | ~0s |
-| Stdio (npx) | 1 | ~2-5s |
+| HTTP servers | 3 | ~0s |
+| Stdio (npx) | 2 | ~3-8s |
 | Stdio (local binary) | 1 | ~1-2s |
-| **Total** | **3** | **~3-7s** |
+| **Total** | **6** | **~4-10s** |
 
 This overhead applies to every Codex invocation, including when Pliny spawns
 Codex for research subtopics.
 
 ## Recommendations
 
-1. **Keep the shared tool plane behind `executor`** for tools that both Codex
-   and Claude should see.
+1. **Prefer HTTP servers** when available (Parallel, deepwiki, and grep all
+   use HTTP directly).
 2. **Install stdio servers globally** instead of using `npx -y`.
 3. **Never add Codex as its own MCP server** — it causes recursive spawning.
-4. **Keep Codex direct MCPs to the small set not yet proven through
-   executor**.
+4. **Keep the default profile lean** and avoid re-adding retired MCPs that are
+   already covered elsewhere.
