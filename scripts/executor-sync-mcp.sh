@@ -190,6 +190,18 @@ start_static_server() {
     --directory "$directory"
 }
 
+sync_tmux_env() {
+  local key
+
+  for key in "$@"; do
+    if [[ -n "${!key:-}" ]]; then
+      "$TMUX_BIN" set-environment -g "$key" "${!key}"
+    else
+      "$TMUX_BIN" set-environment -gu "$key" >/dev/null 2>&1 || true
+    fi
+  done
+}
+
 stop_managed_process() {
   local name="$1"
   local session_name="executor-mcp-${name}"
@@ -440,6 +452,7 @@ sync_openapi_source() {
 
 EXECUTOR_BIN="$(prefer_fallback_bin executor "$HOME/.local/share/mise/shims/executor")"
 SUPERGATEWAY_BIN="$(prefer_fallback_bin supergateway "$HOME/.local/share/mise/shims/supergateway")"
+GITHUB_MCP_BIN="$(resolve_bin github-mcp-server "$HOME/.local/share/mise/shims/github-mcp-server" || true)"
 TMUX_BIN="$(require_bin tmux)"
 JQ_BIN="$(require_bin jq)"
 CURL_BIN="$(require_bin curl)"
@@ -466,14 +479,27 @@ if [[ ! -d "$OPENAPI_SPEC_DIR" ]]; then
 fi
 
 start_static_server "openapi-specs" "$OPENAPI_SPEC_PORT" "$OPENAPI_SPEC_DIR"
+sync_tmux_env \
+  GITHUB_PERSONAL_ACCESS_TOKEN \
+  EXA_API_KEY \
+  JIRA_URL \
+  JIRA_USERNAME \
+  JIRA_API_TOKEN \
+  CONFLUENCE_URL \
+  CONFLUENCE_USERNAME \
+  CONFLUENCE_API_TOKEN \
+  HF_TOKEN \
+  NIA_API_KEY \
+  FIRECRAWL_API_KEY
 
 sync_direct_source "deepwiki" "deepwiki" "https://mcp.deepwiki.com/mcp"
 sync_direct_source "grep" "grep" "https://mcp.grep.app/"
+stop_managed_process "github"
+remove_matching_sources "github" "github" >/dev/null || true
 stop_managed_process "parallel"
 remove_matching_sources "parallel" "parallel" >/dev/null || true
 remove_matching_sources "parallel-search" "parallel_search" >/dev/null || true
 remove_matching_sources "parallel-task" "parallel_task" >/dev/null || true
-remove_matching_sources "github" "github" >/dev/null || true
 remove_matching_sources "context7" "context7" >/dev/null || true
 stop_managed_process "codex"
 remove_matching_sources "codex" "codex" >/dev/null || true
@@ -519,6 +545,18 @@ if have_env PARALLEL_API_KEY; then
 else
   warn "Skipping parallel-search: PARALLEL_API_KEY is not set"
   SKIPPED+=("parallel-search")
+fi
+
+if [[ -n "$GITHUB_MCP_BIN" ]] && have_env GITHUB_PERSONAL_ACCESS_TOKEN; then
+  github_toolsets="actions,code_security,dependabot,discussions,gists,issues,labels,orgs,projects,pull_requests,repos,secret_protection,security_advisories,stargazers,users"
+  sync_stdio_bridge_source \
+    "github" \
+    "github" \
+    8822 \
+    "$GITHUB_MCP_BIN stdio --read-only --toolsets $github_toolsets"
+else
+  warn "Skipping github: command or GITHUB_PERSONAL_ACCESS_TOKEN missing"
+  SKIPPED+=("github")
 fi
 
 sync_stdio_bridge_source "exa" "exa" 8814 "npx -y exa-mcp-server"

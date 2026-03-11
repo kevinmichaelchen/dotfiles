@@ -23,17 +23,16 @@ download packages or install dependencies on launch. This adds up.
 
 ## Removed servers
 
-### `parallel`, `perplexity`, `deepwiki`, `exa`, `atlassian`, and `grep` (moved behind `executor`)
+### `github`, `parallel`, `perplexity`, `deepwiki`, `exa`, `atlassian`, and `grep` (moved behind `executor`)
 
 These direct MCP entries are now routed through the local executor control
 plane. That keeps Codex and Claude on the same shared tool surface instead of
 repeating the same MCP setup in both clients.
 
-### `context7` and `github` (pruned)
+### `context7` (pruned)
 
-These direct MCP entries were removed from Codex's default profile. `github` is
-covered well enough by `gh`, and `context7` was retired from the active tool
-set.
+This direct MCP entry was removed from Codex's default profile. `context7` was
+retired from the active tool set.
 
 ### `codex` (recursive — removed)
 
