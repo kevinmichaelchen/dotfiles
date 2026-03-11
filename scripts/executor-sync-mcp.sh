@@ -516,15 +516,9 @@ if have_env PARALLEL_API_KEY; then
     "https://api.parallel.ai" \
     "$(spec_url "parallel-search.openapi.json")" \
     "$parallel_auth"
-  sync_openapi_source \
-    "parallel-task" \
-    "parallel_task" \
-    "https://api.parallel.ai" \
-    "$(spec_url "parallel-task.openapi.json")" \
-    "$parallel_auth"
 else
-  warn "Skipping parallel-search and parallel-task: PARALLEL_API_KEY is not set"
-  SKIPPED+=("parallel-search" "parallel-task")
+  warn "Skipping parallel-search: PARALLEL_API_KEY is not set"
+  SKIPPED+=("parallel-search")
 fi
 
 sync_stdio_bridge_source "exa" "exa" 8814 "npx -y exa-mcp-server"

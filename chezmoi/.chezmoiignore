@@ -12,3 +12,6 @@ flake.lock
 .config/opencode/bun.lock
 .config/opencode/antigravity-accounts.json
 .config/opencode/.gitignore
+{{ if ne .chezmoi.os "darwin" }}
+Library/
+{{ end }}
