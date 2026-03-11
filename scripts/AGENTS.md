@@ -179,6 +179,8 @@ Current managed source set includes DeepWiki, grep, GitHub, Exa, Atlassian, Hugg
 
 Can be run directly: `./scripts/executor-sync-mcp.sh`
 
+Canonical architecture and runtime notes live in [docs/executor.md](../docs/executor.md).
+
 ## EXECUTOR-LAUNCHD-SYNC SCRIPT
 
 The `executor-launchd-sync.sh` script:
