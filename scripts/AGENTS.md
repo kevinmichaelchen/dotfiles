@@ -172,12 +172,14 @@ The `executor-sync-mcp.sh` script:
 1. Ensures the local `executor` daemon is running
 2. Starts local helper services for stdio-backed MCP sources and curated OpenAPI specs
 3. Adds or reconciles executor sources in the active workspace, including direct MCP sources plus focused OpenAPI sources like `perplexity-search` and `parallel-search`
-4. Removes retired executor-managed sources like `github`, `context7`, and `codex`
+4. Removes retired executor-managed sources like `context7` and `codex`
 5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
 
-Current managed source set includes DeepWiki, grep, Exa, Atlassian, Hugging Face, Effect docs, Nia, Firecrawl, Perplexity Search, and Parallel Search.
+Current managed source set includes DeepWiki, grep, GitHub, Exa, Atlassian, Hugging Face, Effect docs, Nia, Firecrawl, Perplexity Search, and Parallel Search.
 
 Can be run directly: `./scripts/executor-sync-mcp.sh`
+
+Canonical architecture and runtime notes live in [docs/executor.md](../docs/executor.md).
 
 ## EXECUTOR-LAUNCHD-SYNC SCRIPT
 
