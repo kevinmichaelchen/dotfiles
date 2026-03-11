@@ -175,6 +175,8 @@ The `executor-sync-mcp.sh` script:
 4. Removes retired executor-managed sources like `github`, `context7`, and `codex`
 5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
 
+Current managed source set includes DeepWiki, grep, Exa, Atlassian, Hugging Face, Effect docs, Nia, Firecrawl, Perplexity Search, and Parallel Search.
+
 Can be run directly: `./scripts/executor-sync-mcp.sh`
 
 ## EXECUTOR-LAUNCHD-SYNC SCRIPT

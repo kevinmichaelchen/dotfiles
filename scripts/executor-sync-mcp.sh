@@ -546,6 +546,13 @@ else
   SKIPPED+=("nia")
 fi
 
+if have_env FIRECRAWL_API_KEY; then
+  sync_stdio_bridge_source "firecrawl" "firecrawl" 8820 "npx -y firecrawl-mcp"
+else
+  warn "Skipping firecrawl: FIRECRAWL_API_KEY is not set"
+  SKIPPED+=("firecrawl")
+fi
+
 NX_MCP_WORKSPACE="${NX_MCP_WORKSPACE:-}"
 if [[ -n "$NX_MCP_WORKSPACE" ]]; then
   if [[ -f "$NX_MCP_WORKSPACE/nx.json" ]]; then

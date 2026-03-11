@@ -15,6 +15,7 @@ for env_file in \
   "$HOME/.config/shell/perplexity.sh" \
   "$HOME/.config/shell/parallel.sh" \
   "$HOME/.config/shell/exa.sh" \
+  "$HOME/.config/shell/firecrawl.sh" \
   "$HOME/.config/shell/jira.sh" \
   "$HOME/.config/shell/huggingface.sh" \
   "$HOME/.config/shell/nia.sh"
