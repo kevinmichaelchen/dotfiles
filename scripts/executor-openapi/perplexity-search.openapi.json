@@ -1,0 +1,186 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Perplexity Search API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.perplexity.ai"
+    }
+  ],
+  "security": [
+    {
+      "HTTPBearer": []
+    }
+  ],
+  "paths": {
+    "/search": {
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search the Web",
+        "description": "Search the web and retrieve relevant web page contents.",
+        "operationId": "search_search_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "ApiSearchRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "description": "Search query",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "country": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "max_tokens": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "max_tokens_per_page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "search_language_filter": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            }
+          },
+          "search_domain_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_updated_after_filter": {
+            "type": "string"
+          },
+          "last_updated_before_filter": {
+            "type": "string"
+          },
+          "search_after_date_filter": {
+            "type": "string"
+          },
+          "search_before_date_filter": {
+            "type": "string"
+          },
+          "search_recency_filter": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year"
+            ]
+          }
+        }
+      },
+      "ApiSearchResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "results"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiSearchPage"
+            }
+          },
+          "server_time": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApiSearchPage": {
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "snippet"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_updated": {
+            "type": "string",
+            "nullable": true
+          },
+          "snippet": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

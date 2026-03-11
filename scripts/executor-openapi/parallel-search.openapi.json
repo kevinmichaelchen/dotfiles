@@ -1,0 +1,210 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Parallel Search API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.parallel.ai"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/v1beta/search": {
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search",
+        "description": "Searches the web.",
+        "operationId": "web_search_v1beta_search_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "SearchRequest": {
+        "type": "object",
+        "properties": {
+          "objective": {
+            "type": "string"
+          },
+          "search_queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "processor": {
+            "type": "string",
+            "enum": [
+              "base",
+              "pro"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "one-shot",
+              "agentic",
+              "fast"
+            ]
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "excerpts": {
+            "$ref": "#/components/schemas/ExcerptsConfig"
+          },
+          "fetch_policy": {
+            "$ref": "#/components/schemas/FetchPolicy"
+          },
+          "source_policy": {
+            "$ref": "#/components/schemas/SourcePolicy"
+          }
+        }
+      },
+      "SearchResponse": {
+        "type": "object",
+        "required": [
+          "search_id",
+          "results"
+        ],
+        "properties": {
+          "search_id": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            }
+          },
+          "usage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsageRecord"
+            }
+          }
+        }
+      },
+      "SearchResult": {
+        "type": "object",
+        "required": [
+          "url",
+          "title"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "excerpts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExcerptsConfig": {
+        "type": "object",
+        "properties": {
+          "max_chars_per_result": {
+            "type": "integer",
+            "nullable": true
+          },
+          "max_chars_total": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "FetchPolicy": {
+        "type": "object",
+        "properties": {
+          "disable_cache_fallback": {
+            "type": "boolean"
+          },
+          "max_age_seconds": {
+            "type": "integer",
+            "nullable": true
+          },
+          "timeout_seconds": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "SourcePolicy": {
+        "type": "object",
+        "properties": {
+          "after_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "include_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exclude_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UsageRecord": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

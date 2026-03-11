@@ -19,12 +19,13 @@ multi_agent = true
 # Startup overhead notes (see MCP-SERVERS.md for details):
 #
 #   HTTP servers (low overhead — no subprocess spawned):
-#     parallel, context7, deepwiki, github, grep
-#
-#   Stdio servers (medium overhead — spawns a subprocess):
-#     perplexity, exa, atlassian
+#     executor
 #
 # REMOVED:
+#   mcp_servers.context7 and mcp_servers.github — pruned from Codex config.
+#   direct mcp_servers.parallel, mcp_servers.perplexity, mcp_servers.deepwiki,
+#   mcp_servers.exa, mcp_servers.atlassian, and mcp_servers.grep — now routed
+#   through executor.
 #   mcp_servers.codex — was recursive (Codex spawning Codex as MCP server),
 #   causing each invocation to re-load all MCP servers again. This at minimum
 #   doubled startup time and risked infinite recursion.
@@ -35,39 +36,5 @@ multi_agent = true
 
 # ─── HTTP servers (low overhead) ────────────────────────────────────────
 
-[mcp_servers.parallel]
-url = "https://search-mcp.parallel.ai/mcp"
-bearer_token_env_var = "PARALLEL_API_KEY"
-
-[mcp_servers.context7]
-url = "https://mcp.context7.com/mcp"
-env_http_headers = { CONTEXT7_API_KEY = "CONTEXT7_API_KEY" }
-
-[mcp_servers.deepwiki]
-url = "https://mcp.deepwiki.com/mcp"
-
-[mcp_servers.github]
-url = "https://api.githubcopilot.com/mcp/"
-bearer_token_env_var = "GITHUB_PERSONAL_ACCESS_TOKEN"
-
-[mcp_servers.grep]
-url = "https://mcp.grep.app"
-
-# ─── Stdio servers (medium overhead) ────────────────────────────────────
-
-[mcp_servers.perplexity]
-command = "perplexity-mcp"
-args = []
-env_vars = ["PERPLEXITY_API_KEY"]
-
-[mcp_servers.exa]
-command = "npx"
-args = ["-y", "exa-mcp-server"]
-env_vars = ["EXA_API_KEY"]
-
-{{- if eq .chezmoi.hostname "MLJLWV4J4TLC" }}
-[mcp_servers.atlassian]
-command = "mcp-atlassian"
-args = []
-env_vars = ["JIRA_URL", "JIRA_USERNAME", "JIRA_API_TOKEN", "CONFLUENCE_URL", "CONFLUENCE_USERNAME", "CONFLUENCE_API_TOKEN"]
-{{- end }}
+[mcp_servers.executor]
+url = "http://127.0.0.1:8788/mcp"
