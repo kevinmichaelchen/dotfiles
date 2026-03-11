@@ -19,12 +19,13 @@ multi_agent = true
 # Startup overhead notes (see MCP-SERVERS.md for details):
 #
 #   HTTP servers (low overhead — no subprocess spawned):
-#     executor, grep
+#     executor
 #
 # REMOVED:
 #   mcp_servers.context7 and mcp_servers.github — pruned from Codex config.
 #   direct mcp_servers.parallel, mcp_servers.perplexity, mcp_servers.deepwiki,
-#   mcp_servers.exa, and mcp_servers.atlassian — now routed through executor.
+#   mcp_servers.exa, mcp_servers.atlassian, and mcp_servers.grep — now routed
+#   through executor.
 #   mcp_servers.codex — was recursive (Codex spawning Codex as MCP server),
 #   causing each invocation to re-load all MCP servers again. This at minimum
 #   doubled startup time and risked infinite recursion.
@@ -37,8 +38,3 @@ multi_agent = true
 
 [mcp_servers.executor]
 url = "http://127.0.0.1:8788/mcp"
-
-# Grep stays direct for now because its executor bridge is still failing MCP invocation.
-
-[mcp_servers.grep]
-url = "https://mcp.grep.app"

@@ -20,11 +20,10 @@ download packages or install dependencies on launch. This adds up.
 | Server | URL |
 |--------|-----|
 | executor | `http://127.0.0.1:8788/mcp` |
-| grep | `https://mcp.grep.app` |
 
 ## Removed servers
 
-### `parallel`, `perplexity`, `deepwiki`, `exa`, and `atlassian` (moved behind `executor`)
+### `parallel`, `perplexity`, `deepwiki`, `exa`, `atlassian`, and `grep` (moved behind `executor`)
 
 These direct MCP entries are now routed through the local executor control
 plane. That keeps Codex and Claude on the same shared tool surface instead of
@@ -35,11 +34,6 @@ repeating the same MCP setup in both clients.
 These direct MCP entries were removed from Codex's default profile. `github` is
 covered well enough by `gh`, and `context7` was retired from the active tool
 set.
-
-### `grep` (kept direct)
-
-Grep stays direct for now because its executor-backed MCP invocation is still
-failing, even though the source connects successfully.
 
 ### `codex` (recursive — removed)
 
@@ -65,8 +59,8 @@ With all servers loaded:
 
 | Category | Count | Est. time |
 |----------|:---:|-----------|
-| HTTP servers | 2 | ~0s |
-| **Total** | **2** | **~0s** |
+| HTTP servers | 1 | ~0s |
+| **Total** | **1** | **~0s** |
 
 This overhead applies to every Codex invocation, including when Pliny spawns
 Codex for research subtopics.
@@ -75,6 +69,5 @@ Codex for research subtopics.
 
 1. **Keep shared tools behind `executor`** so Codex and Claude see the same
    curated catalog.
-2. **Keep grep direct** until its executor path is stable.
-3. **Never add Codex as its own MCP server** — it causes recursive spawning.
-4. **Avoid re-adding retired MCPs** that are already covered elsewhere.
+2. **Never add Codex as its own MCP server** — it causes recursive spawning.
+3. **Avoid re-adding retired MCPs** that are already covered elsewhere.
