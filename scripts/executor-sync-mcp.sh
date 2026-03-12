@@ -305,7 +305,7 @@ ensure_source() {
   )
 
   local script_file result source_input
-  script_file="$(mktemp "${TMPDIR:-/tmp}/executor-source-add.XXXXXX.ts")"
+  script_file="$(mktemp "${TMPDIR:-/tmp}/executor-source-add.XXXXXX")"
   source_input="$("$JQ_BIN" -cn \
     --arg endpoint "$endpoint" \
     --arg name "$name" \
