@@ -88,6 +88,10 @@ spec_url() {
   printf 'http://127.0.0.1:%s/%s\n' "$OPENAPI_SPEC_PORT" "$filename"
 }
 
+control_plane_spec_url() {
+  printf '%s/v1/openapi.json\n' "${BASE_URL%/}"
+}
+
 wait_for_health() {
   local name="$1"
   local url="$2"
@@ -362,7 +366,8 @@ ensure_openapi_source() {
   local namespace="$2"
   local endpoint="$3"
   local spec_url="$4"
-  local auth_json="$5"
+  local default_headers_json="$5"
+  local auth_json="$6"
   local sources existing source_id matches connect_payload result status
 
   sources="$(api_sources)"
@@ -377,12 +382,14 @@ ensure_openapi_source() {
       printf '%s' "$existing" | "$JQ_BIN" -r \
         --arg endpoint "$endpoint" \
         --arg namespace "$namespace" \
-        --arg specUrl "$spec_url" '
+        --arg specUrl "$spec_url" \
+        --argjson defaultHeaders "$default_headers_json" '
           if .endpoint == $endpoint
             and .namespace == $namespace
             and .specUrl == $specUrl
             and .status == "connected"
             and .enabled == true
+            and ((.defaultHeaders // null) == $defaultHeaders)
           then
             "true"
           else
@@ -406,6 +413,7 @@ ensure_openapi_source() {
     --arg namespace "$namespace" \
     --arg endpoint "$endpoint" \
     --arg specUrl "$spec_url" \
+    --argjson defaultHeaders "$default_headers_json" \
     --argjson auth "$auth_json" \
     '
       {
@@ -414,6 +422,7 @@ ensure_openapi_source() {
         endpoint: $endpoint,
         namespace: $namespace,
         specUrl: $specUrl,
+        defaultHeaders: $defaultHeaders,
         auth: $auth
       }
     '
@@ -445,9 +454,10 @@ sync_openapi_source() {
   local namespace="$2"
   local endpoint="$3"
   local spec_url="$4"
-  local auth_json="$5"
+  local default_headers_json="$5"
+  local auth_json="$6"
 
-  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" || FAILURES+=("$name")
+  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$default_headers_json" "$auth_json" || FAILURES+=("$name")
 }
 
 EXECUTOR_BIN="$(prefer_fallback_bin executor "$HOME/.local/share/mise/shims/executor")"
@@ -492,6 +502,27 @@ sync_tmux_env \
   NIA_API_KEY \
   FIRECRAWL_API_KEY
 
+executor_control_headers="$("$JQ_BIN" -cn --arg accountId "$ACCOUNT_ID" '
+  {
+    "x-executor-account-id": $accountId
+  }
+')"
+no_auth="$("$JQ_BIN" -cn '{ kind: "none" }')"
+
+if "$CURL_BIN" -fsS "$(control_plane_spec_url)" >/dev/null 2>&1; then
+  sync_openapi_source \
+    "executor-control-plane" \
+    "executor_control" \
+    "${BASE_URL%/}/" \
+    "$(control_plane_spec_url)" \
+    "$executor_control_headers" \
+    "$no_auth"
+else
+  warn "Skipping executor-control-plane: $(control_plane_spec_url) is unavailable"
+  remove_matching_sources "executor-control-plane" "executor_control" >/dev/null || true
+  SKIPPED+=("executor-control-plane")
+fi
+
 sync_direct_source "deepwiki" "deepwiki" "https://mcp.deepwiki.com/mcp"
 sync_direct_source "grep" "grep" "https://mcp.grep.app/"
 stop_managed_process "github"
@@ -519,8 +550,9 @@ if have_env PERPLEXITY_API_KEY; then
   sync_openapi_source \
     "perplexity-search" \
     "perplexity_search" \
-    "https://api.perplexity.ai" \
+    "https://api.perplexity.ai/" \
     "$(spec_url "perplexity-search.openapi.json")" \
+    null \
     "$perplexity_auth"
 else
   warn "Skipping perplexity-search: PERPLEXITY_API_KEY is not set"
@@ -539,8 +571,9 @@ if have_env PARALLEL_API_KEY; then
   sync_openapi_source \
     "parallel-search" \
     "parallel_search" \
-    "https://api.parallel.ai" \
+    "https://api.parallel.ai/" \
     "$(spec_url "parallel-search.openapi.json")" \
+    null \
     "$parallel_auth"
 else
   warn "Skipping parallel-search: PARALLEL_API_KEY is not set"
