@@ -1,0 +1,4 @@
+interface:
+  display_name: "Work ADRs"
+  short_description: "Research ADR decisions for work and Confluence"
+  default_prompt: "Use $work-adrs to research an architectural decision, compare options, and prepare an ADR draft, then use $confluence-pages if it should be published to Confluence."

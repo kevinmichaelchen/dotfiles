@@ -22,6 +22,8 @@ Route each requested change to the smallest correct file set before editing anyt
 | darwin user/host profile wiring | `nix-darwin/flake.nix` | Touch when changing `mkDarwinConfig` users or outputs |
 | shared user packages, stable aliases, HM programs | `home-manager/home.nix` | Use for stable shell aliases and Home-Manager-managed programs |
 | dev runtimes and CLI toolchain versions | `chezmoi/dot_config/mise/config.toml` | Prefer Mise for node/python/go/rust and many CLIs |
+| global agent skills for `~/.agents/skills` | `chezmoi/dot_agents/skills/` | Use for skills that should be available across repos/tools on this machine |
+| repo-local dotfiles skills | top-level `.agents/skills/` | Use only for skills specific to maintaining this dotfiles repo |
 | personal shell behavior and fast iteration aliases | `chezmoi/dot_config/shell/*.sh` | Use plain `.sh` for non-secret config |
 | secret-backed env vars | `chezmoi/dot_config/shell/*.sh.tmpl` | Use `onepasswordRead` templates, never hardcode secrets |
 | zsh load order/path wiring | `chezmoi/dot_config/zsh/custom.zsh` | Update when adding a new shell module file |
@@ -31,6 +33,7 @@ Route each requested change to the smallest correct file set before editing anyt
 
 ## Hard Rules
 - Do not put dev runtime/tool version management into `home-manager/home.nix` when it belongs in Mise.
+- Do not put dotfiles-specific skills into `chezmoi/dot_agents/skills`; those belong in top-level `.agents/skills`.
 - Do not put secrets into non-template files.
 - Do not edit generated user dotfiles directly; edit source in `chezmoi/`.
 - Do not add system macOS defaults into Chezmoi shell files.
