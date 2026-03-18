@@ -1,0 +1,4 @@
+interface:
+  display_name: "Confluence Pages"
+  short_description: "Publish Confluence pages via Atlassian MCP"
+  default_prompt: "Use $confluence-pages to draft, format, and publish a Confluence page with a TL;DR, table of contents, inline links, and properly rendered code blocks."

@@ -10,6 +10,8 @@ change frequently or need machine-specific customization.
 
 ```
 chezmoi/
+├── dot_agents/
+│   └── skills/         # Global ~/.agents/skills content
 ├── dot_config/
 │   ├── shell/          # Shell aliases and env vars (*.sh, *.sh.tmpl)
 │   ├── zsh/            # ZSH-specific config (custom.zsh)
@@ -70,6 +72,7 @@ export API_KEY={{ onepasswordRead "op://Work/API Key/password" }}
 
 | Tool     | Location                      |
 | -------- | ----------------------------- |
+| AI agent skills (`~/.agents/skills`) | `dot_agents/skills/` |
 | Git      | `dot_config/git/`             |
 | Starship | `dot_config/starship.toml`    |
 | Mise     | `dot_config/mise/config.toml` |
@@ -99,6 +102,7 @@ chezmoi apply --source=$HOME/dotfiles/chezmoi
 | -------------------------------- | ---------------------------- | -------------------------- |
 | Hardcode secrets                 | Exposes credentials in git   | Use `.tmpl` with 1Password |
 | Edit `~/.config/*` directly      | Changes lost on next apply   | Edit here, then `cma`      |
+| Put dotfiles-only skills in `dot_agents/skills` | Leaks repo-specific helpers into global agent skills | Keep repo-local skills in top-level `.agents/skills` |
 | Run `chezmoi` without `--source` | Uses wrong source directory  | Use `cm*` aliases          |
 | Add dev runtimes here            | Mise manages those           | Edit `mise/config.toml`    |
 | Create new shell in `zsh/`       | Shell scripts go in `shell/` | Add `shell/*.sh` instead   |
