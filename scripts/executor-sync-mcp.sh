@@ -88,6 +88,10 @@ spec_url() {
   printf 'http://127.0.0.1:%s/%s\n' "$OPENAPI_SPEC_PORT" "$filename"
 }
 
+control_plane_spec_url() {
+  printf '%s/v1/openapi.json\n' "${BASE_URL%/}"
+}
+
 wait_for_health() {
   local name="$1"
   local url="$2"
@@ -492,6 +496,21 @@ sync_tmux_env \
   NIA_API_KEY \
   FIRECRAWL_API_KEY
 
+no_auth="$("$JQ_BIN" -cn '{ kind: "none" }')"
+
+if "$CURL_BIN" -fsS "$(control_plane_spec_url)" >/dev/null 2>&1; then
+  sync_openapi_source \
+    "executor-control-plane" \
+    "executor_control" \
+    "${BASE_URL%/}/" \
+    "$(control_plane_spec_url)" \
+    "$no_auth"
+else
+  warn "Skipping executor-control-plane: $(control_plane_spec_url) is unavailable"
+  remove_matching_sources "executor-control-plane" "executor_control" >/dev/null || true
+  SKIPPED+=("executor-control-plane")
+fi
+
 sync_direct_source "deepwiki" "deepwiki" "https://mcp.deepwiki.com/mcp"
 sync_direct_source "grep" "grep" "https://mcp.grep.app/"
 stop_managed_process "github"
@@ -519,7 +538,7 @@ if have_env PERPLEXITY_API_KEY; then
   sync_openapi_source \
     "perplexity-search" \
     "perplexity_search" \
-    "https://api.perplexity.ai" \
+    "https://api.perplexity.ai/" \
     "$(spec_url "perplexity-search.openapi.json")" \
     "$perplexity_auth"
 else
@@ -539,7 +558,7 @@ if have_env PARALLEL_API_KEY; then
   sync_openapi_source \
     "parallel-search" \
     "parallel_search" \
-    "https://api.parallel.ai" \
+    "https://api.parallel.ai/" \
     "$(spec_url "parallel-search.openapi.json")" \
     "$parallel_auth"
 else

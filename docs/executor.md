@@ -27,7 +27,7 @@ Executor currently manages three source shapes:
 1. Direct remote MCP sources
    - Example: DeepWiki, grep
 2. OpenAPI sources
-   - Example: Perplexity Search, Parallel Search
+   - Example: Executor Control Plane, Perplexity Search, Parallel Search
 3. Local stdio MCP sources behind a bridge
    - Example: GitHub, Exa, Atlassian, Hugging Face, Effect docs, Nia, Firecrawl
 
@@ -40,8 +40,18 @@ Only the third category needs the bridge layer.
 3. That script reconstructs `PATH`, activates Mise, and sources secret-backed shell modules like `github.sh`, `perplexity.sh`, and `jira.sh`.
 4. It then execs `scripts/executor-sync-mcp.sh`.
 5. The sync script ensures the local Executor daemon is reachable.
-6. It starts helper processes for any stdio-backed MCP servers and the local OpenAPI spec server.
-7. It registers direct MCP, OpenAPI, and bridged MCP endpoints into the current Executor workspace.
+6. It registers the local Executor control plane as an OpenAPI source when `/v1/openapi.json` is available.
+7. It starts helper processes for any stdio-backed MCP servers and the local OpenAPI spec server.
+8. It registers direct MCP, OpenAPI, and bridged MCP endpoints into the current Executor workspace.
+
+## v1.2 Features In Use
+
+This repo now leans on two Executor `v1.2.x` changes:
+
+- Executor separates shareable source definitions from actor-scoped auth material. The sync script reconciles stable source definitions while leaving auth material local for sources like Perplexity Search and Parallel Search.
+- Executor exposes its control-plane OpenAPI spec at `/v1/openapi.json`. The sync script registers that spec as the `executor_control` OpenAPI source.
+
+That makes the local control plane self-describing: the same tool catalog that exposes GitHub, Firecrawl, or Perplexity can also expose Executor's own workspace and source APIs.
 
 ## What "tmux/launchd-managed bridge" Means
 
@@ -71,6 +81,7 @@ With Executor:
 - Codex and Claude see one shared tool catalog
 - source auth and runtime state are centralized locally
 - OpenAPI APIs and MCP servers live behind one control plane
+- the control plane can describe itself as a normal OpenAPI source
 - clients avoid duplicating MCP configuration
 
 ## Current Managed Sources
@@ -79,6 +90,7 @@ The source inventory is defined in `scripts/executor-sync-mcp.sh`.
 
 At a high level it includes:
 
+- Executor Control Plane
 - DeepWiki
 - grep
 - GitHub
@@ -102,6 +114,9 @@ At a high level it includes:
 
 # Check Executor health
 executor doctor --json
+
+# Inspect the local control-plane OpenAPI document
+curl -s http://127.0.0.1:8788/v1/openapi.json | jq '.info'
 
 # Inspect running bridge logs
 tail -f ~/.local/state/executor-mcp-bridges/logs/github.log
