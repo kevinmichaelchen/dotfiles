@@ -49,7 +49,7 @@ Only the third category needs the bridge layer.
 This repo now leans on two Executor `v1.2.x` changes:
 
 - Executor separates shareable source definitions from actor-scoped auth material. The sync script reconciles stable source definitions while leaving auth material local for sources like Perplexity Search and Parallel Search.
-- Executor exposes its control-plane OpenAPI spec at `/v1/openapi.json`. The sync script registers that spec as the `executor_control` OpenAPI source and injects `x-executor-account-id` as a default header.
+- Executor exposes its control-plane OpenAPI spec at `/v1/openapi.json`. The sync script registers that spec as the `executor_control` OpenAPI source.
 
 That makes the local control plane self-describing: the same tool catalog that exposes GitHub, Firecrawl, or Perplexity can also expose Executor's own workspace and source APIs.
 

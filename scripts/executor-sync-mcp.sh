@@ -366,8 +366,7 @@ ensure_openapi_source() {
   local namespace="$2"
   local endpoint="$3"
   local spec_url="$4"
-  local default_headers_json="$5"
-  local auth_json="$6"
+  local auth_json="$5"
   local sources existing source_id matches connect_payload result status
 
   sources="$(api_sources)"
@@ -382,14 +381,12 @@ ensure_openapi_source() {
       printf '%s' "$existing" | "$JQ_BIN" -r \
         --arg endpoint "$endpoint" \
         --arg namespace "$namespace" \
-        --arg specUrl "$spec_url" \
-        --argjson defaultHeaders "$default_headers_json" '
+        --arg specUrl "$spec_url" '
           if .endpoint == $endpoint
             and .namespace == $namespace
             and .specUrl == $specUrl
             and .status == "connected"
             and .enabled == true
-            and ((.defaultHeaders // null) == $defaultHeaders)
           then
             "true"
           else
@@ -413,7 +410,6 @@ ensure_openapi_source() {
     --arg namespace "$namespace" \
     --arg endpoint "$endpoint" \
     --arg specUrl "$spec_url" \
-    --argjson defaultHeaders "$default_headers_json" \
     --argjson auth "$auth_json" \
     '
       {
@@ -422,7 +418,6 @@ ensure_openapi_source() {
         endpoint: $endpoint,
         namespace: $namespace,
         specUrl: $specUrl,
-        defaultHeaders: $defaultHeaders,
         auth: $auth
       }
     '
@@ -454,10 +449,9 @@ sync_openapi_source() {
   local namespace="$2"
   local endpoint="$3"
   local spec_url="$4"
-  local default_headers_json="$5"
-  local auth_json="$6"
+  local auth_json="$5"
 
-  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$default_headers_json" "$auth_json" || FAILURES+=("$name")
+  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" || FAILURES+=("$name")
 }
 
 EXECUTOR_BIN="$(prefer_fallback_bin executor "$HOME/.local/share/mise/shims/executor")"
@@ -502,11 +496,6 @@ sync_tmux_env \
   NIA_API_KEY \
   FIRECRAWL_API_KEY
 
-executor_control_headers="$("$JQ_BIN" -cn --arg accountId "$ACCOUNT_ID" '
-  {
-    "x-executor-account-id": $accountId
-  }
-')"
 no_auth="$("$JQ_BIN" -cn '{ kind: "none" }')"
 
 if "$CURL_BIN" -fsS "$(control_plane_spec_url)" >/dev/null 2>&1; then
@@ -515,7 +504,6 @@ if "$CURL_BIN" -fsS "$(control_plane_spec_url)" >/dev/null 2>&1; then
     "executor_control" \
     "${BASE_URL%/}/" \
     "$(control_plane_spec_url)" \
-    "$executor_control_headers" \
     "$no_auth"
 else
   warn "Skipping executor-control-plane: $(control_plane_spec_url) is unavailable"
@@ -552,7 +540,6 @@ if have_env PERPLEXITY_API_KEY; then
     "perplexity_search" \
     "https://api.perplexity.ai/" \
     "$(spec_url "perplexity-search.openapi.json")" \
-    null \
     "$perplexity_auth"
 else
   warn "Skipping perplexity-search: PERPLEXITY_API_KEY is not set"
@@ -573,7 +560,6 @@ if have_env PARALLEL_API_KEY; then
     "parallel_search" \
     "https://api.parallel.ai/" \
     "$(spec_url "parallel-search.openapi.json")" \
-    null \
     "$parallel_auth"
 else
   warn "Skipping parallel-search: PARALLEL_API_KEY is not set"
