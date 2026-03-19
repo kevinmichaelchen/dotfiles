@@ -16,10 +16,7 @@ for env_file in \
   "$HOME/.config/shell/parallel.sh" \
   "$HOME/.config/shell/exa.sh" \
   "$HOME/.config/shell/firecrawl.sh" \
-  "$HOME/.config/shell/github.sh" \
-  "$HOME/.config/shell/jira.sh" \
-  "$HOME/.config/shell/huggingface.sh" \
-  "$HOME/.config/shell/nia.sh"
+  "$HOME/.config/shell/github.sh"
 do
   if [[ -f "$env_file" ]]; then
     # These files only export environment variables needed by executor sources.

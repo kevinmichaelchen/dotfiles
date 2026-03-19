@@ -175,7 +175,7 @@ The `executor-sync-mcp.sh` script:
 4. Removes retired executor-managed sources like `context7` and `codex`
 5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
 
-Executor `v1.2.x` lets the script take advantage of the daemon's own `/v1/openapi.json` route while leaving actor-scoped auth material inside Executor for sources that need it. Current managed source set includes Executor Control Plane, DeepWiki, grep, GitHub, Exa, Atlassian, Hugging Face, Effect docs, Nia, Firecrawl, Perplexity Search, and Parallel Search.
+Executor `v1.2.x` lets the script take advantage of the daemon's own `/v1/openapi.json` route while leaving actor-scoped auth material inside Executor for sources that need it. Current managed source set includes Executor Control Plane, DeepWiki, grep, GitHub, Exa, Effect docs, Firecrawl, Perplexity Search, and Parallel Search.
 
 Can be run directly: `./scripts/executor-sync-mcp.sh`
 
@@ -186,7 +186,7 @@ Canonical architecture and runtime notes live in [docs/executor.md](../docs/exec
 The `executor-launchd-sync.sh` script:
 
 1. Recreates the minimal PATH launchd needs for Mise-managed CLIs
-2. Sources the shell fragments that export API credentials for executor-managed sources
+2. Sources the shell fragments that export API credentials for the remaining executor-managed sources
 3. Runs `./scripts/executor-sync-mcp.sh`
 
 It is the entrypoint used by the macOS LaunchAgent that keeps executor available after login.

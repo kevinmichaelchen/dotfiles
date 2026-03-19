@@ -29,7 +29,7 @@ Executor currently manages three source shapes:
 2. OpenAPI sources
    - Example: Executor Control Plane, Perplexity Search, Parallel Search
 3. Local stdio MCP sources behind a bridge
-   - Example: GitHub, Exa, Atlassian, Hugging Face, Effect docs, Nia, Firecrawl
+   - Example: GitHub, Exa, Effect docs, Firecrawl
 
 Only the third category needs the bridge layer.
 
@@ -37,7 +37,7 @@ Only the third category needs the bridge layer.
 
 1. macOS launchd loads `com.kchen.executor-sync`.
 2. The LaunchAgent runs `scripts/executor-launchd-sync.sh`.
-3. That script reconstructs `PATH`, activates Mise, and sources secret-backed shell modules like `github.sh`, `perplexity.sh`, and `jira.sh`.
+3. That script reconstructs `PATH`, activates Mise, and sources secret-backed shell modules like `github.sh`, `perplexity.sh`, `parallel.sh`, and `firecrawl.sh`.
 4. It then execs `scripts/executor-sync-mcp.sh`.
 5. The sync script ensures the local Executor daemon is reachable.
 6. It registers the local Executor control plane as an OpenAPI source when `/v1/openapi.json` is available.
@@ -95,10 +95,7 @@ At a high level it includes:
 - grep
 - GitHub
 - Exa
-- Atlassian
-- Hugging Face
 - Effect docs
-- Nia
 - Firecrawl
 - Perplexity Search
 - Parallel Search

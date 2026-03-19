@@ -24,8 +24,8 @@ multi_agent = true
 # REMOVED:
 #   mcp_servers.context7 — pruned from Codex config.
 #   direct mcp_servers.github, mcp_servers.parallel, mcp_servers.perplexity,
-#   mcp_servers.deepwiki, mcp_servers.exa, mcp_servers.atlassian, and
-#   mcp_servers.grep — now routed through executor.
+#   mcp_servers.deepwiki, mcp_servers.exa, and mcp_servers.grep — now routed
+#   through executor.
 #   mcp_servers.codex — was recursive (Codex spawning Codex as MCP server),
 #   causing each invocation to re-load all MCP servers again. This at minimum
 #   doubled startup time and risked infinite recursion.

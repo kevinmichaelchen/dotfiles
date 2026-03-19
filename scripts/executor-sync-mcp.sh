@@ -525,6 +525,12 @@ remove_matching_sources "codex" "codex" >/dev/null || true
 
 stop_managed_process "perplexity"
 remove_matching_sources "perplexity" "perplexity" >/dev/null || true
+stop_managed_process "atlassian"
+remove_matching_sources "atlassian" "atlassian" >/dev/null || true
+stop_managed_process "huggingface"
+remove_matching_sources "huggingface" "huggingface" >/dev/null || true
+stop_managed_process "nia"
+remove_matching_sources "nia" "nia" >/dev/null || true
 
 if have_env PERPLEXITY_API_KEY; then
   perplexity_auth="$("$JQ_BIN" -cn --arg token "$PERPLEXITY_API_KEY" '
@@ -580,28 +586,7 @@ fi
 
 sync_stdio_bridge_source "exa" "exa" 8814 "npx -y exa-mcp-server"
 
-if command -v mcp-atlassian >/dev/null 2>&1 && have_env JIRA_URL JIRA_USERNAME JIRA_API_TOKEN CONFLUENCE_URL CONFLUENCE_USERNAME CONFLUENCE_API_TOKEN; then
-  sync_stdio_bridge_source "atlassian" "atlassian" 8815 "mcp-atlassian"
-else
-  warn "Skipping atlassian: command or required env vars missing"
-  SKIPPED+=("atlassian")
-fi
-
-if command -v huggingface-mcp-server >/dev/null 2>&1 && have_env HF_TOKEN; then
-  sync_stdio_bridge_source "huggingface" "huggingface" 8816 "huggingface-mcp-server"
-else
-  warn "Skipping huggingface: command or HF_TOKEN missing"
-  SKIPPED+=("huggingface")
-fi
-
 sync_stdio_bridge_source "effect-docs" "effect_docs" 8817 "npx -y effect-mcp@latest"
-
-if have_env NIA_API_KEY; then
-  sync_stdio_bridge_source "nia" "nia" 8818 "pipx run nia-mcp-server"
-else
-  warn "Skipping nia: NIA_API_KEY is not set"
-  SKIPPED+=("nia")
-fi
 
 if have_env FIRECRAWL_API_KEY; then
   sync_stdio_bridge_source "firecrawl" "firecrawl" 8820 "npx -y firecrawl-mcp"
