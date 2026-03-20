@@ -33,7 +33,6 @@ This repository combines the best of both worlds:
 │   │   │   └── kevinmichaelchen  # Personal git config for GitHub repos
 │   │   ├── opencode/      # OpenCode AI coding agent config
 │   │   │   ├── opencode.json
-│   │   │   └── oh-my-opencode.json
 │   │   ├── shell/
 │   │   │   ├── bat.sh     # bat aliases and functions (cat, batdiff, help)
 │   │   │   ├── git.sh     # Shell-agnostic git aliases

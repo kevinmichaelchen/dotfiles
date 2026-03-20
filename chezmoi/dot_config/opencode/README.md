@@ -7,72 +7,37 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 | File                          | Purpose                                                  |
 | ----------------------------- | -------------------------------------------------------- |
 | `opencode.json`               | Main config: plugins, providers, model definitions       |
-| `oh-my-opencode.json`         | [Oh-My-OpenCode][oh-my-opencode] agent model assignments |
-| `oh-my-opencode-rationale.md` | Documentation explaining model assignment decisions      |
-| `package.json`                | Plugin dependencies (managed by bun)                     |
+| `create_package.json`         | Source manifest for bun-managed plugin dependencies      |
 
 ## Providers
 
 ### Configured Providers
 
-- **[Cerebras][cerebras]** - GLM 4.7 (~1000 tokens/sec)
-- **[Google][google-ai]** - Gemini 3 Pro, Gemini 2.5 Flash (via Antigravity)
+- **[OpenCode][opencode]** - `mimo-v2-pro-free`, `mimo-v2-omni-free`
+- **[OpenRouter][openrouter]** - `moonshotai/kimi-k2.5`
 - **[OpenAI][openai]** - GPT-5.x series (via OAuth/Codex)
 
 ### Authentication
 
-Run `/connect` in OpenCode to authenticate with each provider:
+Use `/connect` in OpenCode for OpenAI OAuth:
 
 ```
-/connect cerebras    # API key from Cerebras console
-/connect google      # OAuth via Antigravity plugin
 /connect openai      # OAuth via Codex plugin
 ```
+
+OpenRouter uses `OPENROUTER_API_KEY` from your shell environment. Gemini is
+disabled in config and no longer part of this setup.
+
+## Defaults
+
+- `model`: `opencode/mimo-v2-pro-free`
+- `small_model`: `opencode/mimo-v2-omni-free`
 
 ## Plugins
 
 | Plugin                                        | Purpose                     |
 | --------------------------------------------- | --------------------------- |
-| [oh-my-opencode][oh-my-opencode]              | Agent model routing         |
 | [opencode-openai-codex-auth][codex-auth]      | OpenAI OAuth authentication |
-| [opencode-anthropic-auth][anthropic-auth]     | Anthropic authentication    |
-| [opencode-antigravity-auth][antigravity-auth] | Google AI via Antigravity   |
-
-## Model Tiers
-
-See `oh-my-opencode-rationale.md` for detailed reasoning.
-
-| Tier | Use Case                         | Models                                  |
-| ---- | -------------------------------- | --------------------------------------- |
-| 1    | Critical architecture decisions  | GPT-5.2, GPT-5.1                        |
-| 2    | Code generation & review         | GPT-4.1, Gemini 3 Pro, MiniMax M2.1     |
-| 3    | Search & exploration             | MiniMax M2.1, GLM 4.7 (OpenCode free)   |
-| 4    | Documentation & structured tasks | GLM 4.7, Gemini 2.5 Flash, MiniMax M2.1 |
-
-### Speed & Cost Upgrade Options
-
-#### MiniMax M2.1 (Free Alternative)
-
-For 4.5x faster exploration with better multilingual support, use
-`opencode/minimax-m2.1-free`:
-
-| Metric    | MiniMax M2.1   | GLM 4.7             |
-| --------- | -------------- | ------------------- |
-| Speed     | ~1,500 TPS     | ~1,000 TPS          |
-| Cost      | Free           | Free tier available |
-| SWE-bench | 74% (Verified) | 73.8%               |
-
-#### Cerebras Direct API
-
-For ~10-20x faster exploration, switch Tier 3/4 agents to
-`cerebras/zai-glm-4.7`:
-
-| Metric | OpenCode Free | Cerebras Direct     |
-| ------ | ------------- | ------------------- |
-| Speed  | <100 TPS?     | 1,000-1,700 TPS     |
-| Cost   | Free          | Free tier available |
-
-See [Cerebras Console][cerebras-console] to get an API key.
 
 ## Runtime Files (Not Managed)
 
@@ -80,7 +45,6 @@ These files are generated at runtime and excluded from chezmoi:
 
 - `node_modules/` - Plugin dependencies
 - `bun.lock` - Lockfile
-- `antigravity-accounts.json` - OAuth tokens (sensitive)
 - `.gitignore` - Auto-generated
 
 ## Quick Reference
@@ -93,7 +57,7 @@ cd ~/.config/opencode && bun install
 opencode /models
 
 # Connect to a provider
-opencode /connect cerebras
+opencode /connect openai
 ```
 
 ## References
@@ -101,12 +65,6 @@ opencode /connect cerebras
 [opencode]: https://opencode.ai/
 [opencode-docs]: https://opencode.ai/docs/
 [opencode-providers]: https://opencode.ai/docs/providers/
-[oh-my-opencode]: https://github.com/code-yeongyu/oh-my-opencode
+[openrouter]: https://openrouter.ai/
 [codex-auth]: https://github.com/code-yeongyu/opencode-openai-codex-auth
-[anthropic-auth]: https://www.npmjs.com/package/opencode-anthropic-auth
-[antigravity-auth]: https://www.npmjs.com/package/opencode-antigravity-auth
-[cerebras]: https://www.cerebras.ai/
-[cerebras-glm]: https://www.cerebras.ai/blog/glm-4-7
-[cerebras-console]: https://inference.cerebras.ai/
-[google-ai]: https://ai.google.dev/
 [openai]: https://platform.openai.com/
