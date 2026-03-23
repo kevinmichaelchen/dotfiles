@@ -1,5 +1,5 @@
 # Managed by chezmoi. Source: ~/dotfiles/chezmoi/dot_codex/config.toml.tmpl
-model = "gpt-5.2-codex"
+model = "gpt-5.4"
 model_reasoning_effort = "high"
 notify = ["bash", "{{ .chezmoi.homeDir }}/.claude/hooks/peon-ping/adapters/codex.sh"]
 
@@ -12,6 +12,7 @@ hide_full_access_warning = true
 
 [features]
 steer = true
+fast_mode = true
 multi_agent = true
 
 # ─── MCP servers ────────────────────────────────────────────────────────
