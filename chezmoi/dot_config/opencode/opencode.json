@@ -6,7 +6,8 @@
     "gemini"
   ],
   "plugin": [
-    "opencode-openai-codex-auth"
+    "opencode-openai-codex-auth",
+    "opencode-firecrawl"
   ],
   "provider": {
     "openrouter": {
