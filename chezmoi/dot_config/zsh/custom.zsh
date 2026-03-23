@@ -57,6 +57,7 @@ eval "$(mise activate zsh)"
 [[ -f ~/.config/shell/huggingface.sh ]] && source ~/.config/shell/huggingface.sh
 [[ -f ~/.config/shell/hygraph.sh ]] && source ~/.config/shell/hygraph.sh
 [[ -f ~/.config/shell/jira.sh ]] && source ~/.config/shell/jira.sh
+[[ -f ~/.config/shell/nia.sh ]] && source ~/.config/shell/nia.sh
 [[ -f ~/.config/shell/parallel.sh ]] && source ~/.config/shell/parallel.sh
 [[ -f ~/.config/shell/perplexity.sh ]] && source ~/.config/shell/perplexity.sh
 [[ -f ~/.config/shell/railway.sh ]] && source ~/.config/shell/railway.sh
