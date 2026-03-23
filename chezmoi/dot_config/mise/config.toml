@@ -23,6 +23,7 @@ bun = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@openai/codex" = "latest"
 "npm:executor" = "1.2.3"        # pin for local-first control-plane OpenAPI support
+"npm:agent-browser" = "latest"
 "npm:supergateway" = "latest"
 
 # ============================================================================
