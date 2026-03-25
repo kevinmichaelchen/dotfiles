@@ -3,75 +3,11 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/executor/common.sh
+source "$SCRIPT_DIR/common.sh"
 
-info() {
-  echo -e "${GREEN}==>${NC} $*"
-}
-
-warn() {
-  echo -e "${YELLOW}warn${NC} $*" >&2
-}
-
-error() {
-  echo -e "${RED}err${NC} $*" >&2
-}
-
-resolve_bin() {
-  local name="$1"
-  local fallback="${2:-}"
-
-  if command -v "$name" >/dev/null 2>&1; then
-    command -v "$name"
-    return 0
-  fi
-
-  if [[ -n "$fallback" && -x "$fallback" ]]; then
-    printf '%s\n' "$fallback"
-    return 0
-  fi
-
-  return 1
-}
-
-require_bin() {
-  local name="$1"
-  local fallback="${2:-}"
-  local resolved
-
-  if ! resolved="$(resolve_bin "$name" "$fallback")"; then
-    error "Required command not found: $name"
-    exit 1
-  fi
-
-  printf '%s\n' "$resolved"
-}
-
-prefer_fallback_bin() {
-  local name="$1"
-  local fallback="${2:-}"
-
-  if [[ -n "$fallback" && -x "$fallback" ]]; then
-    printf '%s\n' "$fallback"
-    return 0
-  fi
-
-  require_bin "$name"
-}
-
-have_env() {
-  local key
-  for key in "$@"; do
-    if [[ -z "${!key:-}" ]]; then
-      return 1
-    fi
-  done
-  return 0
-}
+ensure_executor_workspace_root
 
 health_url() {
   local port="$1"
@@ -346,6 +282,91 @@ sync_direct_source() {
   ensure_source "$name" "$namespace" "$endpoint" || FAILURES+=("$name")
 }
 
+sync_remote_mcp_source() {
+  local name="$1"
+  local namespace="$2"
+  local endpoint="$3"
+  local transport="${4:-auto}"
+  local sources existing existing_endpoint existing_status existing_enabled existing_transport
+  local connect_payload result kind auth_url
+
+  sources="$(api_sources)"
+  existing="$(
+    printf '%s' "$sources" | "$JQ_BIN" -c --arg namespace "$namespace" --arg name "$name" '
+      map(select(.namespace == $namespace or .name == $name)) | first
+    '
+  )"
+
+  if [[ "$existing" != "null" ]]; then
+    existing_endpoint="$(printf '%s' "$existing" | "$JQ_BIN" -r '.endpoint')"
+    existing_status="$(printf '%s' "$existing" | "$JQ_BIN" -r '.status')"
+    existing_enabled="$(printf '%s' "$existing" | "$JQ_BIN" -r '.enabled')"
+    existing_transport="$(printf '%s' "$existing" | "$JQ_BIN" -r '.binding.transport // "auto"')"
+
+    if [[ "$existing_endpoint" == "$endpoint" && "$existing_enabled" == "true" && "$existing_transport" == "$transport" ]]; then
+      if [[ "$existing_status" == "connected" ]]; then
+        info "Source $namespace already connected"
+        return 0
+      fi
+
+      if [[ "$existing_status" == "auth_required" ]]; then
+        warn "Source $name is awaiting OAuth. Run $EXECUTOR_AUTH_ATLASSIAN_SCRIPT to finish setup."
+        AUTH_REQUIRED+=("$name")
+        return 0
+      fi
+    fi
+
+    remove_matching_sources "$name" "$namespace" >/dev/null || true
+  fi
+
+  connect_payload="$("$JQ_BIN" -cn \
+    --arg name "$name" \
+    --arg namespace "$namespace" \
+    --arg endpoint "$endpoint" \
+    --arg transport "$transport" \
+    '
+      {
+        name: $name,
+        kind: "mcp",
+        endpoint: $endpoint,
+        namespace: $namespace,
+        transport: $transport
+      }
+    '
+  )"
+
+  info "Connecting remote MCP source $name"
+  result="$(connect_source "$connect_payload")"
+  kind="$(printf '%s' "$result" | "$JQ_BIN" -r '.kind // empty' 2>/dev/null || true)"
+
+  case "$kind" in
+    connected)
+      info "Connected source $namespace -> $endpoint"
+      return 0
+      ;;
+    oauth_required)
+      auth_url="$(printf '%s' "$result" | "$JQ_BIN" -r '.authorizationUrl // empty' 2>/dev/null || true)"
+      warn "Source $name requires OAuth. Run $EXECUTOR_AUTH_ATLASSIAN_SCRIPT to authorize it."
+      if [[ -n "$auth_url" ]]; then
+        printf 'Authorize %s at: %s\n' "$name" "$auth_url" >&2
+      fi
+      AUTH_REQUIRED+=("$name")
+      return 0
+      ;;
+    credential_required)
+      warn "Source $name requires credentials before it can connect"
+      AUTH_REQUIRED+=("$name")
+      return 0
+      ;;
+    *)
+      warn "Remote MCP source $name did not connect cleanly"
+      printf '%s\n' "$result" >&2
+      FAILURES+=("$name")
+      return 0
+      ;;
+  esac
+}
+
 sync_stdio_bridge_source() {
   local name="$1"
   local namespace="$2"
@@ -462,18 +483,19 @@ JQ_BIN="$(require_bin jq)"
 CURL_BIN="$(require_bin curl)"
 PYTHON_BIN="$(require_bin python3)"
 
-BASE_URL="${EXECUTOR_BASE_URL:-http://127.0.0.1:8788}"
-STATE_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/executor-mcp-bridges"
+BASE_URL="$EXECUTOR_BASE_URL"
+STATE_ROOT="$EXECUTOR_STATE_ROOT"
 COMMAND_DIR="$STATE_ROOT/commands"
 LOG_DIR="$STATE_ROOT/logs"
-OPENAPI_SPEC_DIR="$SCRIPT_DIR/executor-openapi"
-OPENAPI_SPEC_PORT="${EXECUTOR_OPENAPI_SPEC_PORT:-8821}"
+OPENAPI_SPEC_DIR="$EXECUTOR_OPENAPI_SPEC_DIR"
+OPENAPI_SPEC_PORT="$EXECUTOR_OPENAPI_SPEC_PORT"
 mkdir -p "$COMMAND_DIR" "$LOG_DIR"
 
 ACCOUNT_ID=""
 WORKSPACE_ID=""
 FAILURES=()
 SKIPPED=()
+AUTH_REQUIRED=()
 
 ensure_executor
 
@@ -483,18 +505,7 @@ if [[ ! -d "$OPENAPI_SPEC_DIR" ]]; then
 fi
 
 start_static_server "openapi-specs" "$OPENAPI_SPEC_PORT" "$OPENAPI_SPEC_DIR"
-sync_tmux_env \
-  GITHUB_PERSONAL_ACCESS_TOKEN \
-  EXA_API_KEY \
-  JIRA_URL \
-  JIRA_USERNAME \
-  JIRA_API_TOKEN \
-  CONFLUENCE_URL \
-  CONFLUENCE_USERNAME \
-  CONFLUENCE_API_TOKEN \
-  HF_TOKEN \
-  NIA_API_KEY \
-  FIRECRAWL_API_KEY
+sync_tmux_env "${EXECUTOR_TMUX_ENV_KEYS[@]}"
 
 no_auth="$("$JQ_BIN" -cn '{ kind: "none" }')"
 
@@ -511,26 +522,37 @@ else
   SKIPPED+=("executor-control-plane")
 fi
 
-sync_direct_source "deepwiki" "deepwiki" "https://mcp.deepwiki.com/mcp"
-sync_direct_source "grep" "grep" "https://mcp.grep.app/"
-stop_managed_process "github"
-remove_matching_sources "github" "github" >/dev/null || true
-stop_managed_process "parallel"
-remove_matching_sources "parallel" "parallel" >/dev/null || true
-remove_matching_sources "parallel-search" "parallel_search" >/dev/null || true
-remove_matching_sources "parallel-task" "parallel_task" >/dev/null || true
-remove_matching_sources "context7" "context7" >/dev/null || true
-stop_managed_process "codex"
-remove_matching_sources "codex" "codex" >/dev/null || true
+for source in \
+  "deepwiki|deepwiki|https://mcp.deepwiki.com/mcp" \
+  "grep|grep|https://mcp.grep.app/"
+do
+  IFS='|' read -r source_name source_namespace source_endpoint <<<"$source"
+  sync_direct_source "$source_name" "$source_namespace" "$source_endpoint"
+done
 
-stop_managed_process "perplexity"
-remove_matching_sources "perplexity" "perplexity" >/dev/null || true
-stop_managed_process "atlassian"
-remove_matching_sources "atlassian" "atlassian" >/dev/null || true
-stop_managed_process "huggingface"
-remove_matching_sources "huggingface" "huggingface" >/dev/null || true
-stop_managed_process "nia"
-remove_matching_sources "nia" "nia" >/dev/null || true
+for source in \
+  "github|github|true" \
+  "parallel|parallel|true" \
+  "parallel-search|parallel_search|false" \
+  "parallel-task|parallel_task|false" \
+  "context7|context7|false" \
+  "codex|codex|true" \
+  "perplexity|perplexity|true" \
+  "huggingface|huggingface|true" \
+  "nia|nia|true"
+do
+  IFS='|' read -r source_name source_namespace stop_bridge <<<"$source"
+  if [[ "$stop_bridge" == "true" ]]; then
+    stop_managed_process "$source_name"
+  fi
+  remove_matching_sources "$source_name" "$source_namespace" >/dev/null || true
+done
+
+sync_remote_mcp_source \
+  "$EXECUTOR_ATLASSIAN_SOURCE_NAME" \
+  "$EXECUTOR_ATLASSIAN_NAMESPACE" \
+  "$EXECUTOR_ATLASSIAN_ENDPOINT" \
+  "$EXECUTOR_ATLASSIAN_TRANSPORT"
 
 if have_env PERPLEXITY_API_KEY; then
   perplexity_auth="$("$JQ_BIN" -cn --arg token "$PERPLEXITY_API_KEY" '
@@ -616,6 +638,10 @@ info "Executor MCP sync complete"
 
 if ((${#SKIPPED[@]} > 0)); then
   printf 'Skipped: %s\n' "${SKIPPED[*]}"
+fi
+
+if ((${#AUTH_REQUIRED[@]} > 0)); then
+  printf 'Auth required: %s\n' "${AUTH_REQUIRED[*]}"
 fi
 
 if ((${#FAILURES[@]} > 0)); then

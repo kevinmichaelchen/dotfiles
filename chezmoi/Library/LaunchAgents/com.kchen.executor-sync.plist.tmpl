@@ -8,8 +8,10 @@
   <string>Background</string>
   <key>ProgramArguments</key>
   <array>
-    <string>{{ .chezmoi.homeDir }}/dotfiles/scripts/executor-launchd-sync.sh</string>
+    <string>{{ .chezmoi.homeDir }}/dotfiles/scripts/executor/launchd-sync.sh</string>
   </array>
+  <key>WorkingDirectory</key>
+  <string>{{ .chezmoi.homeDir }}</string>
   <key>RunAtLoad</key>
   <true/>
   <key>StartInterval</key>
