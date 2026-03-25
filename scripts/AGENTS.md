@@ -10,8 +10,11 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | File           | Purpose                               |
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
-| `executor-launchd-sync.sh` | Load shell env and run executor sync under launchd |
-| `executor-sync-mcp.sh` | Sync MCP sources into local executor |
+| `executor/common.sh` | Shared constants and helpers for executor automation |
+| `executor/launchd-sync.sh` | Load shell env and run executor sync under launchd |
+| `executor/auth-atlassian.sh` | Kick off Atlassian Rovo MCP OAuth for Executor |
+| `executor/restart.sh` | Kill all executor bridges and re-sync from scratch |
+| `executor/sync.sh` | Sync MCP sources into local executor |
 | `update.sh`       | Pull latest changes and apply configs |
 | `update-tools.sh` | Upgrade Mise tools and Claude Code     |
 | `cleanup.sh`      | Nix store maintenance and GC            |
@@ -165,29 +168,64 @@ If `mise upgrade` fails on `github:cli/cli` attestation verification, it retries
 
 Can be run directly: `./scripts/update-tools.sh`
 
-## EXECUTOR-SYNC-MCP SCRIPT
+## EXECUTOR SCRIPTS
 
-The `executor-sync-mcp.sh` script:
+Executor automation is now co-located under `scripts/executor/`:
 
-1. Ensures the local `executor` daemon is running
-2. Starts local helper services for stdio-backed MCP sources and curated OpenAPI specs
-3. Adds or reconciles executor sources in the active workspace, including the local `executor-control-plane` OpenAPI source plus focused external OpenAPI sources like `perplexity-search` and `parallel-search`
-4. Removes retired executor-managed sources like `context7` and `codex`
-5. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
+- `common.sh`: shared paths, constants, and helper functions
+- `sync.sh`: desired source inventory plus idempotent reconciliation
+- `launchd-sync.sh`: launchd-friendly PATH/env bootstrap that delegates to `sync.sh`
+- `auth-atlassian.sh`: one-time or refresh auth bootstrap for the Atlassian source
+- `restart.sh`: hard reset path that tears down bridges and re-runs `sync.sh`
 
-Executor `v1.2.x` lets the script take advantage of the daemon's own `/v1/openapi.json` route while leaving actor-scoped auth material inside Executor for sources that need it. Current managed source set includes Executor Control Plane, DeepWiki, grep, GitHub, Exa, Effect docs, Firecrawl, Perplexity Search, and Parallel Search.
+The `sync.sh` script:
 
-Can be run directly: `./scripts/executor-sync-mcp.sh`
+1. Normalizes the Executor workspace root to `$HOME` (or `$EXECUTOR_WORKSPACE_ROOT`) before touching the daemon
+2. Ensures the local `executor` daemon is running
+3. Starts local helper services for stdio-backed MCP sources and curated OpenAPI specs
+4. Adds or reconciles executor sources in the active workspace, including the local `executor-control-plane` OpenAPI source plus focused external OpenAPI sources like `perplexity-search` and `parallel-search`, plus the Atlassian Rovo MCP remote source
+5. Removes retired or conflicting executor-managed sources before re-registering the current inventory
+6. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
+
+Executor `v1.2.x` lets the script take advantage of the daemon's own `/v1/openapi.json` route while leaving actor-scoped auth material inside Executor for sources that need it. Current managed source set includes Executor Control Plane, DeepWiki, grep, GitHub, Exa, Effect docs, Firecrawl, Atlassian, Perplexity Search, and Parallel Search. Atlassian uses a remote MCP endpoint with persistent OAuth stored by Executor after a one-time browser flow.
+
+Can be run directly: `./scripts/executor/sync.sh`
+
+## EXECUTOR AUTH-ATLASSIAN SCRIPT
+
+The `executor/auth-atlassian.sh` script:
+
+1. Runs `./scripts/executor/sync.sh` to ensure Executor and the source inventory exist
+2. Reconnects the managed `atlassian` MCP source against `https://mcp.atlassian.com/v1/mcp`
+3. Opens the Atlassian OAuth authorization URL in the browser when consent is required
+4. Leaves the resulting source and auth material inside Executor so later launchd syncs can reconnect it automatically
+
+Use this once per machine or whenever Atlassian auth needs to be refreshed.
 
 Canonical architecture and runtime notes live in [docs/executor.md](../docs/executor.md).
 
-## EXECUTOR-LAUNCHD-SYNC SCRIPT
+## EXECUTOR RESTART SCRIPT
 
-The `executor-launchd-sync.sh` script:
+The `executor/restart.sh` script does a full teardown and re-sync:
+
+1. Stops the local `executor` daemon
+2. Kills all `executor-mcp-*` tmux sessions
+3. Kills orphaned processes on known bridge ports (8814, 8817, 8820, 8821, 8822)
+4. Cleans up stale PID files, command scripts, and logs
+5. Runs `./scripts/executor/sync.sh` to bring everything back up
+
+Use this when bridges are in a broken state or you need a clean restart.
+For routine reconciliation that skips already-healthy bridges, use `sync.sh` directly.
+
+Can be run directly: `./scripts/executor/restart.sh`
+
+## EXECUTOR LAUNCHD-SYNC SCRIPT
+
+The `executor/launchd-sync.sh` script:
 
 1. Recreates the minimal PATH launchd needs for Mise-managed CLIs
-2. Sources the shell fragments that export API credentials for the remaining executor-managed sources
-3. Runs `./scripts/executor-sync-mcp.sh`
+2. Sources the shell fragments that export API credentials for the remaining executor-managed sources, including `jira.sh`
+3. Runs `./scripts/executor/sync.sh`, which pins Executor's workspace root before starting the daemon
 
 It is the entrypoint used by the macOS LaunchAgent that keeps executor available after login.
 

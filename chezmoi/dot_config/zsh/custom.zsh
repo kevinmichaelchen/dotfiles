@@ -38,7 +38,10 @@ eval "$(mise activate zsh)"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
 [[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
 [[ ":$PATH:" != *":$HOME/.deno/bin:"* ]] && export PATH="$PATH:$HOME/.deno/bin"
-[[ ":$PATH:" != *":$HOME/.bun/bin:"* ]] && export PATH="$PATH:$HOME/.bun/bin"
+# Keep Bun globals behind Mise-managed bins so pinned npm CLIs win resolution.
+path=(${path:#$HOME/.bun/bin})
+path+=("$HOME/.bun/bin")
+export PATH="${(j/:/)path}"
 # libpq is keg-only (not symlinked) to avoid conflicts with full PostgreSQL
 [[ -d "/opt/homebrew/opt/libpq/bin" ]] && [[ ":$PATH:" != *":/opt/homebrew/opt/libpq/bin:"* ]] && export PATH="$PATH:/opt/homebrew/opt/libpq/bin"
 

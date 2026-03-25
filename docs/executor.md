@@ -14,8 +14,8 @@ registers the actual tools and API sources.
 | --- | --- |
 | Codex / Claude | MCP clients that call Executor |
 | Executor daemon | Local tool catalog and execution runtime |
-| `scripts/executor-launchd-sync.sh` | Rebuilds shell env for background runs |
-| `scripts/executor-sync-mcp.sh` | Reconciles sources into Executor |
+| `scripts/executor/launchd-sync.sh` | Rebuilds shell env for background runs |
+| `scripts/executor/sync.sh` | Reconciles sources into Executor |
 | `supergateway` | Converts stdio MCP servers into local HTTP MCP endpoints |
 | `tmux` | Keeps bridge processes alive between calls |
 | LaunchAgent | Starts sync on login and every 15 minutes |
@@ -36,13 +36,14 @@ Only the third category needs the bridge layer.
 ## Startup Flow
 
 1. macOS launchd loads `com.kchen.executor-sync`.
-2. The LaunchAgent runs `scripts/executor-launchd-sync.sh`.
-3. That script reconstructs `PATH`, activates Mise, and sources secret-backed shell modules like `github.sh`, `perplexity.sh`, `parallel.sh`, and `firecrawl.sh`.
-4. It then execs `scripts/executor-sync-mcp.sh`.
-5. The sync script ensures the local Executor daemon is reachable.
-6. It registers the local Executor control plane as an OpenAPI source when `/v1/openapi.json` is available.
-7. It starts helper processes for any stdio-backed MCP servers and the local OpenAPI spec server.
-8. It registers direct MCP, OpenAPI, and bridged MCP endpoints into the current Executor workspace.
+2. The LaunchAgent runs `scripts/executor/launchd-sync.sh`.
+3. That script reconstructs `PATH`, activates Mise, and sources secret-backed shell modules like `github.sh`, `jira.sh`, `perplexity.sh`, `parallel.sh`, and `firecrawl.sh`.
+4. It then execs `scripts/executor/sync.sh`.
+5. The sync script normalizes Executor's local workspace root to `$HOME` (or `$EXECUTOR_WORKSPACE_ROOT`) before touching the daemon.
+6. It ensures the local Executor daemon is reachable.
+7. It registers the local Executor control plane as an OpenAPI source when `/v1/openapi.json` is available.
+8. It starts helper processes for any stdio-backed MCP servers and the local OpenAPI spec server.
+9. It registers direct MCP, OpenAPI, and bridged MCP endpoints into the current Executor workspace.
 
 ## v1.2 Features In Use
 
@@ -86,7 +87,9 @@ With Executor:
 
 ## Current Managed Sources
 
-The source inventory is defined in `scripts/executor-sync-mcp.sh`.
+All repo-owned Executor automation now lives under `scripts/executor/`.
+
+The source inventory is defined in `scripts/executor/sync.sh`.
 
 At a high level it includes:
 
@@ -97,17 +100,25 @@ At a high level it includes:
 - Exa
 - Effect docs
 - Firecrawl
+- Atlassian
 - Perplexity Search
 - Parallel Search
 
 ## Manual Operations
 
 ```bash
-# Reconcile Executor sources manually
-./scripts/executor-sync-mcp.sh
+# Restart all Executor bridges and re-sync
+./scripts/executor/restart.sh
+
+# Reconcile Executor sources manually (idempotent, skips healthy bridges)
+# Uses $HOME as Executor's workspace root unless EXECUTOR_WORKSPACE_ROOT is set.
+./scripts/executor/sync.sh
 
 # Run the launchd-style sync path manually
-./scripts/executor-launchd-sync.sh
+./scripts/executor/launchd-sync.sh
+
+# Start or refresh Atlassian OAuth for Executor
+./scripts/executor/auth-atlassian.sh
 
 # Check Executor health
 executor doctor --json
@@ -132,3 +143,13 @@ If a bridged source behaves incorrectly, check these in order:
 One subtlety: `tmux` can retain stale environment variables. The sync script now
 refreshes secret-backed env vars in the tmux server before starting bridge
 sessions.
+
+Another subtlety: Atlassian is managed as a remote OAuth-backed MCP source. The
+first setup requires a one-time browser flow via
+`./scripts/executor/auth-atlassian.sh`. After that, Executor keeps the source
+definition and auth material locally so launchd-driven syncs can reconnect it
+after restart without re-registering the source.
+
+Executor `v1.2.x` also derives its local workspace config directory from the
+daemon process cwd. Launchd defaults that cwd to `/`, so this repo pins the sync
+path to `$HOME` and the restart script now stops the daemon before re-syncing.
