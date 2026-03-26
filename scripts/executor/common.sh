@@ -30,10 +30,14 @@ EXECUTOR_ATLASSIAN_NAMESPACE="atlassian"
 EXECUTOR_ATLASSIAN_ENDPOINT="https://mcp.atlassian.com/v1/mcp"
 EXECUTOR_ATLASSIAN_TRANSPORT="streamable-http"
 
+EXECUTOR_EXA_SOURCE_NAME="exa"
+EXECUTOR_EXA_NAMESPACE="exa"
+EXECUTOR_EXA_ENDPOINT="${EXECUTOR_EXA_ENDPOINT:-https://mcp.exa.ai/mcp}"
+EXECUTOR_EXA_TRANSPORT="${EXECUTOR_EXA_TRANSPORT:-streamable-http}"
+
 EXECUTOR_BRIDGE_PORTS=(8814 8817 8820 8821 8822)
 EXECUTOR_TMUX_ENV_KEYS=(
   GITHUB_PERSONAL_ACCESS_TOKEN
-  EXA_API_KEY
   JIRA_URL
   JIRA_USERNAME
   JIRA_API_TOKEN
@@ -47,7 +51,6 @@ EXECUTOR_TMUX_ENV_KEYS=(
 EXECUTOR_LAUNCHD_ENV_FILES=(
   "$HOME/.config/shell/perplexity.sh"
   "$HOME/.config/shell/parallel.sh"
-  "$HOME/.config/shell/exa.sh"
   "$HOME/.config/shell/firecrawl.sh"
   "$HOME/.config/shell/github.sh"
   "$HOME/.config/shell/jira.sh"
