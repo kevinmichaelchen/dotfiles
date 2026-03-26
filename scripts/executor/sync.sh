@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sync local MCP inventory into executor, bridging stdio MCP servers to local HTTP.
+# Sync local MCP inventory into executor, bridging selected stdio MCP servers to local HTTP.
 
 set -euo pipefail
 
@@ -160,6 +160,23 @@ api_sources() {
     "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources"
 }
 
+source_inspection_ok() {
+  local source_id="$1"
+  local inspection tool_count
+
+  if ! inspection="$("$CURL_BIN" -fsS \
+    -H "x-executor-account-id: $ACCOUNT_ID" \
+    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/$source_id/inspection" 2>/dev/null)"; then
+    return 1
+  fi
+
+  tool_count="$(printf '%s' "$inspection" | "$JQ_BIN" -r '
+    if (.toolCount? | type) == "number" then .toolCount else empty end
+  ' 2>/dev/null || true)"
+
+  [[ -n "$tool_count" ]]
+}
+
 connect_source() {
   local payload="$1"
   "$CURL_BIN" -fsS \
@@ -221,17 +238,26 @@ ensure_source() {
   local name="$1"
   local namespace="$2"
   local endpoint="$3"
-  local sources connected_count
+  local sources source_id source_name source_endpoint source_status
 
   sources="$(api_sources)"
-  connected_count="$(printf '%s' "$sources" | "$JQ_BIN" -r --arg namespace "$namespace" --arg endpoint "$endpoint" '
-    map(select(.namespace == $namespace and .endpoint == $endpoint and .status == "connected")) | length
-  ')"
 
-  if [[ "$connected_count" != "0" ]]; then
-    info "Source $namespace already connected"
-    return 0
-  fi
+  while IFS=$'\t' read -r source_id source_name source_endpoint source_status; do
+    [[ -z "$source_id" ]] && continue
+
+    if source_inspection_ok "$source_id"; then
+      info "Source $namespace already connected"
+      return 0
+    fi
+
+    warn "Refreshing source $source_name: inspection bundle is missing or invalid"
+    delete_source "$source_id"
+  done < <(
+    printf '%s' "$sources" | "$JQ_BIN" -r --arg namespace "$namespace" --arg endpoint "$endpoint" '
+      .[] | select(.namespace == $namespace and .endpoint == $endpoint and .status == "connected") |
+      [.id, .name, .endpoint, .status] | @tsv
+    '
+  )
 
   while IFS=$'\t' read -r source_id source_name source_endpoint source_status; do
     [[ -z "$source_id" ]] && continue
@@ -554,6 +580,13 @@ sync_remote_mcp_source \
   "$EXECUTOR_ATLASSIAN_ENDPOINT" \
   "$EXECUTOR_ATLASSIAN_TRANSPORT"
 
+stop_managed_process "$EXECUTOR_EXA_SOURCE_NAME"
+sync_remote_mcp_source \
+  "$EXECUTOR_EXA_SOURCE_NAME" \
+  "$EXECUTOR_EXA_NAMESPACE" \
+  "$EXECUTOR_EXA_ENDPOINT" \
+  "$EXECUTOR_EXA_TRANSPORT"
+
 if have_env PERPLEXITY_API_KEY; then
   perplexity_auth="$("$JQ_BIN" -cn --arg token "$PERPLEXITY_API_KEY" '
     {
@@ -605,8 +638,6 @@ else
   warn "Skipping github: command or GITHUB_PERSONAL_ACCESS_TOKEN missing"
   SKIPPED+=("github")
 fi
-
-sync_stdio_bridge_source "exa" "exa" 8814 "npx -y exa-mcp-server"
 
 sync_stdio_bridge_source "effect-docs" "effect_docs" 8817 "npx -y effect-mcp@latest"
 

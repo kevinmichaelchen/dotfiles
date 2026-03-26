@@ -182,12 +182,12 @@ The `sync.sh` script:
 
 1. Normalizes the Executor workspace root to `$HOME` (or `$EXECUTOR_WORKSPACE_ROOT`) before touching the daemon
 2. Ensures the local `executor` daemon is running
-3. Starts local helper services for stdio-backed MCP sources and curated OpenAPI specs
+3. Starts local helper services for the remaining stdio-backed MCP sources and curated OpenAPI specs
 4. Adds or reconciles executor sources in the active workspace, including the local `executor-control-plane` OpenAPI source plus focused external OpenAPI sources like `perplexity-search` and `parallel-search`, plus the Atlassian Rovo MCP remote source
 5. Removes retired or conflicting executor-managed sources before re-registering the current inventory
 6. Skips repo-scoped sources like `nx-mcp` unless the required workspace path is provided
 
-Executor `v1.2.x` lets the script take advantage of the daemon's own `/v1/openapi.json` route while leaving actor-scoped auth material inside Executor for sources that need it. Current managed source set includes Executor Control Plane, DeepWiki, grep, GitHub, Exa, Effect docs, Firecrawl, Atlassian, Perplexity Search, and Parallel Search. Atlassian uses a remote MCP endpoint with persistent OAuth stored by Executor after a one-time browser flow.
+Executor `v1.2.x` lets the script take advantage of the daemon's own `/v1/openapi.json` route while leaving actor-scoped auth material inside Executor for sources that need it. Current managed source set includes Executor Control Plane, DeepWiki, grep, GitHub, Exa, Effect docs, Firecrawl, Atlassian, Perplexity Search, and Parallel Search. Atlassian and Exa use remote MCP endpoints; GitHub, Effect docs, and Firecrawl stay on local stdio bridges.
 
 Can be run directly: `./scripts/executor/sync.sh`
 
@@ -210,7 +210,7 @@ The `executor/restart.sh` script does a full teardown and re-sync:
 
 1. Stops the local `executor` daemon
 2. Kills all `executor-mcp-*` tmux sessions
-3. Kills orphaned processes on known bridge ports (8814, 8817, 8820, 8821, 8822)
+3. Kills orphaned processes on known bridge ports (8814, 8817, 8820, 8821, 8822); `8814` is retained for legacy Exa bridge cleanup
 4. Cleans up stale PID files, command scripts, and logs
 5. Runs `./scripts/executor/sync.sh` to bring everything back up
 

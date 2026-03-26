@@ -25,11 +25,11 @@ registers the actual tools and API sources.
 Executor currently manages three source shapes:
 
 1. Direct remote MCP sources
-   - Example: DeepWiki, grep
+   - Example: DeepWiki, grep, Atlassian, Exa
 2. OpenAPI sources
    - Example: Executor Control Plane, Perplexity Search, Parallel Search
 3. Local stdio MCP sources behind a bridge
-   - Example: GitHub, Exa, Effect docs, Firecrawl
+   - Example: GitHub, Effect docs, Firecrawl
 
 Only the third category needs the bridge layer.
 
@@ -104,6 +104,11 @@ At a high level it includes:
 - Perplexity Search
 - Parallel Search
 
+Exa now follows Exa's hosted MCP guidance directly via
+`https://mcp.exa.ai/mcp`. The local `exa-mcp-server` npm package is kept as a
+fallback pattern for clients that do not support remote MCP directly, but
+Executor uses the hosted remote source.
+
 ## Manual Operations
 
 ```bash
@@ -143,6 +148,11 @@ If a bridged source behaves incorrectly, check these in order:
 One subtlety: `tmux` can retain stale environment variables. The sync script now
 refreshes secret-backed env vars in the tmux server before starting bridge
 sessions.
+
+The sync path now also checks the control-plane inspection endpoint for
+already-connected MCP sources. If a source is still marked `connected` but its
+inspection bundle is missing, sync replaces that source so the tool catalog can
+recover automatically.
 
 Another subtlety: Atlassian is managed as a remote OAuth-backed MCP source. The
 first setup requires a one-time browser flow via
