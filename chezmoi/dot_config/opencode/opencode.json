@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/mimo-v2-pro-free",
+  "model": "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo",
   "small_model": "opencode/mimo-v2-omni-free",
   "disabled_providers": [
     "gemini"
@@ -35,6 +35,11 @@
             }
           }
         }
+      }
+    },
+    "fireworks-ai": {
+      "options": {
+        "apiKey": "{env:FIREWORKS_API_KEY}"
       }
     },
     "openai": {

@@ -14,6 +14,7 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 ### Configured Providers
 
 - **[OpenCode][opencode]** - `mimo-v2-pro-free`, `mimo-v2-omni-free`
+- **Fireworks AI** - `accounts/fireworks/routers/kimi-k2p5-turbo`
 - **[OpenRouter][openrouter]** - `moonshotai/kimi-k2.5`
 - **[OpenAI][openai]** - GPT-5.x series (via OAuth/Codex)
 
@@ -26,11 +27,12 @@ Use `/connect` in OpenCode for OpenAI OAuth:
 ```
 
 OpenRouter uses `OPENROUTER_API_KEY` from your shell environment. Gemini is
-disabled in config and no longer part of this setup.
+disabled in config and no longer part of this setup. Fireworks AI uses
+`FIREWORKS_API_KEY` from your shell environment.
 
 ## Defaults
 
-- `model`: `opencode/mimo-v2-pro-free`
+- `model`: `fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo`
 - `small_model`: `opencode/mimo-v2-omni-free`
 
 ## Plugins
