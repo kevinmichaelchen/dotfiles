@@ -40,7 +40,7 @@ bun = "latest"
 "cargo:dprint" = "latest"       # Fast pluggable code formatter
 "cargo:prek" = "latest"         # pre-commit re-engineered in Rust
 "cargo:sd" = "latest"           # sed replacement (simpler syntax)
-"cargo:git-spice" = "latest"    # Stacked git workflows (gh-stack successor)
+"github:abhinav/git-spice" = "latest"  # Stacked git workflows (gh-stack successor)
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
