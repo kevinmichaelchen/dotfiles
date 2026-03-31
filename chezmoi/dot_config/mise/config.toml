@@ -19,12 +19,13 @@ pnpm = "latest"
 bun = "latest"
 
 # npm global packages
-"npm:@charmland/crush" = "latest"
-"npm:@google/gemini-cli" = "latest"
-"npm:@openai/codex" = "latest"
+"npm:@charmland/crush" = "0.51.2"
+"npm:@google/gemini-cli" = "0.34.0"
+"npm:@openai/codex" = "0.116.0"
+"npm:markit-ai" = "0.5.0"       # exception: first npm release was 2026-03-25, so no 7-day-old version exists yet
 "npm:executor" = "1.2.6"        # pin for local-first control-plane OpenAPI support
-"npm:agent-browser" = "latest"
-"npm:supergateway" = "latest"
+"npm:agent-browser" = "0.22.0"
+"npm:supergateway" = "3.4.3"
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
@@ -75,8 +76,8 @@ bun = "latest"
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
-"npm:peky" = "latest"           # AI agent terminal multiplexer (Claude Code, Codex, etc.)
-"npm:wrangler" = "latest"       # Cloudflare Workers CLI
+"npm:peky" = "0.0.39"           # AI agent terminal multiplexer (Claude Code, Codex, etc.)
+"npm:wrangler" = "4.77.0"       # Cloudflare Workers CLI
 
 # ============================================================================
 # Notes on Tools NOT Migrated to Mise
