@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Tear down all executor MCP bridges and re-sync from scratch.
+# Stop the Executor runtime and re-run sync. Source state lives in SQLite, so
+# this is only needed when the runtime process itself is wedged.
 
 set -euo pipefail
 
@@ -7,41 +8,27 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=scripts/executor/common.sh
 source "$SCRIPT_DIR/common.sh"
 
-SYNC_SCRIPT="$EXECUTOR_SYNC_SCRIPT"
-STATE_ROOT="$EXECUTOR_STATE_ROOT"
+EXECUTOR_BIN="$(prefer_fallback_bin executor "$EXECUTOR_MISE_SHIM")"
+TMUX_BIN="$(resolve_bin tmux || true)"
 
-TMUX_BIN="$(require_bin tmux)"
-EXECUTOR_BIN="$(resolve_bin executor "$HOME/.local/share/mise/shims/executor" || true)"
-
-if [[ -n "$EXECUTOR_BIN" ]]; then
-  info "Stopping executor daemon"
-  "$EXECUTOR_BIN" down >/dev/null 2>&1 || true
-else
-  warn "executor not found; skipping daemon shutdown"
+if "$EXECUTOR_BIN" daemon stop --base-url "$EXECUTOR_BASE_URL" >/dev/null 2>&1; then
+  info "Stopped Executor daemon via CLI"
 fi
 
-info "Stopping executor MCP tmux sessions"
-while IFS= read -r session; do
-  [[ -z "$session" ]] && continue
-  "$TMUX_BIN" kill-session -t "$session" 2>/dev/null || true
-  info "  Killed $session"
-done < <("$TMUX_BIN" list-sessions -F '#{session_name}' 2>/dev/null | grep '^executor-mcp-')
+if [[ -n "$TMUX_BIN" ]]; then
+  # Clean up legacy stdio-bridge sessions (pre-rewrite).
+  while IFS= read -r session; do
+    [[ -z "$session" ]] && continue
+    info "Killing legacy bridge session $session"
+    "$TMUX_BIN" kill-session -t "$session" >/dev/null 2>&1 || true
+  done < <("$TMUX_BIN" list-sessions -F '#{session_name}' 2>/dev/null | grep '^executor-mcp-' || true)
+fi
 
-info "Killing orphaned bridge processes on known ports"
-for port in "${EXECUTOR_BRIDGE_PORTS[@]}"; do
-  pids="$(lsof -ti ":$port" 2>/dev/null || true)"
-  for pid in $pids; do
-    [[ -z "$pid" ]] && continue
-    kill "$pid" 2>/dev/null || true
-    info "  Killed pid $pid on :$port"
-  done
+pids="$(lsof -ti ":$EXECUTOR_WEB_PORT" 2>/dev/null || true)"
+for pid in $pids; do
+  [[ -z "$pid" ]] && continue
+  info "Killing pid $pid on :$EXECUTOR_WEB_PORT"
+  kill "$pid" 2>/dev/null || true
 done
 
-info "Cleaning up state directory"
-rm -f "$STATE_ROOT"/pids/*.pid
-rm -f "$STATE_ROOT"/commands/*.sh
-rm -f "$STATE_ROOT"/logs/*.log
-info "  Removed stale pids, commands, logs"
-
-info "Running executor sync"
-exec "$SYNC_SCRIPT"
+exec "$EXECUTOR_SYNC_SCRIPT"
