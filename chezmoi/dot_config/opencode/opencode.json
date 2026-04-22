@@ -9,6 +9,13 @@
     "opencode-openai-codex-auth",
     "opencode-firecrawl"
   ],
+  "mcp": {
+    "executor": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8788/mcp",
+      "enabled": true
+    }
+  },
   "provider": {
     "openrouter": {
       "npm": "@ai-sdk/openai-compatible",
