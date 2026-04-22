@@ -17,43 +17,23 @@ EXECUTOR_REPO_ROOT="$(CDPATH= cd -- "$EXECUTOR_SCRIPT_DIR/../.." && pwd)"
 EXECUTOR_SYNC_SCRIPT="$EXECUTOR_SCRIPT_DIR/sync.sh"
 EXECUTOR_RESTART_SCRIPT="$EXECUTOR_SCRIPT_DIR/restart.sh"
 EXECUTOR_LAUNCHD_SYNC_SCRIPT="$EXECUTOR_SCRIPT_DIR/launchd-sync.sh"
-EXECUTOR_AUTH_ATLASSIAN_SCRIPT="$EXECUTOR_SCRIPT_DIR/auth-atlassian.sh"
+EXECUTOR_STATUS_SCRIPT="$EXECUTOR_SCRIPT_DIR/status.sh"
+EXECUTOR_MISE_SHIM="$HOME/.local/share/mise/shims/executor"
 
-EXECUTOR_BASE_URL="${EXECUTOR_BASE_URL:-http://127.0.0.1:8788}"
-EXECUTOR_WORKSPACE_ROOT="${EXECUTOR_WORKSPACE_ROOT:-$HOME}"
-EXECUTOR_STATE_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/executor-mcp-bridges"
-EXECUTOR_OPENAPI_SPEC_PORT="${EXECUTOR_OPENAPI_SPEC_PORT:-8821}"
-EXECUTOR_OPENAPI_SPEC_DIR="$EXECUTOR_SCRIPT_DIR/openapi"
+EXECUTOR_HOSTNAME="${EXECUTOR_HOSTNAME:-127.0.0.1}"
+EXECUTOR_WEB_PORT="${EXECUTOR_WEB_PORT:-8788}"
+EXECUTOR_BASE_URL="${EXECUTOR_BASE_URL:-http://${EXECUTOR_HOSTNAME}:${EXECUTOR_WEB_PORT}}"
+EXECUTOR_SCOPE_DIR="${EXECUTOR_SCOPE_DIR:-$HOME/.executor}"
+EXECUTOR_RUNTIME_LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/executor-mcp-bridges/logs"
+EXECUTOR_RUNTIME_SESSION_NAME="${EXECUTOR_RUNTIME_SESSION_NAME:-executor-runtime}"
 
-EXECUTOR_ATLASSIAN_SOURCE_NAME="atlassian"
-EXECUTOR_ATLASSIAN_NAMESPACE="atlassian"
-EXECUTOR_ATLASSIAN_ENDPOINT="https://mcp.atlassian.com/v1/mcp"
-EXECUTOR_ATLASSIAN_TRANSPORT="streamable-http"
-
-EXECUTOR_EXA_SOURCE_NAME="exa"
-EXECUTOR_EXA_NAMESPACE="exa"
-EXECUTOR_EXA_ENDPOINT="${EXECUTOR_EXA_ENDPOINT:-https://mcp.exa.ai/mcp}"
-EXECUTOR_EXA_TRANSPORT="${EXECUTOR_EXA_TRANSPORT:-streamable-http}"
-
-EXECUTOR_BRIDGE_PORTS=(8814 8817 8820 8821 8822)
-EXECUTOR_TMUX_ENV_KEYS=(
-  GITHUB_PERSONAL_ACCESS_TOKEN
-  JIRA_URL
-  JIRA_USERNAME
-  JIRA_API_TOKEN
-  CONFLUENCE_URL
-  CONFLUENCE_USERNAME
-  CONFLUENCE_API_TOKEN
-  HF_TOKEN
-  NIA_API_KEY
-  FIRECRAWL_API_KEY
-)
 EXECUTOR_LAUNCHD_ENV_FILES=(
   "$HOME/.config/shell/perplexity.sh"
   "$HOME/.config/shell/parallel.sh"
   "$HOME/.config/shell/firecrawl.sh"
   "$HOME/.config/shell/github.sh"
   "$HOME/.config/shell/jira.sh"
+  "$HOME/.config/shell/atlassian.sh"
 )
 
 info() {
@@ -120,12 +100,11 @@ have_env() {
   return 0
 }
 
-ensure_executor_workspace_root() {
-  if [[ ! -d "$EXECUTOR_WORKSPACE_ROOT" ]]; then
-    error "Executor workspace root does not exist: $EXECUTOR_WORKSPACE_ROOT"
-    exit 1
-  fi
-
-  # Executor v1.2.x derives its local workspace config from process cwd.
-  cd "$EXECUTOR_WORKSPACE_ROOT"
+source_executor_env_files() {
+  local file
+  for file in "${EXECUTOR_LAUNCHD_ENV_FILES[@]}"; do
+    [[ -f "$file" ]] || continue
+    # shellcheck disable=SC1090
+    source "$file"
+  done
 }

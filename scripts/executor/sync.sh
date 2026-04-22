@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Sync local MCP inventory into executor, bridging selected stdio MCP servers to local HTTP.
+# Reconcile the desired MCP + OpenAPI source inventory into the local Executor runtime.
+#
+# Every source is a hosted remote endpoint. Auth is either header-based secrets
+# or persisted Executor OAuth connections. The only local process is the
+# Executor runtime itself.
 
 set -euo pipefail
 
@@ -7,672 +11,531 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=scripts/executor/common.sh
 source "$SCRIPT_DIR/common.sh"
 
-ensure_executor_workspace_root
+EXECUTOR_BIN="$(prefer_fallback_bin executor "$EXECUTOR_MISE_SHIM")"
+TMUX_BIN="$(require_bin tmux)"
+JQ_BIN="$(require_bin jq)"
+CURL_BIN="$(require_bin curl)"
+PYTHON_BIN="$(require_bin python3)"
+BASE64_BIN="$(require_bin base64)"
 
-health_url() {
-  local port="$1"
-  printf 'http://127.0.0.1:%s/healthz\n' "$port"
+BASE_URL="$EXECUTOR_BASE_URL"
+OPENAPI_SPEC_DIR="$EXECUTOR_SCRIPT_DIR/openapi"
+mkdir -p "$EXECUTOR_RUNTIME_LOG_DIR"
+
+# Reload the canonical credential fragments so manual runs don't reuse stale
+# shell exports after a secret rotation.
+source_executor_env_files
+
+SCOPE_ID=""
+HTTP_STATUS=""
+HTTP_BODY=""
+FAILURES=()
+SKIPPED=()
+
+migrate_legacy_scope_config() {
+  local config_file="$EXECUTOR_SCOPE_DIR/executor.jsonc"
+  local sources_type backup_file
+
+  [[ -f "$config_file" ]] || return 0
+
+  sources_type="$("$JQ_BIN" -r '
+    if type == "object" and has("sources") then
+      (.sources | type)
+    else
+      ""
+    end
+  ' "$config_file" 2>/dev/null || true)"
+
+  [[ "$sources_type" == "object" ]] || return 0
+
+  backup_file="${config_file}.legacy-$(date +%Y%m%d%H%M%S).bak"
+  cp "$config_file" "$backup_file"
+  cat >"$config_file" <<'EOF'
+{
+  "sources": []
+}
+EOF
+
+  warn "Backed up legacy Executor config to $backup_file"
+  warn "Reset object-shaped executor.jsonc to a modern empty source array"
 }
 
-bridge_url() {
-  local port="$1"
-  printf 'http://127.0.0.1:%s/mcp\n' "$port"
+api() {
+  local method="$1" path="$2" payload="${3:-}"
+  local body_file; body_file="$(mktemp "${TMPDIR:-/tmp}/executor-api.XXXXXX")"
+  local curl_status=0 args=(-sS -o "$body_file" -w '%{http_code}' -X "$method")
+
+  if [[ -n "$payload" ]]; then
+    args+=(-H 'content-type: application/json' -d "$payload")
+  fi
+
+  HTTP_STATUS="$("$CURL_BIN" "${args[@]}" "${BASE_URL%/}/api${path}")" || curl_status=$?
+  HTTP_BODY="$(cat "$body_file")"
+  rm -f "$body_file"
+
+  (( curl_status == 0 )) && [[ "$HTTP_STATUS" =~ ^2 ]]
 }
 
-spec_url() {
-  local filename="$1"
-  printf 'http://127.0.0.1:%s/%s\n' "$OPENAPI_SPEC_PORT" "$filename"
-}
-
-control_plane_spec_url() {
-  printf '%s/v1/openapi.json\n' "${BASE_URL%/}"
-}
-
-wait_for_health() {
-  local name="$1"
-  local url="$2"
+wait_for_ready() {
   local attempts=0
-
   while (( attempts < 30 )); do
-    if "$CURL_BIN" -fsS "$url" >/dev/null 2>&1; then
+    if "$CURL_BIN" -fsS "${BASE_URL%/}/api/docs" >/dev/null 2>&1; then
       return 0
     fi
     attempts=$((attempts + 1))
     sleep 1
   done
-
-  warn "Service $name did not become healthy at $url"
   return 1
 }
 
-start_managed_process_with_ready_url() {
-  local name="$1"
-  local port="$2"
-  local ready_url="$3"
-  shift 3
+start_runtime() {
+  local log_file="$EXECUTOR_RUNTIME_LOG_DIR/runtime.log"
+  local pids pid
 
-  local log_file="$LOG_DIR/${name}.log"
-  local command_file="$COMMAND_DIR/${name}.sh"
-  local session_name="executor-mcp-${name}"
+  "$EXECUTOR_BIN" daemon stop --base-url "$BASE_URL" >/dev/null 2>&1 || true
 
-  if "$CURL_BIN" -fsS "$ready_url" >/dev/null 2>&1; then
-    info "Bridge $name already healthy on $port"
-    return 0
-  fi
-
-  if "$TMUX_BIN" has-session -t "$session_name" >/dev/null 2>&1; then
-    warn "Stopping stale tmux session $session_name"
-    "$TMUX_BIN" kill-session -t "$session_name" >/dev/null 2>&1 || true
-  fi
-
-  {
-    printf '#!/usr/bin/env bash\n'
-    printf 'exec </dev/null >%q 2>&1\n' "$log_file"
-    printf 'exec'
-    local arg
-    for arg in "$@"; do
-      printf ' %q' "$arg"
-    done
-    printf '\n'
-  } >"$command_file"
-  chmod 700 "$command_file"
-
-  info "Starting bridge $name on $port"
-  "$TMUX_BIN" new-session -d -s "$session_name" "$command_file"
-
-  if ! wait_for_health "$name" "$ready_url"; then
-    warn "Recent log output for $name:"
-    tail -n 40 "$log_file" >&2 || true
-    return 1
-  fi
-
-  return 0
-}
-
-start_managed_process() {
-  local name="$1"
-  local port="$2"
-  shift 2
-
-  start_managed_process_with_ready_url "$name" "$port" "$(health_url "$port")" "$@"
-}
-
-start_stdio_bridge() {
-  local name="$1"
-  local port="$2"
-  local command_string="$3"
-
-  start_managed_process \
-    "$name" \
-    "$port" \
-    "$SUPERGATEWAY_BIN" \
-    --stdio "$command_string" \
-    --outputTransport streamableHttp \
-    --port "$port" \
-    --streamableHttpPath /mcp \
-    --stateful \
-    --healthEndpoint /healthz \
-    --logLevel info
-}
-
-start_static_server() {
-  local name="$1"
-  local port="$2"
-  local directory="$3"
-
-  start_managed_process_with_ready_url \
-    "$name" \
-    "$port" \
-    "http://127.0.0.1:${port}/" \
-    "$PYTHON_BIN" \
-    -m http.server "$port" \
-    --bind 127.0.0.1 \
-    --directory "$directory"
-}
-
-sync_tmux_env() {
-  local key
-
-  for key in "$@"; do
-    if [[ -n "${!key:-}" ]]; then
-      "$TMUX_BIN" set-environment -g "$key" "${!key}"
-    else
-      "$TMUX_BIN" set-environment -gu "$key" >/dev/null 2>&1 || true
-    fi
+  pids="$(lsof -ti ":$EXECUTOR_WEB_PORT" 2>/dev/null || true)"
+  for pid in $pids; do
+    [[ -z "$pid" ]] && continue
+    kill "$pid" 2>/dev/null || true
   done
-}
 
-stop_managed_process() {
-  local name="$1"
-  local session_name="executor-mcp-${name}"
+  info "Starting Executor runtime on :$EXECUTOR_WEB_PORT"
+  "$TMUX_BIN" has-session -t "$EXECUTOR_RUNTIME_SESSION_NAME" >/dev/null 2>&1 && \
+    "$TMUX_BIN" kill-session -t "$EXECUTOR_RUNTIME_SESSION_NAME" >/dev/null 2>&1 || true
+  "$TMUX_BIN" new-session -d -s "$EXECUTOR_RUNTIME_SESSION_NAME" \
+    "exec </dev/null >$log_file 2>&1; exec $(printf '%q ' "$EXECUTOR_BIN" daemon run --port "$EXECUTOR_WEB_PORT" --hostname "$EXECUTOR_HOSTNAME" --scope "$EXECUTOR_SCOPE_DIR")"
 
-  if "$TMUX_BIN" has-session -t "$session_name" >/dev/null 2>&1; then
-    warn "Stopping tmux session $session_name"
-    "$TMUX_BIN" kill-session -t "$session_name" >/dev/null 2>&1 || true
-  fi
-
-  rm -f "$COMMAND_DIR/${name}.sh"
-}
-
-api_sources() {
-  "$CURL_BIN" -fsS \
-    -H "x-executor-account-id: $ACCOUNT_ID" \
-    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources"
-}
-
-source_inspection_ok() {
-  local source_id="$1"
-  local inspection tool_count
-
-  if ! inspection="$("$CURL_BIN" -fsS \
-    -H "x-executor-account-id: $ACCOUNT_ID" \
-    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/$source_id/inspection" 2>/dev/null)"; then
-    return 1
-  fi
-
-  tool_count="$(printf '%s' "$inspection" | "$JQ_BIN" -r '
-    if (.toolCount? | type) == "number" then .toolCount else empty end
-  ' 2>/dev/null || true)"
-
-  [[ -n "$tool_count" ]]
-}
-
-connect_source() {
-  local payload="$1"
-  "$CURL_BIN" -fsS \
-    -X POST \
-    -H "content-type: application/json" \
-    -H "x-executor-account-id: $ACCOUNT_ID" \
-    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/connect" \
-    -d "$payload"
-}
-
-delete_source() {
-  local source_id="$1"
-  "$CURL_BIN" -fsS \
-    -X DELETE \
-    -H "x-executor-account-id: $ACCOUNT_ID" \
-    "$BASE_URL/v1/workspaces/$WORKSPACE_ID/sources/$source_id" >/dev/null
-}
-
-remove_matching_sources() {
-  local name="$1"
-  local namespace="$2"
-
-  while IFS=$'\t' read -r source_id source_name source_endpoint source_status; do
-    [[ -z "$source_id" ]] && continue
-    warn "Removing source $source_name ($source_status) at $source_endpoint"
-    delete_source "$source_id"
-  done < <(
-    api_sources | "$JQ_BIN" -r --arg namespace "$namespace" --arg name "$name" '
-      .[] | select(.namespace == $namespace or .name == $name) |
-      [.id, .name, .endpoint, .status] | @tsv
-    '
-  )
-
-  return 0
-}
-
-ensure_executor() {
-  local doctor_json reachable
-
-  doctor_json="$("$EXECUTOR_BIN" doctor --json 2>/dev/null || true)"
-  reachable="$(printf '%s' "$doctor_json" | "$JQ_BIN" -r '.status.reachable // false' 2>/dev/null || echo false)"
-
-  if [[ "$reachable" != "true" ]]; then
-    info "Starting executor daemon"
-    "$EXECUTOR_BIN" up >/dev/null
-    doctor_json="$("$EXECUTOR_BIN" doctor --json)"
-  fi
-
-  ACCOUNT_ID="$(printf '%s' "$doctor_json" | "$JQ_BIN" -r '.status.installation.accountId // empty')"
-  WORKSPACE_ID="$(printf '%s' "$doctor_json" | "$JQ_BIN" -r '.status.installation.workspaceId // empty')"
-
-  if [[ -z "$ACCOUNT_ID" || -z "$WORKSPACE_ID" ]]; then
-    error "Executor did not report a local account/workspace"
+  if ! wait_for_ready; then
+    error "Executor runtime did not become ready"
+    tail -n 40 "$log_file" >&2 || true
     exit 1
   fi
 }
 
-ensure_source() {
-  local name="$1"
-  local namespace="$2"
-  local endpoint="$3"
-  local sources source_id source_name source_endpoint source_status
+ensure_runtime() {
+  mkdir -p "$EXECUTOR_SCOPE_DIR"
+  migrate_legacy_scope_config
 
-  sources="$(api_sources)"
-
-  while IFS=$'\t' read -r source_id source_name source_endpoint source_status; do
-    [[ -z "$source_id" ]] && continue
-
-    if source_inspection_ok "$source_id"; then
-      info "Source $namespace already connected"
+  if api GET /scope; then
+    local dir; dir="$(printf '%s' "$HTTP_BODY" | "$JQ_BIN" -r '.dir // empty' 2>/dev/null || true)"
+    if [[ "$dir" == "$EXECUTOR_SCOPE_DIR" ]]; then
+      SCOPE_ID="$(printf '%s' "$HTTP_BODY" | "$JQ_BIN" -r '.id // empty')"
+      info "Executor runtime already serving $EXECUTOR_SCOPE_DIR"
       return 0
     fi
+    warn "Executor runtime serving '$dir'; restarting against $EXECUTOR_SCOPE_DIR"
+  fi
 
-    warn "Refreshing source $source_name: inspection bundle is missing or invalid"
-    delete_source "$source_id"
-  done < <(
-    printf '%s' "$sources" | "$JQ_BIN" -r --arg namespace "$namespace" --arg endpoint "$endpoint" '
-      .[] | select(.namespace == $namespace and .endpoint == $endpoint and .status == "connected") |
-      [.id, .name, .endpoint, .status] | @tsv
-    '
-  )
+  start_runtime
 
-  while IFS=$'\t' read -r source_id source_name source_endpoint source_status; do
-    [[ -z "$source_id" ]] && continue
-    warn "Replacing existing source $source_name ($source_status) at $source_endpoint"
-    delete_source "$source_id"
-  done < <(
-    printf '%s' "$sources" | "$JQ_BIN" -r --arg namespace "$namespace" --arg name "$name" '
-      .[] | select(.namespace == $namespace or .name == $name) |
-      [.id, .name, .endpoint, .status] | @tsv
-    '
-  )
+  if ! api GET /scope; then
+    error "Executor runtime did not return scope metadata"
+    printf '%s\n' "$HTTP_BODY" >&2
+    exit 1
+  fi
 
-  local script_file result source_input
-  script_file="$(mktemp "${TMPDIR:-/tmp}/executor-source-add.XXXXXX")"
-  source_input="$("$JQ_BIN" -cn \
-    --arg endpoint "$endpoint" \
-    --arg name "$name" \
-    --arg namespace "$namespace" \
-    '{ endpoint: $endpoint, name: $name, namespace: $namespace }'
-  )"
-  printf 'return await tools.executor.sources.add(%s);' "$source_input" >"$script_file"
+  SCOPE_ID="$(printf '%s' "$HTTP_BODY" | "$JQ_BIN" -r '.id // empty')"
+  if [[ -z "$SCOPE_ID" ]]; then
+    error "Executor did not return a scope id"
+    exit 1
+  fi
+}
 
-  if ! result="$("$EXECUTOR_BIN" call --file "$script_file" 2>&1)"; then
-    rm -f "$script_file"
-    error "Failed to add source $name"
-    printf '%s\n' "$result" >&2
+current_json_or_empty() {
+  local path="$1"
+  if ! api GET "$path"; then
     return 1
   fi
-  rm -f "$script_file"
 
-  local status
-  status="$(printf '%s' "$result" | "$JQ_BIN" -r '.status // empty' 2>/dev/null || true)"
-  if [[ "$status" == "connected" ]]; then
-    info "Connected source $namespace -> $endpoint"
+  if [[ "$HTTP_BODY" == "null" ]]; then
+    return 1
+  fi
+
+  return 0
+}
+
+delete_source_id() {
+  local source_id="$1"
+  if api DELETE "/scopes/$SCOPE_ID/sources/$source_id"; then
+    info "Removed source $source_id"
+  else
+    warn "Failed to remove source $source_id: $HTTP_BODY"
+  fi
+}
+
+remove_sources_by_kind_url() {
+  local kind="$1" url="$2" keep_id="${3:-}"
+  local sources_json
+
+  if ! api GET "/scopes/$SCOPE_ID/sources"; then
+    warn "Failed to list sources for cleanup: $HTTP_BODY"
     return 0
   fi
 
-  warn "Source $name did not report connected status"
-  printf '%s\n' "$result" >&2
-  return 1
+  sources_json="$HTTP_BODY"
+  while IFS=$'\t' read -r source_id source_name; do
+    [[ -z "$source_id" ]] && continue
+    [[ -n "$keep_id" && "$source_id" == "$keep_id" ]] && continue
+    warn "Removing stale source $source_id ($source_name) for $url"
+    delete_source_id "$source_id"
+  done < <(
+    printf '%s' "$sources_json" | "$JQ_BIN" -r \
+      --arg kind "$kind" \
+      --arg url "$url" '
+        .[]
+        | select(.kind == $kind and .url == $url)
+        | [.id, .name]
+        | @tsv
+      '
+  )
 }
 
-sync_direct_source() {
-  local name="$1"
-  local namespace="$2"
-  local endpoint="$3"
+ensure_secret() {
+  local secret_id="$1" secret_name="$2" secret_value="$3"
+  local payload
 
-  ensure_source "$name" "$namespace" "$endpoint" || FAILURES+=("$name")
-}
-
-sync_remote_mcp_source() {
-  local name="$1"
-  local namespace="$2"
-  local endpoint="$3"
-  local transport="${4:-auto}"
-  local sources existing existing_endpoint existing_status existing_enabled existing_transport
-  local connect_payload result kind auth_url
-
-  sources="$(api_sources)"
-  existing="$(
-    printf '%s' "$sources" | "$JQ_BIN" -c --arg namespace "$namespace" --arg name "$name" '
-      map(select(.namespace == $namespace or .name == $name)) | first
-    '
+  payload="$("$JQ_BIN" -cn \
+    --arg id "$secret_id" \
+    --arg name "$secret_name" \
+    --arg value "$secret_value" \
+    '{ id: $id, name: $name, value: $value }'
   )"
 
-  if [[ "$existing" != "null" ]]; then
-    existing_endpoint="$(printf '%s' "$existing" | "$JQ_BIN" -r '.endpoint')"
-    existing_status="$(printf '%s' "$existing" | "$JQ_BIN" -r '.status')"
-    existing_enabled="$(printf '%s' "$existing" | "$JQ_BIN" -r '.enabled')"
-    existing_transport="$(printf '%s' "$existing" | "$JQ_BIN" -r '.binding.transport // "auto"')"
-
-    if [[ "$existing_endpoint" == "$endpoint" && "$existing_enabled" == "true" && "$existing_transport" == "$transport" ]]; then
-      if [[ "$existing_status" == "connected" ]]; then
-        info "Source $namespace already connected"
-        return 0
-      fi
-
-      if [[ "$existing_status" == "auth_required" ]]; then
-        warn "Source $name is awaiting OAuth. Run $EXECUTOR_AUTH_ATLASSIAN_SCRIPT to finish setup."
-        AUTH_REQUIRED+=("$name")
-        return 0
-      fi
-    fi
-
-    remove_matching_sources "$name" "$namespace" >/dev/null || true
+  if ! api POST "/scopes/$SCOPE_ID/secrets" "$payload"; then
+    warn "Failed to store secret $secret_id: $HTTP_BODY"
+    return 1
   fi
+}
 
-  connect_payload="$("$JQ_BIN" -cn \
+reconcile_mcp() {
+  local name="$1" namespace="$2" endpoint="$3" transport="$4" headers_json="$5" auth_json="$6"
+  local payload existing
+
+  payload="$("$JQ_BIN" -cn \
     --arg name "$name" \
     --arg namespace "$namespace" \
     --arg endpoint "$endpoint" \
     --arg transport "$transport" \
-    '
+    --argjson headers "$headers_json" \
+    --argjson auth "$auth_json" '
       {
+        transport: "remote",
         name: $name,
-        kind: "mcp",
-        endpoint: $endpoint,
         namespace: $namespace,
-        transport: $transport
-      }
-    '
+        endpoint: $endpoint,
+        remoteTransport: $transport,
+        headers: $headers,
+        queryParams: {},
+        auth: $auth
+      }'
   )"
 
-  info "Connecting remote MCP source $name"
-  result="$(connect_source "$connect_payload")"
-  kind="$(printf '%s' "$result" | "$JQ_BIN" -r '.kind // empty' 2>/dev/null || true)"
+  remove_sources_by_kind_url "mcp" "$endpoint" "$namespace"
 
-  case "$kind" in
-    connected)
-      info "Connected source $namespace -> $endpoint"
-      return 0
-      ;;
-    oauth_required)
-      auth_url="$(printf '%s' "$result" | "$JQ_BIN" -r '.authorizationUrl // empty' 2>/dev/null || true)"
-      warn "Source $name requires OAuth. Run $EXECUTOR_AUTH_ATLASSIAN_SCRIPT to authorize it."
-      if [[ -n "$auth_url" ]]; then
-        printf 'Authorize %s at: %s\n' "$name" "$auth_url" >&2
-      fi
-      AUTH_REQUIRED+=("$name")
-      return 0
-      ;;
-    credential_required)
-      warn "Source $name requires credentials before it can connect"
-      AUTH_REQUIRED+=("$name")
-      return 0
-      ;;
-    *)
-      warn "Remote MCP source $name did not connect cleanly"
-      printf '%s\n' "$result" >&2
-      FAILURES+=("$name")
-      return 0
-      ;;
-  esac
-}
+  if current_json_or_empty "/scopes/$SCOPE_ID/mcp/sources/$namespace"; then
+    existing="$HTTP_BODY"
+    local desired_shape cur_shape
+    desired_shape="$("$JQ_BIN" -cS --arg name "$name" --arg endpoint "$endpoint" \
+      --arg transport "$transport" --argjson headers "$headers_json" \
+      --argjson auth "$auth_json" \
+      -n '{name:$name, endpoint:$endpoint, transport:$transport, headers:$headers, auth:$auth}')"
+    cur_shape="$(printf '%s' "$existing" | "$JQ_BIN" -cS '{
+      name: .name,
+      endpoint: .config.endpoint,
+      transport: (.config.remoteTransport // "auto"),
+      headers: (.config.headers // {}),
+      auth: .config.auth
+    }')"
 
-sync_stdio_bridge_source() {
-  local name="$1"
-  local namespace="$2"
-  local port="$3"
-  local command_string="$4"
-
-  if ! start_stdio_bridge "$name" "$port" "$command_string"; then
-    remove_matching_sources "$name" "$namespace" >/dev/null || true
-    FAILURES+=("$name")
-    return 0
-  fi
-
-  ensure_source "$name" "$namespace" "$(bridge_url "$port")" || FAILURES+=("$name")
-}
-
-ensure_openapi_source() {
-  local name="$1"
-  local namespace="$2"
-  local endpoint="$3"
-  local spec_url="$4"
-  local auth_json="$5"
-  local sources existing source_id matches connect_payload result status
-
-  sources="$(api_sources)"
-  existing="$(
-    printf '%s' "$sources" | "$JQ_BIN" -c --arg name "$name" '
-      map(select(.kind == "openapi" and .name == $name)) | first
-    '
-  )"
-
-  if [[ "$existing" != "null" ]]; then
-    matches="$(
-      printf '%s' "$existing" | "$JQ_BIN" -r \
-        --arg endpoint "$endpoint" \
-        --arg namespace "$namespace" \
-        --arg specUrl "$spec_url" '
-          if .endpoint == $endpoint
-            and .namespace == $namespace
-            and .specUrl == $specUrl
-            and .status == "connected"
-            and .enabled == true
-          then
-            "true"
-          else
-            "false"
-          end
-        '
-    )"
-
-    if [[ "$matches" == "true" ]]; then
-      info "Source $namespace already connected"
+    if [[ "$desired_shape" == "$cur_shape" ]]; then
+      info "MCP source $namespace already up to date"
       return 0
     fi
 
-    source_id="$(printf '%s' "$existing" | "$JQ_BIN" -r '.id')"
-    warn "Replacing existing OpenAPI source $name"
-    delete_source "$source_id"
+    local patch_payload
+    patch_payload="$("$JQ_BIN" -cn \
+      --arg name "$name" \
+      --arg endpoint "$endpoint" \
+      --argjson headers "$headers_json" \
+      --argjson auth "$auth_json" \
+      '{ name: $name, endpoint: $endpoint, headers: $headers, queryParams: {}, auth: $auth }')"
+    if api PATCH "/scopes/$SCOPE_ID/mcp/sources/$namespace" "$patch_payload"; then
+      info "Updated MCP source $namespace"
+    else
+      warn "Patch failed for $name; recreating"
+      api POST "/scopes/$SCOPE_ID/mcp/sources/remove" "$("$JQ_BIN" -cn --arg namespace "$namespace" '{ namespace: $namespace }')" >/dev/null || true
+      if ! api POST "/scopes/$SCOPE_ID/mcp/sources" "$payload"; then
+        warn "Failed to recreate MCP source $name: $HTTP_BODY"
+        FAILURES+=("$name")
+        return 0
+      fi
+      info "Recreated MCP source $namespace"
+    fi
+  else
+    if ! api POST "/scopes/$SCOPE_ID/mcp/sources" "$payload"; then
+      warn "Failed to add MCP source $name: $HTTP_BODY"
+      FAILURES+=("$name")
+      return 0
+    fi
+    info "Added MCP source $namespace"
   fi
 
-  connect_payload="$("$JQ_BIN" -cn \
+  local refresh_payload
+  refresh_payload="$("$JQ_BIN" -cn --arg namespace "$namespace" '{ namespace: $namespace }')"
+  if api POST "/scopes/$SCOPE_ID/mcp/sources/refresh" "$refresh_payload"; then
+    local tool_count
+    tool_count="$(printf '%s' "$HTTP_BODY" | "$JQ_BIN" -r '.toolCount // empty' 2>/dev/null || true)"
+    [[ -n "$tool_count" ]] && info "  $namespace: $tool_count tools"
+  else
+    warn "Refresh failed for $name: $HTTP_BODY"
+  fi
+}
+
+reconcile_openapi() {
+  local name="$1" namespace="$2" base_url="$3" spec_json="$4" headers_json="$5"
+  local payload existing
+
+  payload="$("$JQ_BIN" -cn \
     --arg name "$name" \
     --arg namespace "$namespace" \
-    --arg endpoint "$endpoint" \
-    --arg specUrl "$spec_url" \
-    --argjson auth "$auth_json" \
-    '
-      {
-        name: $name,
-        kind: "openapi",
-        endpoint: $endpoint,
-        namespace: $namespace,
-        specUrl: $specUrl,
-        auth: $auth
-      }
-    '
+    --arg baseUrl "$base_url" \
+    --arg spec "$spec_json" \
+    --argjson headers "$headers_json" \
+    '{ name: $name, namespace: $namespace, baseUrl: $baseUrl, spec: $spec, headers: $headers }'
   )"
 
-  info "Connecting OpenAPI source $name"
-  result="$(connect_source "$connect_payload")"
-  status="$(printf '%s' "$result" | "$JQ_BIN" -r '.kind // empty' 2>/dev/null || true)"
-  if [[ "$status" != "connected" ]]; then
-    warn "OpenAPI source $name did not connect cleanly"
-    printf '%s\n' "$result" >&2
+  if current_json_or_empty "/scopes/$SCOPE_ID/openapi/sources/$namespace"; then
+    existing="$HTTP_BODY"
+    local desired_spec current_spec desired_rest current_rest
+    desired_spec="$(printf '%s' "$spec_json" | "$JQ_BIN" -cS '.')"
+    current_spec="$(printf '%s' "$existing" | "$JQ_BIN" -r '.config.spec // "{}"' | "$JQ_BIN" -cS '.')"
+    desired_rest="$("$JQ_BIN" -cS -n --arg name "$name" --arg baseUrl "$base_url" \
+      --argjson headers "$headers_json" '{name:$name, baseUrl:$baseUrl, headers:$headers}')"
+    current_rest="$(printf '%s' "$existing" | "$JQ_BIN" -cS '{
+      name: .name,
+      baseUrl: .config.baseUrl,
+      headers: (.config.headers // {})
+    }')"
+
+    if [[ "$desired_spec" == "$current_spec" && "$desired_rest" == "$current_rest" ]]; then
+      info "OpenAPI source $namespace already up to date"
+      return 0
+    fi
+
+    if [[ "$desired_spec" != "$current_spec" ]]; then
+      warn "OpenAPI spec changed for $name; recreating"
+      api DELETE "/scopes/$SCOPE_ID/sources/$namespace" >/dev/null || true
+      if ! api POST "/scopes/$SCOPE_ID/openapi/specs" "$payload"; then
+        warn "Failed to recreate OpenAPI source $name: $HTTP_BODY"
+        FAILURES+=("$name")
+        return 0
+      fi
+      info "Recreated OpenAPI source $namespace"
+      return 0
+    fi
+
+    local patch_payload
+    patch_payload="$("$JQ_BIN" -cn --arg name "$name" --arg baseUrl "$base_url" \
+      --argjson headers "$headers_json" '{name:$name, baseUrl:$baseUrl, headers:$headers}')"
+    if api PATCH "/scopes/$SCOPE_ID/openapi/sources/$namespace" "$patch_payload"; then
+      info "Updated OpenAPI source $namespace"
+    else
+      warn "Patch failed for $name: $HTTP_BODY"
+      FAILURES+=("$name")
+    fi
+  else
+    if ! api POST "/scopes/$SCOPE_ID/openapi/specs" "$payload"; then
+      warn "Failed to add OpenAPI source $name: $HTTP_BODY"
+      FAILURES+=("$name")
+      return 0
+    fi
+    info "Added OpenAPI source $namespace"
+  fi
+}
+
+auth_none_json() {
+  "$JQ_BIN" -cn '{ kind: "none" }'
+}
+
+auth_header_json() {
+  local header_name="$1" secret_id="$2" prefix="${3:-}"
+
+  if [[ -n "$prefix" ]]; then
+    "$JQ_BIN" -cn \
+      --arg headerName "$header_name" \
+      --arg secretId "$secret_id" \
+      --arg prefix "$prefix" \
+      '{ kind: "header", headerName: $headerName, secretId: $secretId, prefix: $prefix }'
+  else
+    "$JQ_BIN" -cn \
+      --arg headerName "$header_name" \
+      --arg secretId "$secret_id" \
+      '{ kind: "header", headerName: $headerName, secretId: $secretId }'
+  fi
+}
+
+auth_oauth_json() {
+  local connection_id="$1"
+  "$JQ_BIN" -cn --arg connectionId "$connection_id" \
+    '{ kind: "oauth2", connectionId: $connectionId }'
+}
+
+secret_header_ref_json() {
+  local secret_id="$1" prefix="${2:-}"
+
+  if [[ -n "$prefix" ]]; then
+    "$JQ_BIN" -cn --arg secretId "$secret_id" --arg prefix "$prefix" \
+      '{ secretId: $secretId, prefix: $prefix }'
+  else
+    "$JQ_BIN" -cn --arg secretId "$secret_id" '{ secretId: $secretId }'
+  fi
+}
+
+connection_exists() {
+  local connection_id="$1"
+
+  if ! api GET "/scopes/$SCOPE_ID/connections"; then
+    warn "Failed to list Executor connections: $HTTP_BODY"
     return 1
   fi
 
-  result="$(printf '%s' "$result" | "$JQ_BIN" -c '.source')"
-  status="$(printf '%s' "$result" | "$JQ_BIN" -r '.status // empty' 2>/dev/null || true)"
-  if [[ "$status" != "connected" ]]; then
-    warn "OpenAPI source $name did not report connected status"
-    printf '%s\n' "$result" >&2
-    return 1
+  printf '%s' "$HTTP_BODY" | "$JQ_BIN" -e \
+    --arg connectionId "$connection_id" \
+    '.[] | select(.id == $connectionId)' >/dev/null
+}
+
+control_plane_spec() {
+  "$CURL_BIN" -fsS "${BASE_URL%/}/api/docs" | "$PYTHON_BIN" -c '
+import json, re, sys
+m = re.search(r"<script id=\"swagger-spec\" type=\"application/json\">(.*?)</script>", sys.stdin.read(), re.S)
+if not m:
+    sys.exit(1)
+print(json.dumps(json.loads(m.group(1)), separators=(",", ":")))
+'
+}
+
+# --- main ---------------------------------------------------------------------
+
+ensure_runtime
+
+# MCP sources: no-auth hosted endpoints.
+for spec in \
+  "deepwiki|deepwiki|https://mcp.deepwiki.com/mcp|streamable-http" \
+  "grep|grep|https://mcp.grep.app/|auto" \
+  "exa|exa|${EXA_ENDPOINT:-https://mcp.exa.ai/mcp}|streamable-http"
+do
+  IFS='|' read -r name namespace endpoint transport <<<"$spec"
+  reconcile_mcp "$name" "$namespace" "$endpoint" "$transport" '{}' "$(auth_none_json)"
+done
+
+# MCP sources: secret-backed hosted endpoints.
+if have_env GITHUB_PERSONAL_ACCESS_TOKEN; then
+  if ensure_secret "github_pat" "GitHub Personal Access Token" "$GITHUB_PERSONAL_ACCESS_TOKEN"; then
+    headers="$("$JQ_BIN" -cn '{ "X-MCP-Readonly": "true" }')"
+    reconcile_mcp "github" "github" \
+      "https://api.githubcopilot.com/mcp/" "streamable-http" "$headers" \
+      "$(auth_header_json "Authorization" "github_pat" "Bearer ")"
+  else
+    FAILURES+=("github")
   fi
-
-  info "Connected source $namespace -> $endpoint"
-  return 0
-}
-
-sync_openapi_source() {
-  local name="$1"
-  local namespace="$2"
-  local endpoint="$3"
-  local spec_url="$4"
-  local auth_json="$5"
-
-  ensure_openapi_source "$name" "$namespace" "$endpoint" "$spec_url" "$auth_json" || FAILURES+=("$name")
-}
-
-EXECUTOR_BIN="$(prefer_fallback_bin executor "$HOME/.local/share/mise/shims/executor")"
-SUPERGATEWAY_BIN="$(prefer_fallback_bin supergateway "$HOME/.local/share/mise/shims/supergateway")"
-GITHUB_MCP_BIN="$(resolve_bin github-mcp-server "$HOME/.local/share/mise/shims/github-mcp-server" || true)"
-TMUX_BIN="$(require_bin tmux)"
-JQ_BIN="$(require_bin jq)"
-CURL_BIN="$(require_bin curl)"
-PYTHON_BIN="$(require_bin python3)"
-
-BASE_URL="$EXECUTOR_BASE_URL"
-STATE_ROOT="$EXECUTOR_STATE_ROOT"
-COMMAND_DIR="$STATE_ROOT/commands"
-LOG_DIR="$STATE_ROOT/logs"
-OPENAPI_SPEC_DIR="$EXECUTOR_OPENAPI_SPEC_DIR"
-OPENAPI_SPEC_PORT="$EXECUTOR_OPENAPI_SPEC_PORT"
-mkdir -p "$COMMAND_DIR" "$LOG_DIR"
-
-ACCOUNT_ID=""
-WORKSPACE_ID=""
-FAILURES=()
-SKIPPED=()
-AUTH_REQUIRED=()
-
-ensure_executor
-
-if [[ ! -d "$OPENAPI_SPEC_DIR" ]]; then
-  error "Missing OpenAPI spec directory: $OPENAPI_SPEC_DIR"
-  exit 1
-fi
-
-start_static_server "openapi-specs" "$OPENAPI_SPEC_PORT" "$OPENAPI_SPEC_DIR"
-sync_tmux_env "${EXECUTOR_TMUX_ENV_KEYS[@]}"
-
-no_auth="$("$JQ_BIN" -cn '{ kind: "none" }')"
-
-if "$CURL_BIN" -fsS "$(control_plane_spec_url)" >/dev/null 2>&1; then
-  sync_openapi_source \
-    "executor-control-plane" \
-    "executor_control" \
-    "${BASE_URL%/}/" \
-    "$(control_plane_spec_url)" \
-    "$no_auth"
 else
-  warn "Skipping executor-control-plane: $(control_plane_spec_url) is unavailable"
-  remove_matching_sources "executor-control-plane" "executor_control" >/dev/null || true
-  SKIPPED+=("executor-control-plane")
+  warn "Skipping github: GITHUB_PERSONAL_ACCESS_TOKEN is not set"
+  SKIPPED+=("github")
 fi
 
-for source in \
-  "deepwiki|deepwiki|https://mcp.deepwiki.com/mcp" \
-  "grep|grep|https://mcp.grep.app/"
-do
-  IFS='|' read -r source_name source_namespace source_endpoint <<<"$source"
-  sync_direct_source "$source_name" "$source_namespace" "$source_endpoint"
-done
-
-for source in \
-  "github|github|true" \
-  "parallel|parallel|true" \
-  "parallel-search|parallel_search|false" \
-  "parallel-task|parallel_task|false" \
-  "context7|context7|false" \
-  "codex|codex|true" \
-  "perplexity|perplexity|true" \
-  "huggingface|huggingface|true" \
-  "nia|nia|true"
-do
-  IFS='|' read -r source_name source_namespace stop_bridge <<<"$source"
-  if [[ "$stop_bridge" == "true" ]]; then
-    stop_managed_process "$source_name"
+if have_env FIRECRAWL_API_KEY; then
+  if ensure_secret "firecrawl_api_key" "Firecrawl API Key" "$FIRECRAWL_API_KEY"; then
+    reconcile_mcp "firecrawl" "firecrawl" \
+      "https://mcp.firecrawl.dev/v2/mcp" "streamable-http" \
+      '{}' \
+      "$(auth_header_json "Authorization" "firecrawl_api_key" "Bearer ")"
+  else
+    FAILURES+=("firecrawl")
   fi
-  remove_matching_sources "$source_name" "$source_namespace" >/dev/null || true
-done
+else
+  warn "Skipping firecrawl: FIRECRAWL_API_KEY is not set"
+  SKIPPED+=("firecrawl")
+fi
 
-sync_remote_mcp_source \
-  "$EXECUTOR_ATLASSIAN_SOURCE_NAME" \
-  "$EXECUTOR_ATLASSIAN_NAMESPACE" \
-  "$EXECUTOR_ATLASSIAN_ENDPOINT" \
-  "$EXECUTOR_ATLASSIAN_TRANSPORT"
+atlassian_connection_id="atlassian_oauth"
+atlassian_email="${ATLASSIAN_EMAIL:-${JIRA_USERNAME:-}}"
+atlassian_token="${ATLASSIAN_API_TOKEN:-${JIRA_API_TOKEN:-}}"
+if connection_exists "$atlassian_connection_id"; then
+  reconcile_mcp "atlassian" "atlassian" \
+    "https://mcp.atlassian.com/v1/mcp" "streamable-http" \
+    '{}' \
+    "$(auth_oauth_json "$atlassian_connection_id")"
+elif [[ -n "$atlassian_email" && -n "$atlassian_token" ]]; then
+  atlassian_basic_secret="$(printf '%s:%s' "$atlassian_email" "$atlassian_token" | "$BASE64_BIN" | tr -d '\n')"
+  if ensure_secret "atlassian_basic_token" "Atlassian Basic Auth Token" "$atlassian_basic_secret"; then
+    reconcile_mcp "atlassian" "atlassian" \
+      "https://mcp.atlassian.com/v1/mcp" "streamable-http" \
+      '{}' \
+      "$(auth_header_json "Authorization" "atlassian_basic_token" "Basic ")"
+  else
+    FAILURES+=("atlassian")
+  fi
+elif have_env ATLASSIAN_API_KEY; then
+  if ensure_secret "atlassian_api_key" "Atlassian API Key" "$ATLASSIAN_API_KEY"; then
+    reconcile_mcp "atlassian" "atlassian" \
+      "https://mcp.atlassian.com/v1/mcp" "streamable-http" \
+      '{}' \
+      "$(auth_header_json "Authorization" "atlassian_api_key" "Bearer ")"
+  else
+    FAILURES+=("atlassian")
+  fi
+else
+  warn "Skipping atlassian: set up the atlassian_oauth connection or provide ATLASSIAN_EMAIL+ATLASSIAN_API_TOKEN, JIRA_USERNAME+JIRA_API_TOKEN, or ATLASSIAN_API_KEY"
+  SKIPPED+=("atlassian")
+fi
 
-stop_managed_process "$EXECUTOR_EXA_SOURCE_NAME"
-sync_remote_mcp_source \
-  "$EXECUTOR_EXA_SOURCE_NAME" \
-  "$EXECUTOR_EXA_NAMESPACE" \
-  "$EXECUTOR_EXA_ENDPOINT" \
-  "$EXECUTOR_EXA_TRANSPORT"
-
+# OpenAPI sources: external APIs with header-based auth.
 if have_env PERPLEXITY_API_KEY; then
-  perplexity_auth="$("$JQ_BIN" -cn --arg token "$PERPLEXITY_API_KEY" '
-    {
-      kind: "bearer",
-      headerName: "Authorization",
-      prefix: "Bearer ",
-      token: $token
-    }
-  ')"
-  sync_openapi_source \
-    "perplexity-search" \
-    "perplexity_search" \
-    "https://api.perplexity.ai/" \
-    "$(spec_url "perplexity-search.openapi.json")" \
-    "$perplexity_auth"
+  if ensure_secret "perplexity_api_key" "Perplexity API Key" "$PERPLEXITY_API_KEY"; then
+    headers="$("$JQ_BIN" -cn --argjson auth "$(secret_header_ref_json "perplexity_api_key" "Bearer ")" \
+      '{ Authorization: $auth }')"
+    reconcile_openapi "perplexity-search" "perplexity_search" \
+      "https://api.perplexity.ai" \
+      "$("$JQ_BIN" -cS '.' "$OPENAPI_SPEC_DIR/perplexity-search.openapi.json")" \
+      "$headers"
+  else
+    FAILURES+=("perplexity-search")
+  fi
 else
   warn "Skipping perplexity-search: PERPLEXITY_API_KEY is not set"
   SKIPPED+=("perplexity-search")
 fi
 
 if have_env PARALLEL_API_KEY; then
-  parallel_auth="$("$JQ_BIN" -cn --arg token "$PARALLEL_API_KEY" '
-    {
-      kind: "bearer",
-      headerName: "x-api-key",
-      prefix: "",
-      token: $token
-    }
-  ')"
-  sync_openapi_source \
-    "parallel-search" \
-    "parallel_search" \
-    "https://api.parallel.ai/" \
-    "$(spec_url "parallel-search.openapi.json")" \
-    "$parallel_auth"
+  if ensure_secret "parallel_api_key" "Parallel API Key" "$PARALLEL_API_KEY"; then
+    headers="$("$JQ_BIN" -cn --argjson keyRef "$(secret_header_ref_json "parallel_api_key")" '{ "x-api-key": $keyRef }')"
+    reconcile_openapi "parallel-search" "parallel_search" \
+      "https://api.parallel.ai" \
+      "$("$JQ_BIN" -cS '.' "$OPENAPI_SPEC_DIR/parallel-search.openapi.json")" \
+      "$headers"
+  else
+    FAILURES+=("parallel-search")
+  fi
 else
   warn "Skipping parallel-search: PARALLEL_API_KEY is not set"
   SKIPPED+=("parallel-search")
 fi
 
-if [[ -n "$GITHUB_MCP_BIN" ]] && have_env GITHUB_PERSONAL_ACCESS_TOKEN; then
-  github_toolsets="actions,code_security,dependabot,discussions,gists,issues,labels,orgs,projects,pull_requests,repos,secret_protection,security_advisories,stargazers,users"
-  sync_stdio_bridge_source \
-    "github" \
-    "github" \
-    8822 \
-    "$GITHUB_MCP_BIN stdio --read-only --toolsets $github_toolsets"
+# Executor's own control plane, self-described.
+if spec="$(control_plane_spec)"; then
+  reconcile_openapi "executor-control-plane" "executor_control" \
+    "${BASE_URL%/}/api" "$spec" '{}'
 else
-  warn "Skipping github: command or GITHUB_PERSONAL_ACCESS_TOKEN missing"
-  SKIPPED+=("github")
-fi
-
-sync_stdio_bridge_source "effect-docs" "effect_docs" 8817 "npx -y effect-mcp@latest"
-
-if have_env FIRECRAWL_API_KEY; then
-  sync_stdio_bridge_source "firecrawl" "firecrawl" 8820 "npx -y firecrawl-mcp"
-else
-  warn "Skipping firecrawl: FIRECRAWL_API_KEY is not set"
-  SKIPPED+=("firecrawl")
-fi
-
-NX_MCP_WORKSPACE="${NX_MCP_WORKSPACE:-}"
-if [[ -n "$NX_MCP_WORKSPACE" ]]; then
-  if [[ -f "$NX_MCP_WORKSPACE/nx.json" ]]; then
-    printf -v nx_command 'npx -y nx-mcp@latest %q' "$NX_MCP_WORKSPACE"
-    sync_stdio_bridge_source "nx-mcp" "nx_mcp" 8819 "$nx_command"
-  else
-    warn "Skipping nx-mcp: $NX_MCP_WORKSPACE is not an Nx workspace root"
-    SKIPPED+=("nx-mcp")
-  fi
-else
-  warn "Skipping nx-mcp: set NX_MCP_WORKSPACE to an Nx workspace root"
-  stop_managed_process "nx-mcp"
-  remove_matching_sources "nx-mcp" "nx_mcp" >/dev/null || true
-  SKIPPED+=("nx-mcp")
+  warn "Skipping executor-control-plane: could not extract live OpenAPI spec"
+  SKIPPED+=("executor-control-plane")
 fi
 
 echo
-info "Executor MCP sync complete"
+info "Executor sync complete"
 
 if ((${#SKIPPED[@]} > 0)); then
   printf 'Skipped: %s\n' "${SKIPPED[*]}"
-fi
-
-if ((${#AUTH_REQUIRED[@]} > 0)); then
-  printf 'Auth required: %s\n' "${AUTH_REQUIRED[*]}"
 fi
 
 if ((${#FAILURES[@]} > 0)); then

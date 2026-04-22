@@ -5,161 +5,118 @@ Codex and Claude talk to one local MCP endpoint:
 
 - `http://127.0.0.1:8788/mcp`
 
-That endpoint is backed by a local Executor daemon plus a sync script that
-registers the actual tools and API sources.
+That endpoint is backed by a local Executor runtime plus a sync script that
+registers MCP and OpenAPI sources.
 
 ## Architecture
 
 | Component | Role |
 | --- | --- |
 | Codex / Claude | MCP clients that call Executor |
-| Executor daemon | Local tool catalog and execution runtime |
-| `scripts/executor/launchd-sync.sh` | Rebuilds shell env for background runs |
-| `scripts/executor/sync.sh` | Reconciles sources into Executor |
-| `supergateway` | Converts stdio MCP servers into local HTTP MCP endpoints |
-| `tmux` | Keeps bridge processes alive between calls |
+| Executor runtime (`executor daemon run`) | Local tool catalog; persists runtime state under `~/.executor` |
+| `scripts/executor/sync.sh` | Reconciles the desired source inventory into Executor |
+| `scripts/executor/launchd-sync.sh` | Rebuilds shell env for launchd-driven runs |
+| `scripts/executor/restart.sh` | Stops the runtime and re-runs sync |
+| `scripts/executor/status.sh` | Prints runtime + source inventory |
 | LaunchAgent | Starts sync on login and every 15 minutes |
 
 ## Source Types
 
-Executor currently manages three source shapes:
+Every source is either:
 
-1. Direct remote MCP sources
-   - Example: DeepWiki, grep, Atlassian, Exa
-2. OpenAPI sources
-   - Example: Executor Control Plane, Perplexity Search, Parallel Search
-3. Local stdio MCP sources behind a bridge
-   - Example: GitHub, Effect docs, Firecrawl
+1. **Hosted remote MCP** — `streamable-http` or `sse` endpoint, auth via Executor-managed headers or OAuth connections.
+   - Examples: DeepWiki, grep, Exa, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
+2. **OpenAPI** — baseUrl + spec + headers.
+   - Examples: Executor control plane, Perplexity Search, Parallel Search.
 
-Only the third category needs the bridge layer.
+There are **no stdio MCP bridges**. Every source is a plain HTTP endpoint that
+Executor speaks to directly.
+
+## Env Contract
+
+Sources register only when their credentials are present.
+
+| Source | Env vars | Auth form |
+| --- | --- | --- |
+| GitHub | `GITHUB_PERSONAL_ACCESS_TOKEN` | `Authorization: Bearer <PAT>` |
+| Firecrawl | `FIRECRAWL_API_KEY` | `Authorization: Bearer <key>` |
+| Atlassian Rovo | Preferred: persisted Executor connection `atlassian_oauth`. Fallback: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` (Basic) or `ATLASSIAN_API_KEY` (Bearer) | OAuth preferred; token auth fallback |
+| Perplexity | `PERPLEXITY_API_KEY` | `Authorization: Bearer <key>` |
+| Parallel | `PARALLEL_API_KEY` | `x-api-key: <key>` |
+| DeepWiki / grep / Exa | — | none |
+
+Secrets live in `~/.config/shell/*.sh` fragments sourced by `launchd-sync.sh`.
+`sync.sh` copies those values into Executor's own secret store and references
+them from source definitions, so `executor.jsonc` does not need raw API keys.
+Manual `sync.sh` runs also reload those fragments first so secret rotations do
+not depend on the caller's current shell exports.
+
+## Atlassian auth
+
+Preferred path: complete a one-time OAuth consent flow so Executor stores the
+`atlassian_oauth` connection in the current scope. Once that connection exists,
+`sync.sh` keeps the Atlassian MCP source on OAuth automatically.
+
+Fallback path: Atlassian Rovo MCP also accepts API-token auth when an org admin
+has enabled it. Personal API tokens use Basic auth, service-account API keys
+use Bearer. Tokens are not bound to a `cloudId`, so pass it per call.
+
+See
+[Atlassian docs: Configuring authentication via API token](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/configuring-authentication-via-api-token/).
 
 ## Startup Flow
 
 1. macOS launchd loads `com.kchen.executor-sync`.
 2. The LaunchAgent runs `scripts/executor/launchd-sync.sh`.
-3. That script reconstructs `PATH`, activates Mise, and sources secret-backed shell modules like `github.sh`, `jira.sh`, `perplexity.sh`, `parallel.sh`, and `firecrawl.sh`.
-4. It then execs `scripts/executor/sync.sh`.
-5. The sync script normalizes Executor's local workspace root to `$HOME` (or `$EXECUTOR_WORKSPACE_ROOT`) before touching the daemon.
-6. It ensures the local Executor daemon is reachable.
-7. It registers the local Executor control plane as an OpenAPI source when `/v1/openapi.json` is available.
-8. It starts helper processes for any stdio-backed MCP servers and the local OpenAPI spec server.
-9. It registers direct MCP, OpenAPI, and bridged MCP endpoints into the current Executor workspace.
-
-## v1.2 Features In Use
-
-This repo now leans on two Executor `v1.2.x` changes:
-
-- Executor separates shareable source definitions from actor-scoped auth material. The sync script reconciles stable source definitions while leaving auth material local for sources like Perplexity Search and Parallel Search.
-- Executor exposes its control-plane OpenAPI spec at `/v1/openapi.json`. The sync script registers that spec as the `executor_control` OpenAPI source.
-
-That makes the local control plane self-describing: the same tool catalog that exposes GitHub, Firecrawl, or Perplexity can also expose Executor's own workspace and source APIs.
-
-## What "tmux/launchd-managed bridge" Means
-
-This repo uses that phrase to describe the local plumbing around stdio MCP
-servers.
-
-For a stdio-only MCP server like `github-mcp-server`:
-
-1. `supergateway` launches the stdio server and exposes it locally as HTTP MCP.
-2. The HTTP endpoint lives on `127.0.0.1:<port>/mcp`.
-3. The bridge process is run inside a detached `tmux` session so it stays alive.
-4. Executor registers that local HTTP endpoint as a normal MCP source.
-
-That is the "bridge":
-
-- stdio MCP server -> `supergateway` -> local HTTP MCP endpoint -> Executor source
-
-`tmux` is used as lightweight process supervision.
-`launchd` is used to kick off the sync automatically after login.
-
-## Why This Exists
-
-Without Executor, each client would carry and start its own MCP graph.
-
-With Executor:
-
-- Codex and Claude see one shared tool catalog
-- source auth and runtime state are centralized locally
-- OpenAPI APIs and MCP servers live behind one control plane
-- the control plane can describe itself as a normal OpenAPI source
-- clients avoid duplicating MCP configuration
-
-## Current Managed Sources
-
-All repo-owned Executor automation now lives under `scripts/executor/`.
-
-The source inventory is defined in `scripts/executor/sync.sh`.
-
-At a high level it includes:
-
-- Executor Control Plane
-- DeepWiki
-- grep
-- GitHub
-- Exa
-- Effect docs
-- Firecrawl
-- Atlassian
-- Perplexity Search
-- Parallel Search
-
-Exa now follows Exa's hosted MCP guidance directly via
-`https://mcp.exa.ai/mcp`. The local `exa-mcp-server` npm package is kept as a
-fallback pattern for clients that do not support remote MCP directly, but
-Executor uses the hosted remote source.
+3. That script reconstructs `PATH`, activates Mise, and sources the credential
+   fragments listed in `EXECUTOR_LAUNCHD_ENV_FILES`.
+4. It execs `scripts/executor/sync.sh`.
+5. `sync.sh` hits `GET /api/scope`. If the runtime isn't up, it starts
+   `executor daemon run --port 8788 --hostname 127.0.0.1 --scope ~/.executor`
+   via a detached tmux launch wrapper and waits for `/api/docs`.
+6. For each desired source, `sync.sh` compares with `GET /api/scopes/:id/{mcp,openapi}/sources/:ns` and PATCHes, POSTs, or DELETE+POSTs as needed. On add/patch it triggers a tool refresh.
+7. If `~/.executor/executor.jsonc` is still in the legacy object-shaped format,
+   `sync.sh` backs it up and replaces it with a modern empty `sources` array
+   before reconciliation.
+8. Secret-backed sources are written as secret references, not literal tokens.
+9. Executor persists sources in SQLite, so subsequent runs are cheap — unchanged sources return a "already up to date" line without touching the server.
 
 ## Manual Operations
 
 ```bash
-# Restart all Executor bridges and re-sync
-./scripts/executor/restart.sh
-
-# Reconcile Executor sources manually (idempotent, skips healthy bridges)
-# Uses $HOME as Executor's workspace root unless EXECUTOR_WORKSPACE_ROOT is set.
+# Reconcile sources (idempotent; starts runtime if needed).
 ./scripts/executor/sync.sh
 
-# Run the launchd-style sync path manually
-./scripts/executor/launchd-sync.sh
+# Stop the runtime and re-run sync.
+./scripts/executor/restart.sh
 
-# Start or refresh Atlassian OAuth for Executor
-./scripts/executor/auth-atlassian.sh
+# Show runtime + source inventory.
+./scripts/executor/status.sh
 
-# Check Executor health
-executor doctor --json
+# Inspect the live control-plane OpenAPI spec.
+curl -s http://127.0.0.1:8788/api/docs \
+  | python3 -c 'import re,sys,json; m=re.search(r"<script id=\"swagger-spec\" type=\"application/json\">(.*?)</script>",sys.stdin.read(),re.S); print(json.dumps(json.loads(m.group(1)),indent=2))' \
+  | jq '.info'
 
-# Inspect the local control-plane OpenAPI document
-curl -s http://127.0.0.1:8788/v1/openapi.json | jq '.info'
-
-# Inspect running bridge logs
-tail -f ~/.local/state/executor-mcp-bridges/logs/github.log
+# Tail runtime logs.
+tail -f ~/.local/state/executor-mcp-bridges/logs/runtime.log
 tail -f ~/Library/Logs/com.kchen.executor-sync.log
 ```
 
 ## Troubleshooting
 
-If a bridged source behaves incorrectly, check these in order:
-
-1. `executor doctor --json`
-2. `~/.local/state/executor-mcp-bridges/logs/<source>.log`
-3. `~/Library/Logs/com.kchen.executor-sync.log`
-4. whether the required env vars are present in the sourced shell module
-
-One subtlety: `tmux` can retain stale environment variables. The sync script now
-refreshes secret-backed env vars in the tmux server before starting bridge
-sessions.
-
-The sync path now also checks the control-plane inspection endpoint for
-already-connected MCP sources. If a source is still marked `connected` but its
-inspection bundle is missing, sync replaces that source so the tool catalog can
-recover automatically.
-
-Another subtlety: Atlassian is managed as a remote OAuth-backed MCP source. The
-first setup requires a one-time browser flow via
-`./scripts/executor/auth-atlassian.sh`. After that, Executor keeps the source
-definition and auth material locally so launchd-driven syncs can reconnect it
-after restart without re-registering the source.
-
-Executor `v1.2.x` also derives its local workspace config directory from the
-daemon process cwd. Launchd defaults that cwd to `/`, so this repo pins the sync
-path to `$HOME` and the restart script now stops the daemon before re-syncing.
+- `status.sh` is the first stop. It fails fast if the runtime is unreachable.
+- Runtime wedged? `restart.sh`. Source state is preserved in SQLite; only the process is replaced.
+- If source adds fail right after a version upgrade, inspect `~/.executor` for a
+  `executor.jsonc.legacy-*.bak` backup. `sync.sh` rewrites the old object-shaped
+  file because Executor `1.4.8` expects `sources` to be an array.
+- `executor.jsonc` may stay sparse right after a legacy migration because the
+  authoritative catalog already lives in SQLite. A fresh scope or empty catalog
+  is rebuilt fully by `sync.sh`.
+- Source marked "auth required" or failing to refresh? Check that the
+  corresponding env var is actually in the environment (launchd has a minimal
+  env — credentials must be in `~/.config/shell/*.sh`).
+- GitHub's hosted MCP requires a PAT with the scopes your tools need. No Copilot
+  subscription is required; see `github/github-mcp-server` `docs/remote-server.md`.
+- Firecrawl's hosted endpoint `https://mcp.firecrawl.dev/v2/mcp` is
+  streamable-http; the API key is sent as a Bearer header.
