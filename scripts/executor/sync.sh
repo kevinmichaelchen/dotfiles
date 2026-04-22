@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Reconcile the desired MCP + OpenAPI source inventory into the local Executor runtime.
 #
-# Every source is a hosted remote endpoint authenticated via headers. The only
-# local process is the Executor runtime itself.
+# Every source is a hosted remote endpoint. Auth is either header-based secrets
+# or persisted Executor OAuth connections. The only local process is the
+# Executor runtime itself.
 
 set -euo pipefail
 
@@ -20,6 +21,10 @@ BASE64_BIN="$(require_bin base64)"
 BASE_URL="$EXECUTOR_BASE_URL"
 OPENAPI_SPEC_DIR="$EXECUTOR_SCRIPT_DIR/openapi"
 mkdir -p "$EXECUTOR_RUNTIME_LOG_DIR"
+
+# Reload the canonical credential fragments so manual runs don't reuse stale
+# shell exports after a secret rotation.
+source_executor_env_files
 
 SCOPE_ID=""
 HTTP_STATUS=""
@@ -370,6 +375,12 @@ auth_header_json() {
   fi
 }
 
+auth_oauth_json() {
+  local connection_id="$1"
+  "$JQ_BIN" -cn --arg connectionId "$connection_id" \
+    '{ kind: "oauth2", connectionId: $connectionId }'
+}
+
 secret_header_ref_json() {
   local secret_id="$1" prefix="${2:-}"
 
@@ -379,6 +390,19 @@ secret_header_ref_json() {
   else
     "$JQ_BIN" -cn --arg secretId "$secret_id" '{ secretId: $secretId }'
   fi
+}
+
+connection_exists() {
+  local connection_id="$1"
+
+  if ! api GET "/scopes/$SCOPE_ID/connections"; then
+    warn "Failed to list Executor connections: $HTTP_BODY"
+    return 1
+  fi
+
+  printf '%s' "$HTTP_BODY" | "$JQ_BIN" -e \
+    --arg connectionId "$connection_id" \
+    '.[] | select(.id == $connectionId)' >/dev/null
 }
 
 control_plane_spec() {
@@ -434,9 +458,15 @@ else
   SKIPPED+=("firecrawl")
 fi
 
+atlassian_connection_id="atlassian_oauth"
 atlassian_email="${ATLASSIAN_EMAIL:-${JIRA_USERNAME:-}}"
 atlassian_token="${ATLASSIAN_API_TOKEN:-${JIRA_API_TOKEN:-}}"
-if [[ -n "$atlassian_email" && -n "$atlassian_token" ]]; then
+if connection_exists "$atlassian_connection_id"; then
+  reconcile_mcp "atlassian" "atlassian" \
+    "https://mcp.atlassian.com/v1/mcp" "streamable-http" \
+    '{}' \
+    "$(auth_oauth_json "$atlassian_connection_id")"
+elif [[ -n "$atlassian_email" && -n "$atlassian_token" ]]; then
   atlassian_basic_secret="$(printf '%s:%s' "$atlassian_email" "$atlassian_token" | "$BASE64_BIN" | tr -d '\n')"
   if ensure_secret "atlassian_basic_token" "Atlassian Basic Auth Token" "$atlassian_basic_secret"; then
     reconcile_mcp "atlassian" "atlassian" \
@@ -456,7 +486,7 @@ elif have_env ATLASSIAN_API_KEY; then
     FAILURES+=("atlassian")
   fi
 else
-  warn "Skipping atlassian: set ATLASSIAN_EMAIL+ATLASSIAN_API_TOKEN, JIRA_USERNAME+JIRA_API_TOKEN, or ATLASSIAN_API_KEY"
+  warn "Skipping atlassian: set up the atlassian_oauth connection or provide ATLASSIAN_EMAIL+ATLASSIAN_API_TOKEN, JIRA_USERNAME+JIRA_API_TOKEN, or ATLASSIAN_API_KEY"
   SKIPPED+=("atlassian")
 fi
 

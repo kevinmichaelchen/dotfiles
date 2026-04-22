@@ -179,7 +179,8 @@ Executor automation is co-located under `scripts/executor/`:
 - `status.sh`: print runtime + source inventory
 
 Every managed source is a hosted remote HTTP endpoint (MCP or OpenAPI) — no
-stdio bridges, no supergateway. Auth is header-based and driven by env vars; see
+stdio bridges, no supergateway. Auth is usually header-based and env-driven,
+but Atlassian can also run from a persisted Executor OAuth connection; see
 [docs/executor.md](../docs/executor.md) for the env contract.
 
 The `sync.sh` script:
@@ -189,7 +190,10 @@ The `sync.sh` script:
 3. Stores auth material in Executor's own secret store and references secrets from source configs instead of writing raw tokens into `executor.jsonc`.
 4. Triggers a tool refresh on each MCP source after add/update.
 5. Migrates a legacy object-shaped `executor.jsonc` to the modern array-based format before any add path runs.
-6. Skips sources whose credentials are not in the environment.
+6. Reloads the credential fragments in `~/.config/shell/*.sh` so manual runs do not reuse stale secret exports.
+7. Skips sources whose credentials are not in the environment, except for
+   sources that can run from a stored Executor OAuth connection (currently
+   Atlassian via `atlassian_oauth`).
 
 Executor persists sources in SQLite inside the scope directory, so on a warm
 system `sync.sh` is close to a no-op — unchanged sources return an

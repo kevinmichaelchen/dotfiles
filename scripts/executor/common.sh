@@ -99,3 +99,12 @@ have_env() {
   done
   return 0
 }
+
+source_executor_env_files() {
+  local file
+  for file in "${EXECUTOR_LAUNCHD_ENV_FILES[@]}"; do
+    [[ -f "$file" ]] || continue
+    # shellcheck disable=SC1090
+    source "$file"
+  done
+}

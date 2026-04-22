@@ -24,7 +24,7 @@ registers MCP and OpenAPI sources.
 
 Every source is either:
 
-1. **Hosted remote MCP** — `streamable-http` or `sse` endpoint, auth via headers.
+1. **Hosted remote MCP** — `streamable-http` or `sse` endpoint, auth via Executor-managed headers or OAuth connections.
    - Examples: DeepWiki, grep, Exa, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
 2. **OpenAPI** — baseUrl + spec + headers.
    - Examples: Executor control plane, Perplexity Search, Parallel Search.
@@ -40,7 +40,7 @@ Sources register only when their credentials are present.
 | --- | --- | --- |
 | GitHub | `GITHUB_PERSONAL_ACCESS_TOKEN` | `Authorization: Bearer <PAT>` |
 | Firecrawl | `FIRECRAWL_API_KEY` | `Authorization: Bearer <key>` |
-| Atlassian Rovo | `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` (Basic) or `ATLASSIAN_API_KEY` (Bearer) | See Atlassian docs |
+| Atlassian Rovo | Preferred: persisted Executor connection `atlassian_oauth`. Fallback: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` (Basic) or `ATLASSIAN_API_KEY` (Bearer) | OAuth preferred; token auth fallback |
 | Perplexity | `PERPLEXITY_API_KEY` | `Authorization: Bearer <key>` |
 | Parallel | `PARALLEL_API_KEY` | `x-api-key: <key>` |
 | DeepWiki / grep / Exa | — | none |
@@ -48,13 +48,18 @@ Sources register only when their credentials are present.
 Secrets live in `~/.config/shell/*.sh` fragments sourced by `launchd-sync.sh`.
 `sync.sh` copies those values into Executor's own secret store and references
 them from source definitions, so `executor.jsonc` does not need raw API keys.
+Manual `sync.sh` runs also reload those fragments first so secret rotations do
+not depend on the caller's current shell exports.
 
 ## Atlassian auth
 
-Atlassian Rovo MCP accepts API-token auth when an org admin has enabled it
-(otherwise fall back to OAuth via an interactive MCP client). Personal API
-tokens use Basic auth, service-account API keys use Bearer. Tokens are not
-bound to a `cloudId`, so pass it per call.
+Preferred path: complete a one-time OAuth consent flow so Executor stores the
+`atlassian_oauth` connection in the current scope. Once that connection exists,
+`sync.sh` keeps the Atlassian MCP source on OAuth automatically.
+
+Fallback path: Atlassian Rovo MCP also accepts API-token auth when an org admin
+has enabled it. Personal API tokens use Basic auth, service-account API keys
+use Bearer. Tokens are not bound to a `cloudId`, so pass it per call.
 
 See
 [Atlassian docs: Configuring authentication via API token](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/configuring-authentication-via-api-token/).
