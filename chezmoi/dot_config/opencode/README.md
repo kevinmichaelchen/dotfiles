@@ -14,8 +14,8 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 ### Configured Providers
 
 - **[OpenCode][opencode]** - `mimo-v2-pro-free`, `mimo-v2-omni-free`
-- **Fireworks AI** - `accounts/fireworks/routers/kimi-k2p5-turbo`
-- **[OpenRouter][openrouter]** - `moonshotai/kimi-k2.5`
+- **Fireworks AI** - `accounts/fireworks/models/kimi-k2p6`
+- **[OpenRouter][openrouter]** - `moonshotai/kimi-k2.6`
 - **[OpenAI][openai]** - GPT-5.x series (via OAuth/Codex)
 
 ### Authentication
@@ -32,7 +32,7 @@ disabled in config and no longer part of this setup. Fireworks AI uses
 
 ## Defaults
 
-- `model`: `fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo`
+- `model`: `fireworks-ai/accounts/fireworks/models/kimi-k2p6`
 - `small_model`: `opencode/mimo-v2-omni-free`
 
 ## Plugins
