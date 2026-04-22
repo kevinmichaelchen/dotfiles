@@ -9,12 +9,13 @@
         "provider": {
           "order": ["Fireworks"],
           "data_collection": "deny"
-        }
+        },
+        "store": false
       },
       "models": [
         {
-          "id": "moonshotai/kimi-k2.5",
-          "name": "Kimi K2.5 (OpenRouter/Fireworks)",
+          "id": "moonshotai/kimi-k2.6",
+          "name": "Kimi K2.6 (OpenRouter/Fireworks)",
           "context_window": 262144,
           "default_max_tokens": 32768
         }
@@ -23,11 +24,11 @@
   },
   "models": {
     "large": {
-      "model": "moonshotai/kimi-k2.5",
+      "model": "moonshotai/kimi-k2.6",
       "provider": "openrouter"
     },
     "small": {
-      "model": "moonshotai/kimi-k2.5",
+      "model": "moonshotai/kimi-k2.6",
       "provider": "openrouter"
     }
   },
