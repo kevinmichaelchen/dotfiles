@@ -50,6 +50,13 @@
       "provider": "openrouter"
     }
   },
+  "mcp": {
+    "executor": {
+      "type": "http",
+      "url": "http://127.0.0.1:8788/mcp",
+      "timeout": 120
+    }
+  },
   "options": {
     "context_paths": [
       "CLAUDE.md",
