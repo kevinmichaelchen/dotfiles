@@ -191,6 +191,32 @@ remove_sources_by_kind_url() {
   )
 }
 
+remove_source_id_if_kind_mismatch() {
+  local source_id="$1" desired_kind="$2"
+  local sources_json
+
+  if ! api GET "/scopes/$SCOPE_ID/sources"; then
+    warn "Failed to list sources for kind migration cleanup: $HTTP_BODY"
+    return 0
+  fi
+
+  sources_json="$HTTP_BODY"
+  while IFS=$'\t' read -r actual_kind source_name; do
+    [[ -z "$actual_kind" ]] && continue
+    warn "Removing stale $actual_kind source $source_id ($source_name) before reconciling as $desired_kind"
+    delete_source_id "$source_id"
+  done < <(
+    printf '%s' "$sources_json" | "$JQ_BIN" -r \
+      --arg source_id "$source_id" \
+      --arg desired_kind "$desired_kind" '
+        .[]
+        | select(.id == $source_id and .kind != $desired_kind)
+        | [.kind, .name]
+        | @tsv
+      '
+  )
+}
+
 ensure_secret() {
   local secret_id="$1" secret_name="$2" secret_value="$3"
   local payload
@@ -231,6 +257,7 @@ reconcile_mcp() {
       }'
   )"
 
+  remove_source_id_if_kind_mismatch "$namespace" "mcp"
   remove_sources_by_kind_url "mcp" "$endpoint" "$namespace"
 
   if current_json_or_empty "/scopes/$SCOPE_ID/mcp/sources/$namespace"; then
@@ -304,6 +331,8 @@ reconcile_openapi() {
     --argjson headers "$headers_json" \
     '{ name: $name, namespace: $namespace, baseUrl: $baseUrl, spec: $spec, headers: $headers }'
   )"
+
+  remove_source_id_if_kind_mismatch "$namespace" "openapi"
 
   if current_json_or_empty "/scopes/$SCOPE_ID/openapi/sources/$namespace"; then
     existing="$HTTP_BODY"
@@ -422,14 +451,27 @@ ensure_runtime
 # MCP sources: no-auth hosted endpoints.
 for spec in \
   "deepwiki|deepwiki|https://mcp.deepwiki.com/mcp|streamable-http" \
-  "grep|grep|https://mcp.grep.app/|auto" \
-  "exa|exa|${EXA_ENDPOINT:-https://mcp.exa.ai/mcp}|streamable-http"
+  "grep|grep|https://mcp.grep.app/|auto"
 do
   IFS='|' read -r name namespace endpoint transport <<<"$spec"
   reconcile_mcp "$name" "$namespace" "$endpoint" "$transport" '{}' "$(auth_none_json)"
 done
 
 # MCP sources: secret-backed hosted endpoints.
+if have_env EXA_API_KEY; then
+  if ensure_secret "exa_api_key" "Exa API Key" "$EXA_API_KEY"; then
+    reconcile_mcp "exa" "exa" \
+      "${EXA_ENDPOINT:-https://mcp.exa.ai/mcp}" "streamable-http" \
+      '{}' \
+      "$(auth_header_json "Authorization" "exa_api_key" "Bearer ")"
+  else
+    FAILURES+=("exa")
+  fi
+else
+  warn "Skipping exa: EXA_API_KEY is not set"
+  SKIPPED+=("exa")
+fi
+
 if have_env GITHUB_PERSONAL_ACCESS_TOKEN; then
   if ensure_secret "github_pat" "GitHub Personal Access Token" "$GITHUB_PERSONAL_ACCESS_TOKEN"; then
     headers="$("$JQ_BIN" -cn '{ "X-MCP-Readonly": "true" }')"
@@ -509,11 +551,11 @@ fi
 
 if have_env PARALLEL_API_KEY; then
   if ensure_secret "parallel_api_key" "Parallel API Key" "$PARALLEL_API_KEY"; then
-    headers="$("$JQ_BIN" -cn --argjson keyRef "$(secret_header_ref_json "parallel_api_key")" '{ "x-api-key": $keyRef }')"
-    reconcile_openapi "parallel-search" "parallel_search" \
-      "https://api.parallel.ai" \
-      "$("$JQ_BIN" -cS '.' "$OPENAPI_SPEC_DIR/parallel-search.openapi.json")" \
-      "$headers"
+    reconcile_mcp "parallel-search" "parallel_search" \
+      "${PARALLEL_SEARCH_MCP_ENDPOINT:-https://search.parallel.ai/mcp}" \
+      "streamable-http" \
+      '{}' \
+      "$(auth_header_json "Authorization" "parallel_api_key" "Bearer ")"
   else
     FAILURES+=("parallel-search")
   fi

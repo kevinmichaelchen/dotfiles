@@ -25,9 +25,9 @@ registers MCP and OpenAPI sources.
 Every source is either:
 
 1. **Hosted remote MCP** — `streamable-http` or `sse` endpoint, auth via Executor-managed headers or OAuth connections.
-   - Examples: DeepWiki, grep, Exa, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
+   - Examples: DeepWiki, grep, Exa, Parallel Search MCP, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
 2. **OpenAPI** — baseUrl + spec + headers.
-   - Examples: Executor control plane, Perplexity Search, Parallel Search.
+   - Examples: Executor control plane, Perplexity Search.
 
 There are **no stdio MCP bridges**. Every source is a plain HTTP endpoint that
 Executor speaks to directly.
@@ -42,8 +42,9 @@ Sources register only when their credentials are present.
 | Firecrawl | `FIRECRAWL_API_KEY` | `Authorization: Bearer <key>` |
 | Atlassian Rovo | Preferred: persisted Executor connection `atlassian_oauth`. Fallback: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` (Basic) or `ATLASSIAN_API_KEY` (Bearer) | OAuth preferred; token auth fallback |
 | Perplexity | `PERPLEXITY_API_KEY` | `Authorization: Bearer <key>` |
-| Parallel | `PARALLEL_API_KEY` | `x-api-key: <key>` |
-| DeepWiki / grep / Exa | — | none |
+| Parallel | `PARALLEL_API_KEY` | `Authorization: Bearer <key>` |
+| Exa | `EXA_API_KEY` | `Authorization: Bearer <key>` |
+| DeepWiki / grep | — | none |
 
 Secrets live in `~/.config/shell/*.sh` fragments sourced by `launchd-sync.sh`.
 `sync.sh` copies those values into Executor's own secret store and references
