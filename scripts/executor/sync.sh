@@ -32,34 +32,6 @@ HTTP_BODY=""
 FAILURES=()
 SKIPPED=()
 
-migrate_legacy_scope_config() {
-  local config_file="$EXECUTOR_SCOPE_DIR/executor.jsonc"
-  local sources_type backup_file
-
-  [[ -f "$config_file" ]] || return 0
-
-  sources_type="$("$JQ_BIN" -r '
-    if type == "object" and has("sources") then
-      (.sources | type)
-    else
-      ""
-    end
-  ' "$config_file" 2>/dev/null || true)"
-
-  [[ "$sources_type" == "object" ]] || return 0
-
-  backup_file="${config_file}.legacy-$(date +%Y%m%d%H%M%S).bak"
-  cp "$config_file" "$backup_file"
-  cat >"$config_file" <<'EOF'
-{
-  "sources": []
-}
-EOF
-
-  warn "Backed up legacy Executor config to $backup_file"
-  warn "Reset object-shaped executor.jsonc to a modern empty source array"
-}
-
 api() {
   local method="$1" path="$2" payload="${3:-}"
   local body_file; body_file="$(mktemp "${TMPDIR:-/tmp}/executor-api.XXXXXX")"
@@ -115,7 +87,6 @@ start_runtime() {
 
 ensure_runtime() {
   mkdir -p "$EXECUTOR_SCOPE_DIR"
-  migrate_legacy_scope_config
 
   if api GET /scope; then
     local dir; dir="$(printf '%s' "$HTTP_BODY" | "$JQ_BIN" -r '.dir // empty' 2>/dev/null || true)"
