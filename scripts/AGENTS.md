@@ -176,7 +176,7 @@ Executor automation is co-located under `scripts/executor/`:
 - `sync.sh`: desired source inventory plus idempotent reconciliation
 - `launchd-sync.sh`: launchd-friendly PATH/env bootstrap that delegates to `sync.sh`
 - `restart.sh`: stop the runtime and re-run `sync.sh`
-- `status.sh`: print runtime + source inventory
+- `status.sh`: print runtime + source inventory through Executor's CLI, with a direct API fallback
 
 Every managed source is a hosted remote HTTP endpoint (MCP or OpenAPI) — no
 stdio bridges, no supergateway. Auth is usually header-based and env-driven,
@@ -189,9 +189,8 @@ The `sync.sh` script:
 2. Reconciles each desired source against `GET /api/scopes/:id/{mcp,openapi}/sources/:namespace` — PATCHes a drift, POSTs a new source, or DELETE+POSTs when an immutable field changed.
 3. Stores auth material in Executor's own secret store and references secrets from source configs instead of writing raw tokens into `executor.jsonc`.
 4. Triggers a tool refresh on each MCP source after add/update.
-5. Migrates a legacy object-shaped `executor.jsonc` to the modern array-based format before any add path runs.
-6. Reloads the credential fragments in `~/.config/shell/*.sh` so manual runs do not reuse stale secret exports.
-7. Skips sources whose credentials are not in the environment, except for
+5. Reloads the credential fragments in `~/.config/shell/*.sh` so manual runs do not reuse stale secret exports.
+6. Skips sources whose credentials are not in the environment, except for
    sources that can run from a stored Executor OAuth connection (currently
    Atlassian via `atlassian_oauth`).
 

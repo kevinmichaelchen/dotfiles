@@ -8,9 +8,33 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
 BASE_URL="$EXECUTOR_BASE_URL"
+EXECUTOR_BIN="$(prefer_fallback_bin executor "$EXECUTOR_MISE_SHIM")"
 JQ_BIN="$(require_bin jq)"
 CURL_BIN="$(require_bin curl)"
 LSOF_BIN="$(resolve_bin lsof || true)"
+
+daemon_status_file="$(mktemp "${TMPDIR:-/tmp}/executor-daemon-status.XXXXXX")"
+sources_file="$(mktemp "${TMPDIR:-/tmp}/executor-tools-sources.XXXXXX")"
+trap 'rm -f "$daemon_status_file" "$sources_file"' EXIT
+
+if "$EXECUTOR_BIN" daemon status --base-url "$BASE_URL" >"$daemon_status_file" 2>/dev/null; then
+  cat "$daemon_status_file"
+  echo
+
+  if "$EXECUTOR_BIN" tools sources \
+    --base-url "$BASE_URL" \
+    --scope "$EXECUTOR_SCOPE_DIR" >"$sources_file" 2>/dev/null; then
+    printf '%-18s %-10s %-28s %s\n' "ID" "KIND" "NAME" "TOOLS"
+    printf '%-18s %-10s %-28s %s\n' "--" "----" "----" "-----"
+    "$JQ_BIN" -r '.[] | [.id, .kind, .name, .toolCount] | @tsv' "$sources_file" |
+      while IFS=$'\t' read -r source_id kind name tool_count; do
+        printf '%-18s %-10s %-28s %s\n' "$source_id" "$kind" "$name" "$tool_count"
+      done
+    exit 0
+  fi
+
+  warn "executor tools sources failed; falling back to direct control-plane API"
+fi
 
 if ! scope_json="$("$CURL_BIN" -fsS "${BASE_URL%/}/api/scope" 2>/dev/null)"; then
   error "Executor runtime is not reachable at ${BASE_URL%/}"

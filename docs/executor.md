@@ -17,7 +17,7 @@ registers MCP and OpenAPI sources.
 | `scripts/executor/sync.sh` | Reconciles the desired source inventory into Executor |
 | `scripts/executor/launchd-sync.sh` | Rebuilds shell env for launchd-driven runs |
 | `scripts/executor/restart.sh` | Stops the runtime and re-runs sync |
-| `scripts/executor/status.sh` | Prints runtime + source inventory |
+| `scripts/executor/status.sh` | Prints runtime + source inventory via Executor CLI, with a direct API fallback |
 | LaunchAgent | Starts sync on login and every 15 minutes |
 
 ## Source Types
@@ -75,11 +75,8 @@ See
    `executor daemon run --port 8788 --hostname 127.0.0.1 --scope ~/.executor`
    via a detached tmux launch wrapper and waits for `/api/docs`.
 6. For each desired source, `sync.sh` compares with `GET /api/scopes/:id/{mcp,openapi}/sources/:ns` and PATCHes, POSTs, or DELETE+POSTs as needed. On add/patch it triggers a tool refresh.
-7. If `~/.executor/executor.jsonc` is still in the legacy object-shaped format,
-   `sync.sh` backs it up and replaces it with a modern empty `sources` array
-   before reconciliation.
-8. Secret-backed sources are written as secret references, not literal tokens.
-9. Executor persists sources in SQLite, so subsequent runs are cheap — unchanged sources return a "already up to date" line without touching the server.
+7. Secret-backed sources are written as secret references, not literal tokens.
+8. Executor persists sources in SQLite, so subsequent runs are cheap — unchanged sources return a "already up to date" line without touching the server.
 
 ## Manual Operations
 
@@ -92,6 +89,9 @@ See
 
 # Show runtime + source inventory.
 ./scripts/executor/status.sh
+
+# Ask Executor directly for source metadata and tool counts.
+executor tools sources --base-url http://127.0.0.1:8788 --scope ~/.executor
 
 # Inspect the live control-plane OpenAPI spec.
 curl -s http://127.0.0.1:8788/api/docs \
@@ -107,12 +107,9 @@ tail -f ~/Library/Logs/com.kchen.executor-sync.log
 
 - `status.sh` is the first stop. It fails fast if the runtime is unreachable.
 - Runtime wedged? `restart.sh`. Source state is preserved in SQLite; only the process is replaced.
-- If source adds fail right after a version upgrade, inspect `~/.executor` for a
-  `executor.jsonc.legacy-*.bak` backup. `sync.sh` rewrites the old object-shaped
-  file because Executor `1.4.8` expects `sources` to be an array.
-- `executor.jsonc` may stay sparse right after a legacy migration because the
-  authoritative catalog already lives in SQLite. A fresh scope or empty catalog
-  is rebuilt fully by `sync.sh`.
+- `executor.jsonc` may stay sparse after an Executor data upgrade because the
+  authoritative catalog lives in SQLite. A fresh scope or empty catalog is
+  rebuilt fully by `sync.sh`.
 - Source marked "auth required" or failing to refresh? Check that the
   corresponding env var is actually in the environment (launchd has a minimal
   env — credentials must be in `~/.config/shell/*.sh`).
