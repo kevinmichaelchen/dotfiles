@@ -31,6 +31,7 @@ EXECUTOR_LAUNCHD_ENV_FILES=(
   "$HOME/.config/shell/perplexity.sh"
   "$HOME/.config/shell/parallel.sh"
   "$HOME/.config/shell/firecrawl.sh"
+  "$HOME/.config/shell/exa.sh"
   "$HOME/.config/shell/github.sh"
   "$HOME/.config/shell/jira.sh"
   "$HOME/.config/shell/atlassian.sh"

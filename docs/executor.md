@@ -25,9 +25,9 @@ registers MCP and OpenAPI sources.
 Every source is either:
 
 1. **Hosted remote MCP** — `streamable-http` or `sse` endpoint, auth via Executor-managed headers or OAuth connections.
-   - Examples: DeepWiki, grep, Exa, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
+   - Examples: DeepWiki, grep, Exa, Parallel Search MCP, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
 2. **OpenAPI** — baseUrl + spec + headers.
-   - Examples: Executor control plane, Perplexity Search, Parallel Search.
+   - Examples: Executor control plane, Perplexity Search.
 
 There are **no stdio MCP bridges**. Every source is a plain HTTP endpoint that
 Executor speaks to directly.
@@ -42,14 +42,44 @@ Sources register only when their credentials are present.
 | Firecrawl | `FIRECRAWL_API_KEY` | `Authorization: Bearer <key>` |
 | Atlassian Rovo | Preferred: persisted Executor connection `atlassian_oauth`. Fallback: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` (Basic) or `ATLASSIAN_API_KEY` (Bearer) | OAuth preferred; token auth fallback |
 | Perplexity | `PERPLEXITY_API_KEY` | `Authorization: Bearer <key>` |
-| Parallel | `PARALLEL_API_KEY` | `x-api-key: <key>` |
-| DeepWiki / grep / Exa | — | none |
+| Parallel | `PARALLEL_API_KEY` | `Authorization: Bearer <key>` |
+| Exa | `EXA_API_KEY` | `Authorization: Bearer <key>` |
+| DeepWiki / grep | — | none |
 
 Secrets live in `~/.config/shell/*.sh` fragments sourced by `launchd-sync.sh`.
 `sync.sh` copies those values into Executor's own secret store and references
 them from source definitions, so `executor.jsonc` does not need raw API keys.
 Manual `sync.sh` runs also reload those fragments first so secret rotations do
 not depend on the caller's current shell exports.
+
+## Source Registry
+
+This is the canonical map of the Executor sources managed by this repo, their
+transport, the namespace they register under, the Executor secret or connection
+name they use at runtime, and where the backing credential is sourced.
+
+| Source | Namespace | Protocol | Executor auth ref | Shell/env source |
+| --- | --- | --- | --- | --- |
+| DeepWiki | `deepwiki` | `MCP` | none | no credential |
+| grep | `grep` | `MCP` | none | no credential |
+| Exa | `exa` | `MCP` | secret `exa_api_key` via `Authorization: Bearer` | `~/.config/shell/exa.sh` from `chezmoi/dot_config/shell/exa.sh.tmpl` using `op://Software/Exa/EXA_API_KEY` |
+| Parallel Search | `parallel_search` | `MCP` | secret `parallel_api_key` via `Authorization: Bearer` | `~/.config/shell/parallel.sh` from `chezmoi/dot_config/shell/parallel.sh.tmpl` using `op://Software/Parallel/PARALLEL_API_KEY` |
+| GitHub | `github` | `MCP` | secret `github_pat` via `Authorization: Bearer` | `~/.config/shell/github.sh` from `chezmoi/dot_config/shell/github.sh.tmpl`; prefers `gh auth token`, falls back to `op://Software/GitHub/GitHub Personal Access Token` |
+| Firecrawl | `firecrawl` | `MCP` | secret `firecrawl_api_key` via `Authorization: Bearer` | `~/.config/shell/firecrawl.sh` from `chezmoi/dot_config/shell/firecrawl.sh.tmpl` using `op://Software/Firecrawl/FIRECRAWL_API_KEY` |
+| Atlassian Rovo | `atlassian` | `MCP` | preferred connection `atlassian_oauth`; fallback secret `atlassian_basic_token` via `Authorization: Basic`; optional fallback secret `atlassian_api_key` via `Authorization: Bearer` | `~/.config/shell/jira.sh` from `chezmoi/dot_config/shell/jira.sh.tmpl` provides `JIRA_USERNAME` and `JIRA_API_TOKEN` from `op://Software/JIRA-Aspira/JIRA_API_TOKEN`; `~/.config/shell/atlassian.sh` is also sourced if present for `ATLASSIAN_*` overrides |
+| Perplexity Search | `perplexity_search` | `OpenAPI` | secret `perplexity_api_key` via `Authorization: Bearer` header binding | `~/.config/shell/perplexity.sh` from `chezmoi/dot_config/shell/perplexity.sh.tmpl` using `op://Software/Perplexity/PERPLEXITY_API_KEY` |
+| Executor control plane | `executor_control` | `OpenAPI` | none | live OpenAPI spec is pulled from the local runtime at `http://127.0.0.1:8788/api/docs` |
+
+Notes:
+
+- Executor secret ids such as `parallel_api_key` and `exa_api_key` live in the
+  Executor scope's secret store and are created or updated by
+  `scripts/executor/sync.sh`.
+- The shell fragments above are the launchd-facing credential bridge.
+  `scripts/executor/launchd-sync.sh` and manual `scripts/executor/sync.sh` runs
+  both source them before reconciling Executor state.
+- Source registration itself lives in `scripts/executor/sync.sh`: `reconcile_mcp`
+  is used for MCP sources and `reconcile_openapi` is used for OpenAPI sources.
 
 ## Atlassian auth
 
