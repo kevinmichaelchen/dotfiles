@@ -56,6 +56,32 @@ There is intentionally no steady-state source sync script. Add or edit sources
 through Executor UI/CLI so policies, OAuth Connections, plugins, and future
 nested scopes remain authoritative inside Executor.
 
+## Chezmoi Boundary
+
+Chezmoi should manage the pieces that are stable text config:
+
+- agent client wiring that points at `executor mcp --scope ~/.executor`
+- the launchd plist and foreground daemon entrypoint
+- helper scripts and operator docs
+- machine-wide policy bootstrap for exact low-risk tools
+
+Chezmoi should not own `~/.executor/executor.jsonc` wholesale. That file can
+contain source definitions, generated OpenAPI specs, secret references, and
+remote MCP connection details that drift as Executor evolves. Treating it as a
+rendered dotfile makes Chezmoi a second source catalog and can overwrite live
+OAuth-backed sources.
+
+If a stale source in `executor.jsonc` clobbers live Executor state, remove only
+that entry and repair the live source through the control plane. For Atlassian,
+the expected live source auth is:
+
+```json
+{
+  "kind": "oauth2",
+  "connectionId": "atlassian_oauth"
+}
+```
+
 ## LaunchAgent
 
 The macOS LaunchAgent is `com.kchen.executor-daemon`.
@@ -163,6 +189,11 @@ tail -f ~/.local/state/executor/logs/runtime.log
 - Runtime wedged? Run `restart.sh`.
 - If `restart.sh` says the LaunchAgent is not loaded, run `chezmoi apply` from
   the real `~/dotfiles` checkout so launchd points at an existing script.
+- Atlassian source present but zero tools? Check whether `executor.jsonc`
+  contains an `atlassian` source entry. A stale entry can sync without OAuth and
+  replace the live source with `auth: none`. Remove that stale config-file entry,
+  bind the live source to the `atlassian_oauth` connection, and run the
+  MCP-specific source refresh.
 - Source auth broken? Fix it in Executor's UI/CLI, not in dotfiles.
 - Project-only MCPs should move to project scopes when Executor's nested-scope
   flow is ready.
