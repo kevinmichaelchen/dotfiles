@@ -3,22 +3,22 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.kchen.executor-sync</string>
+  <string>com.kchen.executor-daemon</string>
   <key>ProcessType</key>
   <string>Background</string>
   <key>ProgramArguments</key>
   <array>
-    <string>{{ .chezmoi.homeDir }}/dotfiles/scripts/executor/launchd-sync.sh</string>
+    <string>{{ .chezmoi.homeDir }}/dotfiles/scripts/executor/launchd-daemon.sh</string>
   </array>
   <key>WorkingDirectory</key>
   <string>{{ .chezmoi.homeDir }}</string>
   <key>RunAtLoad</key>
   <true/>
-  <key>StartInterval</key>
-  <integer>900</integer>
+  <key>KeepAlive</key>
+  <true/>
   <key>StandardOutPath</key>
-  <string>{{ .chezmoi.homeDir }}/Library/Logs/com.kchen.executor-sync.log</string>
+  <string>{{ .chezmoi.homeDir }}/Library/Logs/com.kchen.executor-daemon.log</string>
   <key>StandardErrorPath</key>
-  <string>{{ .chezmoi.homeDir }}/Library/Logs/com.kchen.executor-sync.err.log</string>
+  <string>{{ .chezmoi.homeDir }}/Library/Logs/com.kchen.executor-daemon.err.log</string>
 </dict>
 </plist>

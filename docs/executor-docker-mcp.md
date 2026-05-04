@@ -34,7 +34,7 @@ Executor runs a single daemon on `localhost:8788` with a layered architecture:
 
 | Layer        | Component                          | Role                                                                               |
 | ------------ | ---------------------------------- | ---------------------------------------------------------------------------------- |
-| CLI          | `executor up/down/call/resume/mcp` | Daemon lifecycle and script execution                                              |
+| CLI          | `executor daemon`, `executor tools`, `executor call`, `executor resume`, `executor mcp` | Daemon lifecycle, discovery, invocation, and MCP serving |
 | Server       | Local HTTP server                  | Serves API (`/v1`), MCP endpoint (`/mcp`), and web UI                              |
 | Platform SDK | Core business logic                | Source discovery, auth, tool indexing, execution tracking                          |
 | Sandbox      | QuickJS WASM                       | Executes agent TypeScript in isolation; tool calls proxy through the control plane |

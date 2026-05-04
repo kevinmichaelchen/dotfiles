@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Load the shell env launchd is missing, then reconcile executor sources.
+# Run the shared Executor daemon under launchd.
 
 set -euo pipefail
 
@@ -13,12 +13,10 @@ if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate bash --shims)"
 fi
 
-for env_file in "${EXECUTOR_LAUNCHD_ENV_FILES[@]}"
-do
-  if [[ -f "$env_file" ]]; then
-    # These files only export environment variables needed by executor sources.
-    source "$env_file"
-  fi
-done
+EXECUTOR_BIN="$(prefer_fallback_bin executor "$EXECUTOR_MISE_SHIM")"
 
-exec "$EXECUTOR_SYNC_SCRIPT"
+exec "$EXECUTOR_BIN" daemon run \
+  --foreground \
+  --port "$EXECUTOR_WEB_PORT" \
+  --hostname "$EXECUTOR_HOSTNAME" \
+  --scope "$EXECUTOR_SCOPE_DIR"

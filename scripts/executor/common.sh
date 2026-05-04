@@ -14,9 +14,8 @@ NC='\033[0m'
 EXECUTOR_SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 EXECUTOR_REPO_ROOT="$(CDPATH= cd -- "$EXECUTOR_SCRIPT_DIR/../.." && pwd)"
 
-EXECUTOR_SYNC_SCRIPT="$EXECUTOR_SCRIPT_DIR/sync.sh"
 EXECUTOR_RESTART_SCRIPT="$EXECUTOR_SCRIPT_DIR/restart.sh"
-EXECUTOR_LAUNCHD_SYNC_SCRIPT="$EXECUTOR_SCRIPT_DIR/launchd-sync.sh"
+EXECUTOR_LAUNCHD_DAEMON_SCRIPT="$EXECUTOR_SCRIPT_DIR/launchd-daemon.sh"
 EXECUTOR_STATUS_SCRIPT="$EXECUTOR_SCRIPT_DIR/status.sh"
 EXECUTOR_MISE_SHIM="$HOME/.local/share/mise/shims/executor"
 
@@ -24,17 +23,7 @@ EXECUTOR_HOSTNAME="${EXECUTOR_HOSTNAME:-127.0.0.1}"
 EXECUTOR_WEB_PORT="${EXECUTOR_WEB_PORT:-8788}"
 EXECUTOR_BASE_URL="${EXECUTOR_BASE_URL:-http://${EXECUTOR_HOSTNAME}:${EXECUTOR_WEB_PORT}}"
 EXECUTOR_SCOPE_DIR="${EXECUTOR_SCOPE_DIR:-$HOME/.executor}"
-EXECUTOR_RUNTIME_LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/executor-mcp-bridges/logs"
-EXECUTOR_RUNTIME_SESSION_NAME="${EXECUTOR_RUNTIME_SESSION_NAME:-executor-runtime}"
-
-EXECUTOR_LAUNCHD_ENV_FILES=(
-  "$HOME/.config/shell/perplexity.sh"
-  "$HOME/.config/shell/parallel.sh"
-  "$HOME/.config/shell/firecrawl.sh"
-  "$HOME/.config/shell/github.sh"
-  "$HOME/.config/shell/jira.sh"
-  "$HOME/.config/shell/atlassian.sh"
-)
+EXECUTOR_RUNTIME_LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/executor/logs"
 
 info() {
   echo -e "${GREEN}==>${NC} $*"
@@ -90,21 +79,7 @@ prefer_fallback_bin() {
   require_bin "$name"
 }
 
-have_env() {
-  local key
-  for key in "$@"; do
-    if [[ -z "${!key:-}" ]]; then
-      return 1
-    fi
-  done
-  return 0
-}
-
-source_executor_env_files() {
-  local file
-  for file in "${EXECUTOR_LAUNCHD_ENV_FILES[@]}"; do
-    [[ -f "$file" ]] || continue
-    # shellcheck disable=SC1090
-    source "$file"
-  done
+executor_version() {
+  local bin="$1"
+  "$bin" --version 2>/dev/null | awk 'NF { value=$NF } END { sub(/^v/, "", value); print value }'
 }

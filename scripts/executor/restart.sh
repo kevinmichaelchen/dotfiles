@@ -9,26 +9,19 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
 EXECUTOR_BIN="$(prefer_fallback_bin executor "$EXECUTOR_MISE_SHIM")"
-TMUX_BIN="$(resolve_bin tmux || true)"
+LABEL="com.kchen.executor-daemon"
+DOMAIN="gui/$(id -u)"
 
 if "$EXECUTOR_BIN" daemon stop --base-url "$EXECUTOR_BASE_URL" >/dev/null 2>&1; then
   info "Stopped Executor daemon via CLI"
 fi
 
-if [[ -n "$TMUX_BIN" ]]; then
-  # Clean up legacy stdio-bridge sessions (pre-rewrite).
-  while IFS= read -r session; do
-    [[ -z "$session" ]] && continue
-    info "Killing legacy bridge session $session"
-    "$TMUX_BIN" kill-session -t "$session" >/dev/null 2>&1 || true
-  done < <("$TMUX_BIN" list-sessions -F '#{session_name}' 2>/dev/null | grep '^executor-mcp-' || true)
+if [[ "${OSTYPE:-}" == darwin* ]] && command -v launchctl >/dev/null 2>&1 && \
+  launchctl print "${DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+  launchctl kickstart -k "${DOMAIN}/${LABEL}" >/dev/null
+  info "Restarted Executor daemon via launchd"
+  exit 0
 fi
 
-pids="$(lsof -ti ":$EXECUTOR_WEB_PORT" 2>/dev/null || true)"
-for pid in $pids; do
-  [[ -z "$pid" ]] && continue
-  info "Killing pid $pid on :$EXECUTOR_WEB_PORT"
-  kill "$pid" 2>/dev/null || true
-done
-
-exec "$EXECUTOR_SYNC_SCRIPT"
+error "LaunchAgent $LABEL is not loaded; run chezmoi apply or start scripts/executor/launchd-daemon.sh under a supervisor"
+exit 1

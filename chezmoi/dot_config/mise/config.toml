@@ -23,7 +23,7 @@ bun = "latest"
 "npm:@google/gemini-cli" = "0.34.0"
 "npm:@openai/codex" = "0.116.0"
 "npm:markit-ai" = "0.5.0"       # exception: first npm release was 2026-03-25, so no 7-day-old version exists yet
-"npm:executor" = "1.4.8"        # pin for local-first control-plane OpenAPI support
+"npm:executor" = "1.4.15"       # pin to first complete post-1.4.8 packaging + policy release
 "npm:agent-browser" = "0.22.0"
 
 # ============================================================================
