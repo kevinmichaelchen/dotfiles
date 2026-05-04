@@ -1,122 +1,168 @@
 # Executor
 
-Executor is the local execution layer for shared agent tooling in this repo.
-Codex and Claude talk to one local MCP endpoint:
+Executor is the shared local tool catalog for agent clients on this machine.
+Dotfiles manage how clients connect to Executor; Executor owns the live runtime
+state.
+
+The default shared scope is:
+
+- `~/.executor`
+
+## Client Wiring
+
+Codex and Claude use command-backed MCP through the Mise shim:
+
+```bash
+~/.local/share/mise/shims/executor mcp --scope ~/.executor
+```
+
+OpenCode and Crush are still URL-backed clients, so launchd keeps the local
+daemon endpoint available:
 
 - `http://127.0.0.1:8788/mcp`
 
-That endpoint is backed by a local Executor runtime plus a sync script that
-registers MCP and OpenAPI sources.
+## Ownership
 
-## Architecture
+Dotfiles own:
 
-| Component | Role |
+- The pinned Executor CLI version in Mise.
+- MCP client wiring for Codex, Claude, OpenCode, and Crush.
+- A macOS LaunchAgent for clients that need the HTTP daemon.
+- Small operator helpers under `scripts/executor/`.
+
+Executor owns:
+
+- Sources.
+- Secrets and OAuth Connections.
+- Tool policies.
+- Plugins.
+- Execution history.
+- Future workspace / nested-scope state.
+
+Do not periodically rewrite Executor sources from dotfiles. That turns bash into
+a second control plane and fights Executor's own runtime model.
+
+## Scripts
+
+| Script | Purpose |
 | --- | --- |
-| Codex / Claude | MCP clients that call Executor |
-| Executor runtime (`executor daemon run`) | Local tool catalog; persists runtime state under `~/.executor` |
-| `scripts/executor/sync.sh` | Reconciles the desired source inventory into Executor |
-| `scripts/executor/launchd-sync.sh` | Rebuilds shell env for launchd-driven runs |
-| `scripts/executor/restart.sh` | Stops the runtime and re-runs sync |
-| `scripts/executor/status.sh` | Prints runtime + source inventory |
-| LaunchAgent | Starts sync on login and every 15 minutes |
+| `scripts/executor/launchd-daemon.sh` | launchd entrypoint; runs the shared Executor daemon in foreground |
+| `scripts/executor/restart.sh` | stops the daemon and restarts it through launchd |
+| `scripts/executor/status.sh` | prints daemon reachability, version, scope, source inventory, and policy count |
+| `scripts/executor/ensure-readonly-search-policies.sh` | idempotently approves exact read-only Perplexity and Parallel search tools |
+| `scripts/executor/common.sh` | shared constants and helper functions |
 
-## Source Types
+There is intentionally no steady-state source sync script. Add or edit sources
+through Executor UI/CLI so policies, OAuth Connections, plugins, and future
+nested scopes remain authoritative inside Executor.
 
-Every source is either:
+## LaunchAgent
 
-1. **Hosted remote MCP** — `streamable-http` or `sse` endpoint, auth via Executor-managed headers or OAuth connections.
-   - Examples: DeepWiki, grep, Exa, Atlassian Rovo MCP, GitHub remote MCP, Firecrawl remote MCP.
-2. **OpenAPI** — baseUrl + spec + headers.
-   - Examples: Executor control plane, Perplexity Search, Parallel Search.
+The macOS LaunchAgent is `com.kchen.executor-daemon`.
 
-There are **no stdio MCP bridges**. Every source is a plain HTTP endpoint that
-Executor speaks to directly.
+It runs:
 
-## Env Contract
+```bash
+scripts/executor/launchd-daemon.sh
+```
 
-Sources register only when their credentials are present.
+That script activates Mise and then execs:
 
-| Source | Env vars | Auth form |
+```bash
+executor daemon run --foreground \
+  --port 8788 \
+  --hostname 127.0.0.1 \
+  --scope ~/.executor
+```
+
+launchd supervises the foreground process with `KeepAlive`.
+
+## Project Scopes
+
+For now, global clients use `~/.executor`. As Executor's workspace / nested
+scope support matures, project repos should move project-specific tools and
+policies into their own Executor scopes instead of adding them to global
+dotfiles.
+
+Examples of project-specific sources that should not live in global dotfiles:
+
+- A local Playwright MCP for one app.
+- A design MCP only relevant to one UI repo.
+- A repo-local state-parks or demo MCP.
+- Repo-specific Nia indexes.
+
+The expected future pattern is:
+
+```bash
+executor mcp --scope ~/.executor
+executor mcp --scope /path/to/project
+```
+
+where the project scope can inherit from or layer over the global scope once
+Executor exposes that workflow.
+
+## Approval Policy
+
+Executor's policy model is the right place for tool safety decisions. Rules live
+at scope level and can match exact tools or namespace wildcards.
+
+| Action | Use When |
+| --- | --- |
+| `approve` | A read-only or low-risk tool is noisy enough that repeated prompts slow work down |
+| `require_approval` | A tool should always ask first, even if its source metadata says it is safe |
+| `block` | A tool should be hidden from discovery and fail if invoked |
+
+Best practice:
+
+- Keep global `~/.executor` permissive only for clearly read-only tools.
+- Require approval or block broad write namespaces globally.
+- Put project-specific exceptions in project scopes once nested scopes are
+  available.
+- Let upstream MCP `destructiveHint` annotations require approval by default.
+- Avoid encoding approval rules in dotfiles unless they are truly machine-wide
+  policy.
+
+This repo seeds two exact machine-wide approvals because they are read-only web
+search tools used across many local projects:
+
+| Pattern | Action | Why |
 | --- | --- | --- |
-| GitHub | `GITHUB_PERSONAL_ACCESS_TOKEN` | `Authorization: Bearer <PAT>` |
-| Firecrawl | `FIRECRAWL_API_KEY` | `Authorization: Bearer <key>` |
-| Atlassian Rovo | Preferred: persisted Executor connection `atlassian_oauth`. Fallback: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` (Basic) or `ATLASSIAN_API_KEY` (Bearer) | OAuth preferred; token auth fallback |
-| Perplexity | `PERPLEXITY_API_KEY` | `Authorization: Bearer <key>` |
-| Parallel | `PARALLEL_API_KEY` | `x-api-key: <key>` |
-| DeepWiki / grep / Exa | — | none |
+| `perplexity_search.search.searchSearchPost` | `approve` | avoids repeated approval prompts for Perplexity Search |
+| `parallel_search.search.webSearchV1betaSearchPost` | `approve` | avoids repeated approval prompts for Parallel Search |
 
-Secrets live in `~/.config/shell/*.sh` fragments sourced by `launchd-sync.sh`.
-`sync.sh` copies those values into Executor's own secret store and references
-them from source definitions, so `executor.jsonc` does not need raw API keys.
-Manual `sync.sh` runs also reload those fragments first so secret rotations do
-not depend on the caller's current shell exports.
-
-## Atlassian auth
-
-Preferred path: complete a one-time OAuth consent flow so Executor stores the
-`atlassian_oauth` connection in the current scope. Once that connection exists,
-`sync.sh` keeps the Atlassian MCP source on OAuth automatically.
-
-Fallback path: Atlassian Rovo MCP also accepts API-token auth when an org admin
-has enabled it. Personal API tokens use Basic auth, service-account API keys
-use Bearer. Tokens are not bound to a `cloudId`, so pass it per call.
-
-See
-[Atlassian docs: Configuring authentication via API token](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/configuring-authentication-via-api-token/).
-
-## Startup Flow
-
-1. macOS launchd loads `com.kchen.executor-sync`.
-2. The LaunchAgent runs `scripts/executor/launchd-sync.sh`.
-3. That script reconstructs `PATH`, activates Mise, and sources the credential
-   fragments listed in `EXECUTOR_LAUNCHD_ENV_FILES`.
-4. It execs `scripts/executor/sync.sh`.
-5. `sync.sh` hits `GET /api/scope`. If the runtime isn't up, it starts
-   `executor daemon run --port 8788 --hostname 127.0.0.1 --scope ~/.executor`
-   via a detached tmux launch wrapper and waits for `/api/docs`.
-6. For each desired source, `sync.sh` compares with `GET /api/scopes/:id/{mcp,openapi}/sources/:ns` and PATCHes, POSTs, or DELETE+POSTs as needed. On add/patch it triggers a tool refresh.
-7. If `~/.executor/executor.jsonc` is still in the legacy object-shaped format,
-   `sync.sh` backs it up and replaces it with a modern empty `sources` array
-   before reconciliation.
-8. Secret-backed sources are written as secret references, not literal tokens.
-9. Executor persists sources in SQLite, so subsequent runs are cheap — unchanged sources return a "already up to date" line without touching the server.
+Keep these exact rather than approving the whole namespace. If either API grows
+write-capable operations later, those new tools should require review before
+being approved.
 
 ## Manual Operations
 
 ```bash
-# Reconcile sources (idempotent; starts runtime if needed).
-./scripts/executor/sync.sh
+# Show daemon + source inventory.
+./scripts/executor/status.sh
 
-# Stop the runtime and re-run sync.
+# Restart the daemon through launchd.
 ./scripts/executor/restart.sh
 
-# Show runtime + source inventory.
-./scripts/executor/status.sh
+# Ensure global read-only search approvals.
+./scripts/executor/ensure-readonly-search-policies.sh
 
 # Inspect the live control-plane OpenAPI spec.
 curl -s http://127.0.0.1:8788/api/docs \
   | python3 -c 'import re,sys,json; m=re.search(r"<script id=\"swagger-spec\" type=\"application/json\">(.*?)</script>",sys.stdin.read(),re.S); print(json.dumps(json.loads(m.group(1)),indent=2))' \
   | jq '.info'
 
-# Tail runtime logs.
-tail -f ~/.local/state/executor-mcp-bridges/logs/runtime.log
-tail -f ~/Library/Logs/com.kchen.executor-sync.log
+# Tail logs.
+tail -f ~/Library/Logs/com.kchen.executor-daemon.log
+tail -f ~/Library/Logs/com.kchen.executor-daemon.err.log
+tail -f ~/.local/state/executor/logs/runtime.log
 ```
 
 ## Troubleshooting
 
 - `status.sh` is the first stop. It fails fast if the runtime is unreachable.
-- Runtime wedged? `restart.sh`. Source state is preserved in SQLite; only the process is replaced.
-- If source adds fail right after a version upgrade, inspect `~/.executor` for a
-  `executor.jsonc.legacy-*.bak` backup. `sync.sh` rewrites the old object-shaped
-  file because Executor `1.4.8` expects `sources` to be an array.
-- `executor.jsonc` may stay sparse right after a legacy migration because the
-  authoritative catalog already lives in SQLite. A fresh scope or empty catalog
-  is rebuilt fully by `sync.sh`.
-- Source marked "auth required" or failing to refresh? Check that the
-  corresponding env var is actually in the environment (launchd has a minimal
-  env — credentials must be in `~/.config/shell/*.sh`).
-- GitHub's hosted MCP requires a PAT with the scopes your tools need. No Copilot
-  subscription is required; see `github/github-mcp-server` `docs/remote-server.md`.
-- Firecrawl's hosted endpoint `https://mcp.firecrawl.dev/v2/mcp` is
-  streamable-http; the API key is sent as a Bearer header.
+- Runtime wedged? Run `restart.sh`.
+- If `restart.sh` says the LaunchAgent is not loaded, run `chezmoi apply` from
+  the real `~/dotfiles` checkout so launchd points at an existing script.
+- Source auth broken? Fix it in Executor's UI/CLI, not in dotfiles.
+- Project-only MCPs should move to project scopes when Executor's nested-scope
+  flow is ready.

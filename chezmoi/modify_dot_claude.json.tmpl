@@ -4,13 +4,15 @@
 
 set -euo pipefail
 
-# Define the MCP servers configuration
-# Uses environment variables for secrets (set via shell/*.sh.tmpl files)
+# Define the MCP servers configuration.
+# Use command-backed MCP so Claude can start Executor against the shared user scope
+# from any project directory.
 MCP_CONFIG='{
   "mcpServers": {
     "executor": {
-      "type": "http",
-      "url": "http://127.0.0.1:8788/mcp"
+      "type": "stdio",
+      "command": "{{ .chezmoi.homeDir }}/.local/share/mise/shims/executor",
+      "args": ["mcp", "--scope", "{{ .chezmoi.homeDir }}/.executor"]
     }
   }
 }'

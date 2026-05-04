@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Manage only the Executor MCP stanza in ~/.codex/config.toml.
+# Preserve Codex runtime state such as project trust, model selections, and NUX flags.
+
+set -euo pipefail
+
+tmp="$(mktemp "${TMPDIR:-/tmp}/codex-config.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+cat >"$tmp"
+
+python3 - "$tmp" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text()
+
+block = '''[mcp_servers.executor]
+command = "{{ .chezmoi.homeDir }}/.local/share/mise/shims/executor"
+args = ["mcp", "--scope", "{{ .chezmoi.homeDir }}/.executor"]
+
+'''
+
+pattern = re.compile(r'(?ms)^\[mcp_servers\.executor\]\n.*?(?=^\[|\Z)')
+
+if text.strip():
+    if pattern.search(text):
+        text = pattern.sub(block, text)
+    else:
+        if not text.endswith("\n"):
+            text += "\n"
+        text += "\n" + block
+else:
+    text = block
+
+if not text.endswith("\n"):
+    text += "\n"
+
+print(text, end="")
+PY

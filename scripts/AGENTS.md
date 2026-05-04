@@ -11,10 +11,9 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
 | `executor/common.sh` | Shared constants and helpers for executor automation |
-| `executor/launchd-sync.sh` | Load shell env and run executor sync under launchd |
-| `executor/restart.sh` | Stop the executor runtime and re-run sync |
+| `executor/launchd-daemon.sh` | Run the shared Executor daemon under launchd |
+| `executor/restart.sh` | Stop and restart the Executor daemon |
 | `executor/status.sh` | Print executor runtime + source inventory |
-| `executor/sync.sh` | Reconcile MCP + OpenAPI sources into local executor |
 | `update.sh`       | Pull latest changes and apply configs |
 | `update-tools.sh` | Upgrade Mise tools and Claude Code     |
 | `cleanup.sh`      | Nix store maintenance and GC            |
@@ -173,33 +172,16 @@ Can be run directly: `./scripts/update-tools.sh`
 Executor automation is co-located under `scripts/executor/`:
 
 - `common.sh`: shared paths, constants, and helper functions
-- `sync.sh`: desired source inventory plus idempotent reconciliation
-- `launchd-sync.sh`: launchd-friendly PATH/env bootstrap that delegates to `sync.sh`
-- `restart.sh`: stop the runtime and re-run `sync.sh`
+- `launchd-daemon.sh`: launchd-friendly PATH/bootstrap that execs the Executor daemon in foreground
+- `ensure-readonly-search-policies.sh`: exact machine-wide approvals for read-only Perplexity and Parallel search
+- `restart.sh`: stop and restart the daemon
 - `status.sh`: print runtime + source inventory
 
-Every managed source is a hosted remote HTTP endpoint (MCP or OpenAPI) — no
-stdio bridges, no supergateway. Auth is usually header-based and env-driven,
-but Atlassian can also run from a persisted Executor OAuth connection; see
-[docs/executor.md](../docs/executor.md) for the env contract.
-
-The `sync.sh` script:
-
-1. Ensures the runtime is serving `$EXECUTOR_SCOPE_DIR` (`~/.executor`). Launches `executor daemon run --hostname 127.0.0.1 --port 8788 --scope ~/.executor` via a detached tmux wrapper if not.
-2. Reconciles each desired source against `GET /api/scopes/:id/{mcp,openapi}/sources/:namespace` — PATCHes a drift, POSTs a new source, or DELETE+POSTs when an immutable field changed.
-3. Stores auth material in Executor's own secret store and references secrets from source configs instead of writing raw tokens into `executor.jsonc`.
-4. Triggers a tool refresh on each MCP source after add/update.
-5. Migrates a legacy object-shaped `executor.jsonc` to the modern array-based format before any add path runs.
-6. Reloads the credential fragments in `~/.config/shell/*.sh` so manual runs do not reuse stale secret exports.
-7. Skips sources whose credentials are not in the environment, except for
-   sources that can run from a stored Executor OAuth connection (currently
-   Atlassian via `atlassian_oauth`).
-
-Executor persists sources in SQLite inside the scope directory, so on a warm
-system `sync.sh` is close to a no-op — unchanged sources return an
-"already up to date" line.
-
-Can be run directly: `./scripts/executor/sync.sh`
+Executor owns source state, secrets, OAuth Connections, policies, plugins, and
+future workspace/nested-scope data. Do not add a steady-state source reconciler
+back into dotfiles; manage sources through Executor UI/CLI. Machine-wide policy
+seeding should stay exact and limited to tools that are truly read-only across
+projects.
 
 Canonical architecture and runtime notes live in [docs/executor.md](../docs/executor.md).
 
@@ -208,23 +190,23 @@ Canonical architecture and runtime notes live in [docs/executor.md](../docs/exec
 The `executor/restart.sh` script:
 
 1. Stops the Executor daemon via `executor daemon stop`
-2. Kills any remaining process on `$EXECUTOR_WEB_PORT`
-3. Execs `./scripts/executor/sync.sh`
+2. Restarts it through launchd if `com.kchen.executor-daemon` is loaded
 
-Source definitions live in SQLite, so restart preserves the inventory. Use this
-only when the runtime process itself is wedged.
+Runtime state lives under `~/.executor`, so restart preserves the inventory. Use
+this only when the runtime process itself is wedged. If the LaunchAgent is not
+loaded, run `chezmoi apply` from the real `~/dotfiles` checkout first.
 
 Can be run directly: `./scripts/executor/restart.sh`
 
-## EXECUTOR LAUNCHD-SYNC SCRIPT
+## EXECUTOR LAUNCHD-DAEMON SCRIPT
 
-The `executor/launchd-sync.sh` script:
+The `executor/launchd-daemon.sh` script:
 
 1. Recreates the minimal PATH launchd needs for Mise-managed CLIs
-2. Sources the shell fragments that export API credentials (Perplexity, Parallel, Firecrawl, GitHub, Atlassian)
-3. Execs `./scripts/executor/sync.sh`
+2. Activates Mise shims
+3. Execs `executor daemon run --foreground --port 8788 --hostname 127.0.0.1 --scope ~/.executor`
 
-It is the entrypoint used by the macOS LaunchAgent that keeps executor available
+It is the entrypoint used by the macOS LaunchAgent that keeps Executor available
 after login.
 
 ## CLEANUP SCRIPT
