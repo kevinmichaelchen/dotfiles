@@ -49,6 +49,7 @@ a second control plane and fights Executor's own runtime model.
 | `scripts/executor/launchd-daemon.sh` | launchd entrypoint; runs the shared Executor daemon in foreground |
 | `scripts/executor/restart.sh` | stops the daemon and restarts it through launchd |
 | `scripts/executor/status.sh` | prints daemon reachability, version, scope, source inventory, and policy count |
+| `scripts/executor/add-paper-mcp-source.sh` | registers the local Paper Desktop MCP server with the current Executor scope |
 | `scripts/executor/ensure-readonly-search-policies.sh` | idempotently approves exact read-only Perplexity and Parallel search tools |
 | `scripts/executor/common.sh` | shared constants and helper functions |
 
@@ -127,6 +128,27 @@ executor mcp --scope /path/to/project
 where the project scope can inherit from or layer over the global scope once
 Executor exposes that workflow.
 
+## Paper Desktop MCP
+
+Paper Desktop exposes a local Streamable HTTP MCP server while the desktop app is
+open with a design file:
+
+- `http://127.0.0.1:29979/mcp`
+
+Register it with the active Executor scope using:
+
+```bash
+./scripts/executor/add-paper-mcp-source.sh
+```
+
+The script probes the Paper endpoint first, then creates or updates the `paper`
+MCP source through Executor's control API. It does not run from Chezmoi because
+Paper is local app state and the MCP can both read and write design files.
+
+Do not add broad global approval policies for Paper tools. Read-only inspection
+tools may be low risk, but write tools can create, update, or delete content in
+the currently open Paper file.
+
 ## Approval Policy
 
 Executor's policy model is the right place for tool safety decisions. Rules live
@@ -165,6 +187,9 @@ being approved.
 ```bash
 # Show daemon + source inventory.
 ./scripts/executor/status.sh
+
+# Register the local Paper Desktop MCP source.
+./scripts/executor/add-paper-mcp-source.sh
 
 # Restart the daemon through launchd.
 ./scripts/executor/restart.sh
