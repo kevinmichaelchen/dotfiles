@@ -173,6 +173,7 @@ Executor automation is co-located under `scripts/executor/`:
 
 - `common.sh`: shared paths, constants, and helper functions
 - `launchd-daemon.sh`: launchd-friendly PATH/bootstrap that execs the Executor daemon in foreground
+- `add-paper-mcp-source.sh`: register the local Paper Desktop MCP endpoint with the active Executor scope
 - `ensure-readonly-search-policies.sh`: exact machine-wide approvals for read-only Perplexity and Parallel search
 - `restart.sh`: stop and restart the daemon
 - `status.sh`: print runtime + source inventory
@@ -182,6 +183,10 @@ future workspace/nested-scope data. Do not add a steady-state source reconciler
 back into dotfiles; manage sources through Executor UI/CLI. Machine-wide policy
 seeding should stay exact and limited to tools that are truly read-only across
 projects.
+
+Paper Desktop MCP is intentionally a manual helper, not a Chezmoi apply hook:
+the endpoint depends on the local Paper app being open, and its tools can write
+to the currently open design file.
 
 Canonical architecture and runtime notes live in [docs/executor.md](../docs/executor.md).
 
