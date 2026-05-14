@@ -45,42 +45,15 @@ tool_count_for_source() {
   "$CURL_BIN" -fsS "${BASE_URL%/}/api/scopes/$SCOPE_ID/sources/$source_id/tools" | "$JQ_BIN" 'length'
 }
 
-show_mcp_source() {
-  local namespace="$1" source_json name tool_count
-  source_json="$("$CURL_BIN" -fsS "${BASE_URL%/}/api/scopes/$SCOPE_ID/mcp/sources/$namespace" 2>/dev/null || true)"
-  [[ -n "$source_json" && "$source_json" != "null" ]] || return 0
-  name="$(printf '%s' "$source_json" | "$JQ_BIN" -r '.name // .namespace')"
-  tool_count="$(tool_count_for_source "$namespace")"
-  print_row "$namespace" "mcp" "$name" "$tool_count"
-}
-
-show_openapi_source() {
-  local namespace="$1" source_json name tool_count
-  source_json="$("$CURL_BIN" -fsS "${BASE_URL%/}/api/scopes/$SCOPE_ID/openapi/sources/$namespace" 2>/dev/null || true)"
-  [[ -n "$source_json" && "$source_json" != "null" ]] || return 0
-  name="$(printf '%s' "$source_json" | "$JQ_BIN" -r '.name // .namespace')"
-  tool_count="$(tool_count_for_source "$namespace")"
-  print_row "$namespace" "openapi" "$name" "$tool_count"
-}
-
-show_control_source() {
-  local source_id="$1" name="$2" tool_count
-  tool_count="$(tool_count_for_source "$source_id" 2>/dev/null || true)"
-  [[ -n "$tool_count" ]] || return 0
-  print_row "$source_id" "control" "$name" "$tool_count"
-}
-
-show_mcp_source "deepwiki"
-show_mcp_source "grep"
-show_mcp_source "exa"
-show_mcp_source "github"
-show_mcp_source "firecrawl"
-show_mcp_source "atlassian"
-show_control_source "graphql" "GraphQL"
-show_openapi_source "executor_control"
-show_control_source "openapi" "OpenAPI"
-show_openapi_source "parallel_search"
-show_openapi_source "perplexity_search"
+sources_json="$("$CURL_BIN" -fsS "${BASE_URL%/}/api/scopes/$SCOPE_ID/sources" 2>/dev/null || true)"
+if [[ -n "$sources_json" && "$sources_json" != "null" ]]; then
+  printf '%s' "$sources_json" \
+    | "$JQ_BIN" -r '.[] | [.id, .kind, (.name // .id)] | @tsv' \
+    | while IFS=$'\t' read -r source_id kind name; do
+      tool_count="$(tool_count_for_source "$source_id" 2>/dev/null || printf '?')"
+      print_row "$source_id" "$kind" "$name" "$tool_count"
+    done
+fi
 
 policies_json="$("$CURL_BIN" -fsS "${BASE_URL%/}/api/scopes/$SCOPE_ID/policies" 2>/dev/null || true)"
 if [[ -n "$policies_json" && "$policies_json" != "null" ]]; then

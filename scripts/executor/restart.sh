@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Stop the Executor runtime and re-run sync. Source state lives in SQLite, so
-# this is only needed when the runtime process itself is wedged.
+# Stop and restart the Executor runtime. Source state lives in SQLite, so this
+# is only needed when the runtime process itself is wedged or launchd settings
+# changed.
 
 set -euo pipefail
 
