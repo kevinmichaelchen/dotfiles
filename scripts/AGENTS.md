@@ -11,6 +11,7 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
 | `executor/common.sh` | Shared constants and helpers for executor automation |
+| `executor/doctor.sh` | Safe Executor daemon/process/keychain diagnostics |
 | `executor/launchd-daemon.sh` | Run the shared Executor daemon under launchd |
 | `executor/restart.sh` | Stop and restart the Executor daemon |
 | `executor/status.sh` | Print executor runtime + source inventory |
@@ -174,6 +175,7 @@ Executor automation is co-located under `scripts/executor/`:
 - `common.sh`: shared paths, constants, and helper functions
 - `launchd-daemon.sh`: launchd-friendly PATH/bootstrap that execs the Executor daemon in foreground
 - `ensure-readonly-search-policies.sh`: exact machine-wide approvals for read-only Perplexity and Parallel search
+- `doctor.sh`: safe diagnostics for daemon, launchd, processes, legacy config, and keychain-prompt triage
 - `restart.sh`: stop and restart the daemon
 - `status.sh`: print runtime + source inventory
 
@@ -182,6 +184,15 @@ future workspace/nested-scope data. Do not add a steady-state source reconciler
 back into dotfiles; manage sources through Executor UI/CLI. Machine-wide policy
 seeding should stay exact and limited to tools that are truly read-only across
 projects.
+
+On Executor 1.4.28+, `~/.executor/executor.jsonc` is only an optional plugin
+manifest. Do not use it as a source catalog, and do not add source replay from
+that file back into the launchd entrypoint.
+
+Codex, Claude, OpenCode, and Crush should use the shared HTTP endpoint at
+`http://127.0.0.1:8788/mcp`. Avoid command-backed `executor mcp --scope
+~/.executor` wiring unless a client has no HTTP MCP support; each command-backed
+session can spawn its own Executor runtime and repeat macOS Keychain probes.
 
 Canonical architecture and runtime notes live in [docs/executor.md](../docs/executor.md).
 
@@ -208,6 +219,11 @@ The `executor/launchd-daemon.sh` script:
 
 It is the entrypoint used by the macOS LaunchAgent that keeps Executor available
 after login.
+
+The Chezmoi LaunchAgent hook leaves an already loaded daemon running by default.
+This avoids unnecessary Executor restarts and repeated macOS Keychain probes.
+Use `scripts/executor/restart.sh` or `EXECUTOR_FORCE_LAUNCHD_RELOAD=1 chezmoi
+apply` when an intentional launchd reload is needed.
 
 ## CLEANUP SCRIPT
 

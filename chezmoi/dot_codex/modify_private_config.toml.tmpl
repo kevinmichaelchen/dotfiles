@@ -17,8 +17,7 @@ path = Path(sys.argv[1])
 text = path.read_text()
 
 block = '''[mcp_servers.executor]
-command = "{{ .chezmoi.homeDir }}/.local/share/mise/shims/executor"
-args = ["mcp", "--scope", "{{ .chezmoi.homeDir }}/.executor"]
+url = "http://127.0.0.1:8788/mcp"
 
 '''
 

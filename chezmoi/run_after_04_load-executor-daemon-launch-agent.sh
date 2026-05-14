@@ -38,6 +38,11 @@ if [[ ! -x "$ENTRYPOINT" ]]; then
 fi
 
 if launchctl print "${DOMAIN}/${LABEL}" >/dev/null 2>&1; then
+  if [[ "${EXECUTOR_FORCE_LAUNCHD_RELOAD:-0}" != "1" ]]; then
+    echo "LaunchAgent ${LABEL} already loaded; leaving the Executor daemon running"
+    echo "Set EXECUTOR_FORCE_LAUNCHD_RELOAD=1 or run scripts/executor/restart.sh to restart it"
+    exit 0
+  fi
   launchctl bootout "${DOMAIN}/${LABEL}" >/dev/null 2>&1 || true
 fi
 

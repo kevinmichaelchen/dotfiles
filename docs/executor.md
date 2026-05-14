@@ -8,18 +8,20 @@ The default shared scope is:
 
 - `~/.executor`
 
+This repo pins Executor to `1.4.28`, the first local release where source state
+is clearly database-owned again. `executor.jsonc` is an optional plugin manifest,
+not the source catalog.
+
 ## Client Wiring
 
-Codex and Claude use command-backed MCP through the Mise shim:
-
-```bash
-~/.local/share/mise/shims/executor mcp --scope ~/.executor
-```
-
-OpenCode and Crush are still URL-backed clients, so launchd keeps the local
-daemon endpoint available:
+Codex, Claude, OpenCode, and Crush all use the shared HTTP MCP daemon:
 
 - `http://127.0.0.1:8788/mcp`
+
+Do not wire normal agent clients to `executor mcp --scope ~/.executor` unless a
+client cannot speak streamable HTTP MCP. Command-backed MCP spawns an Executor
+runtime per client session, which can duplicate source state work and repeat
+macOS Keychain probes.
 
 ## Ownership
 
@@ -42,6 +44,10 @@ Executor owns:
 Do not periodically rewrite Executor sources from dotfiles. That turns bash into
 a second control plane and fights Executor's own runtime model.
 
+Since Executor `1.4.28`, source configuration is no longer replayed from or
+written back to `executor.jsonc`. Live source definitions, source credentials,
+and source auth bindings are SQLite-backed runtime state.
+
 ## Scripts
 
 | Script | Purpose |
@@ -49,6 +55,7 @@ a second control plane and fights Executor's own runtime model.
 | `scripts/executor/launchd-daemon.sh` | launchd entrypoint; runs the shared Executor daemon in foreground |
 | `scripts/executor/restart.sh` | stops the daemon and restarts it through launchd |
 | `scripts/executor/status.sh` | prints daemon reachability, version, scope, source inventory, and policy count |
+| `scripts/executor/doctor.sh` | prints safe diagnostics for daemon, launchd, process, config, and keychain-prompt triage |
 | `scripts/executor/ensure-readonly-search-policies.sh` | idempotently approves exact read-only Perplexity and Parallel search tools |
 | `scripts/executor/common.sh` | shared constants and helper functions |
 
@@ -60,27 +67,21 @@ nested scopes remain authoritative inside Executor.
 
 Chezmoi should manage the pieces that are stable text config:
 
-- agent client wiring that points at `executor mcp --scope ~/.executor`
+- agent client wiring that points at `http://127.0.0.1:8788/mcp`
 - the launchd plist and foreground daemon entrypoint
 - helper scripts and operator docs
 - machine-wide policy bootstrap for exact low-risk tools
 
-Chezmoi should not own `~/.executor/executor.jsonc` wholesale. That file can
-contain source definitions, generated OpenAPI specs, secret references, and
-remote MCP connection details that drift as Executor evolves. Treating it as a
-rendered dotfile makes Chezmoi a second source catalog and can overwrite live
-OAuth-backed sources.
+Chezmoi should not own `~/.executor/executor.jsonc` wholesale. On Executor
+`1.4.28+`, that file should only be treated as an optional plugin manifest.
+Sources, generated OpenAPI specs, secret references, and remote MCP auth
+bindings belong in Executor's runtime database and should be edited through the
+control plane.
 
-If a stale source in `executor.jsonc` clobbers live Executor state, remove only
-that entry and repair the live source through the control plane. For Atlassian,
-the expected live source auth is:
-
-```json
-{
-  "kind": "oauth2",
-  "connectionId": "atlassian_oauth"
-}
-```
+If `doctor.sh` reports a lingering `sources` key in `executor.jsonc`, treat it
+as legacy state. Do not port it into dotfiles; verify the live source in
+Executor's UI/CLI and remove the stale config entry only after the database copy
+is healthy.
 
 ## LaunchAgent
 
@@ -102,6 +103,41 @@ executor daemon run --foreground \
 ```
 
 launchd supervises the foreground process with `KeepAlive`.
+
+The Chezmoi LaunchAgent hook is intentionally idempotent. If the LaunchAgent is
+already loaded, `chezmoi apply` leaves the daemon running instead of booting it
+out and starting a fresh process. This avoids unnecessary keychain probes and
+keeps source/OAuth state warm. Use `scripts/executor/restart.sh` or set
+`EXECUTOR_FORCE_LAUNCHD_RELOAD=1` for an intentional launchd reload.
+
+## Secrets
+
+Executor source credentials should use Executor secret providers, not committed
+env blocks or checked-in source definitions.
+
+| Backend | Use When | Notes |
+| --- | --- | --- |
+| 1Password | API tokens already live in 1Password | Preferred for Exa, Perplexity, Parallel, Firecrawl, and similar source credentials |
+| macOS Keychain | You specifically want OS-keychain storage | Encrypted at rest, but macOS can prompt when Executor probes or reads entries |
+| file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
+
+For Exa, keep the global `exa` source in `~/.executor`, keep the API key in
+1Password, and bind the source credential to the 1Password-backed Executor
+secret. The shell `EXA_API_KEY` template can remain for non-Executor CLIs, but
+Executor sources should not rely on committed env wiring.
+
+If macOS repeatedly asks for a Keychain password:
+
+- Run `./scripts/executor/doctor.sh` and check whether multiple Executor
+  processes are running.
+- Avoid restarting launchd unless needed; `chezmoi apply` no longer restarts an
+  already loaded Executor daemon by default.
+- Keep Codex and Claude on the HTTP MCP URL so they do not spawn extra
+  command-backed Executor runtimes.
+- Prefer migrating source credentials to the 1Password provider so Executor does
+  not need to store new source secrets in Keychain.
+- Expect one-time prompts after an Executor binary upgrade if existing secrets
+  still live in Keychain.
 
 ## Project Scopes
 
@@ -166,6 +202,9 @@ being approved.
 # Show daemon + source inventory.
 ./scripts/executor/status.sh
 
+# Show safe daemon/process/keychain diagnostics.
+./scripts/executor/doctor.sh
+
 # Restart the daemon through launchd.
 ./scripts/executor/restart.sh
 
@@ -189,11 +228,8 @@ tail -f ~/.local/state/executor/logs/runtime.log
 - Runtime wedged? Run `restart.sh`.
 - If `restart.sh` says the LaunchAgent is not loaded, run `chezmoi apply` from
   the real `~/dotfiles` checkout so launchd points at an existing script.
-- Atlassian source present but zero tools? Check whether `executor.jsonc`
-  contains an `atlassian` source entry. A stale entry can sync without OAuth and
-  replace the live source with `auth: none`. Remove that stale config-file entry,
-  bind the live source to the `atlassian_oauth` connection, and run the
-  MCP-specific source refresh.
+- Repeated Keychain prompts? Run `doctor.sh`; if there are multiple Executor
+  processes, stop the extras and keep the launchd daemon as the shared runtime.
 - Source auth broken? Fix it in Executor's UI/CLI, not in dotfiles.
 - Project-only MCPs should move to project scopes when Executor's nested-scope
   flow is ready.

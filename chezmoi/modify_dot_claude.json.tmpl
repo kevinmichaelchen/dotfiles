@@ -5,14 +5,13 @@
 set -euo pipefail
 
 # Define the MCP servers configuration.
-# Use command-backed MCP so Claude can start Executor against the shared user scope
-# from any project directory.
+# Use the shared HTTP daemon so Claude does not spawn a separate Executor
+# runtime for every project/session.
 MCP_CONFIG='{
   "mcpServers": {
     "executor": {
-      "type": "stdio",
-      "command": "{{ .chezmoi.homeDir }}/.local/share/mise/shims/executor",
-      "args": ["mcp", "--scope", "{{ .chezmoi.homeDir }}/.executor"]
+      "type": "http",
+      "url": "http://127.0.0.1:8788/mcp"
     }
   }
 }'
