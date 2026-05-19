@@ -1,10 +1,82 @@
 {
   "version": 1,
   "skills": {
+    "ast-grep": {
+      "source": "ast-grep/agent-skill",
+      "sourceType": "github",
+      "sourcePath": "ast-grep/skills/ast-grep",
+      "ref": "577f4d4507678f2c8cee150fae25e6ce309f70b1",
+      "computedHash": "f3bdd9405b66b1973accc3b770a189df0e1f46315625e4fa6ef71b918c0f8962"
+    },
     "firecrawl": {
       "source": "firecrawl/cli",
       "sourceType": "github",
-      "computedHash": "e0530de30fe242f0dc9b703c1ca5967a97ba83cde803423f7b2341f7ddd95064"
+      "sourcePath": "skills/firecrawl-cli",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "b8956a49c1f31b8adbe1072e75e91e2cfb10a7441b7bc1d0206917ee48183995"
+    },
+    "firecrawl-agent": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-agent",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "e223e6f2a9b9451f812d40a59a7cde4d905e2855193b864d1868c8f1cbfd608d"
+    },
+    "firecrawl-crawl": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-crawl",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "5a05029f8792b4a1a63c3c8848cfdff1917dc1d1c71d48d086ee1ae9b6d752ae"
+    },
+    "firecrawl-download": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-download",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "15463fa7eb446873630a7fa14314bd028557bbc9ac712d04a912081b15fafea2"
+    },
+    "firecrawl-interact": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-interact",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "489897cd882a79cc0c9abb0453622298e5686d65d1818353a9b2f62dea0aec14"
+    },
+    "firecrawl-map": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-map",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "1ad82ebc3de0a7a0c3355eb06dbc685f5d378e0cf90fabd482baf9ed5b0b34d0"
+    },
+    "firecrawl-parse": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-parse",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "6fab102bceee1436e52890707504387a206489dba0d9f90b4dee2613b9bad98e"
+    },
+    "firecrawl-scrape": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-scrape",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "991e0f06a154df0f58eda5e929b367cc56dd9a3e2a0804b62cc76ddaa1041bde"
+    },
+    "firecrawl-search": {
+      "source": "firecrawl/cli",
+      "sourceType": "github",
+      "sourcePath": "skills/firecrawl-search",
+      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
+      "computedHash": "2adf4abdd973ac2bd5552a3660b3b643742d9a38119eebea97f55084dac06abb"
+    },
+    "nia": {
+      "source": "nozomio-labs/nia-skill",
+      "sourceType": "github",
+      "sourcePath": ".",
+      "ref": "b253a81f257d219f9842d864f9991be287bfc66f",
+      "computedHash": "b51c6a78c27a7856feea72ce295c19673cfb40819b2a05dc046f6060cb2270c5"
     }
   }
 }
