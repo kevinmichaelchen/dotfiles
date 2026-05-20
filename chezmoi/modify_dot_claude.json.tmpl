@@ -5,13 +5,12 @@
 set -euo pipefail
 
 # Define the MCP servers configuration.
-# Use the shared HTTP daemon so Claude does not spawn a separate Executor
-# runtime for every project/session.
+# Use Executor Cloud as the shared MCP gateway.
 MCP_CONFIG='{
   "mcpServers": {
     "executor": {
       "type": "http",
-      "url": "http://127.0.0.1:8788/mcp"
+      "url": "https://executor.sh/mcp"
     }
   }
 }'
