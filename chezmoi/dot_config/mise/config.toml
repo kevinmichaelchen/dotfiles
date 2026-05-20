@@ -2,21 +2,25 @@
 # Managed by Chezmoi - edit via `cme ~/.config/mise/config.toml`
 # Apply with `mise install` after changes
 
+[settings]
+# Save exact versions by default when adding tools with `mise use`.
+pin = true
+
 [tools]
 
 # ============================================================================
 # Core Language Runtimes
 # ============================================================================
-node = "24"
-python = "latest"
+node = "24.14.1"
+python = "3.14.3"
 go = "1.26.3"
-rust = "latest"
+rust = "1.94.1"
 
 # ============================================================================
 # Node.js Tools & Package Managers
 # ============================================================================
-pnpm = "latest"
-bun = "latest"
+pnpm = "11.2.1"
+bun = "1.3.11"
 
 # npm global packages
 "npm:@charmland/crush" = "0.51.2"
@@ -30,47 +34,46 @@ bun = "latest"
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
 # ============================================================================
-"cargo:bat" = "latest"          # cat replacement with syntax highlighting
-"cargo:git-delta" = "latest"    # git diff viewer (crate name is git-delta)
-"cargo:eza" = "latest"          # ls replacement
-"cargo:fd-find" = "latest"      # find replacement (crate name is fd-find)
-"cargo:tokei" = "latest"        # code statistics
-"cargo:zoxide" = "latest"       # z replacement (smarter cd)
-"cargo:railwayapp" = "latest"   # Railway deployment CLI
-"cargo:projclean" = "latest"    # Project build artifact cleaner
-"cargo:dprint" = "latest"       # Fast pluggable code formatter
-"cargo:prek" = "latest"         # pre-commit re-engineered in Rust
-"cargo:sd" = "latest"           # sed replacement (simpler syntax)
-"github:abhinav/git-spice" = "latest"  # Stacked git workflows (gh-stack successor)
+"cargo:bat" = "0.26.1"          # cat replacement with syntax highlighting
+"cargo:git-delta" = "0.19.1"    # git diff viewer (crate name is git-delta)
+"cargo:eza" = "0.23.4"          # ls replacement
+"cargo:fd-find" = "10.4.2"      # find replacement (crate name is fd-find)
+"cargo:tokei" = "14.0.0"        # code statistics
+"cargo:zoxide" = "0.9.9"        # z replacement (smarter cd)
+"cargo:projclean" = "0.8.0"     # Project build artifact cleaner
+"cargo:dprint" = "0.53.0"       # Fast pluggable code formatter
+"cargo:prek" = "0.3.8"          # pre-commit re-engineered in Rust
+"cargo:sd" = "1.0.0"            # sed replacement (simpler syntax)
+"github:abhinav/git-spice" = "0.24.2"  # Stacked git workflows (gh-stack successor)
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
-"github:charmbracelet/glow" = "latest"  # markdown renderer (Go)
-"github:charmbracelet/gum" = "latest"   # shell prompt tool (Go)
-"go:golang.org/x/vuln/cmd/govulncheck" = "latest"  # Go vulnerability scanner
+"github:charmbracelet/glow" = "2.1.1"  # markdown renderer (Go)
+"github:charmbracelet/gum" = "0.17.0"  # shell prompt tool (Go)
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.1.4"  # Go vulnerability scanner
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
 # Note: chezmoi is in Nix (bootstrap tool - needed to apply this config)
-"github:neiii/bridle" = "latest"       # Claude profile switcher (Rust)
-"github:x-motemen/ghq" = "latest"      # repository management (Go)
-"github:cli/cli" = "latest"            # GitHub CLI (gh) (Go)
-"aqua:jqlang/jq" = "latest"            # JSON processor (aqua has prebuilt binaries)
+"github:neiii/bridle" = "0.2.9"        # Claude profile switcher (Rust)
+"github:x-motemen/ghq" = "1.9.4"       # repository management (Go)
+"github:cli/cli" = "2.88.1"            # GitHub CLI (gh) (Go)
+"aqua:jqlang/jq" = "1.8.1"             # JSON processor (aqua has prebuilt binaries)
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
-"aqua:mikefarah/yq" = "latest"  # YAML processor
-"aqua:terrastruct/d2" = "latest"  # Diagram language
-"aqua:typst/typst" = "latest"   # Typesetting system
+"aqua:mikefarah/yq" = "4.52.5"  # YAML processor
+"aqua:terrastruct/d2" = "0.7.1"  # Diagram language
+"aqua:typst/typst" = "0.14.2"   # Typesetting system
 "aqua:golangci/golangci-lint" = "2.12.2"  # Go linter aggregator
-"github:astral-sh/uv" = "latest"  # Python package manager
-"aqua:planetscale/cli" = "latest"  # PlanetScale database CLI (pscale)
-"aqua:aws/aws-cli" = "latest"          # AWS CLI
-"aqua:hashicorp/terraform" = "latest"  # Infrastructure as Code
-"aqua:ariga/atlas" = "latest"         # Database schema management
+"github:astral-sh/uv" = "0.11.2"  # Python package manager
+"aqua:planetscale/cli" = "0.277.0"  # PlanetScale database CLI (pscale)
+"aqua:aws/aws-cli" = "2.34.18"       # AWS CLI
+"aqua:hashicorp/terraform" = "1.14.8"  # Infrastructure as Code
+"aqua:ariga/atlas" = "1.1.0"        # Database schema management
 
 # ============================================================================
 # Tools from npm (Node.js packages)
