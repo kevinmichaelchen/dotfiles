@@ -5,10 +5,15 @@
 set -euo pipefail
 
 # Define the MCP servers configuration.
-# Use Executor Cloud as the shared MCP gateway.
+# Use Executor Desktop as the default MCP gateway and keep Cloud available as
+# an explicit fallback.
 MCP_CONFIG='{
   "mcpServers": {
     "executor": {
+      "type": "http",
+      "url": "http://127.0.0.1:4789/mcp"
+    },
+    "executor-cloud": {
       "type": "http",
       "url": "https://executor.sh/mcp"
     }
