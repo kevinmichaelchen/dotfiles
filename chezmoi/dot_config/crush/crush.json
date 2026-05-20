@@ -53,6 +53,11 @@
   "mcp": {
     "executor": {
       "type": "http",
+      "url": "http://127.0.0.1:4789/mcp",
+      "timeout": 120
+    },
+    "executor-cloud": {
+      "type": "http",
       "url": "https://executor.sh/mcp",
       "timeout": 120
     }

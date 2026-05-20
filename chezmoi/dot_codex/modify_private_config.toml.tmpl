@@ -17,11 +17,17 @@ path = Path(sys.argv[1])
 text = path.read_text()
 
 block = '''[mcp_servers.executor]
+url = "http://127.0.0.1:4789/mcp"
+
+[mcp_servers.executor-cloud]
 url = "https://executor.sh/mcp"
 
 '''
 
-pattern = re.compile(r'(?ms)^\[mcp_servers\.executor\]\n.*?(?=^\[|\Z)')
+pattern = re.compile(
+    r'(?ms)^\[mcp_servers\.executor\]\n.*?(?=^\[|\Z)'
+    r'(?:^\[mcp_servers\.executor-(?:desktop|cloud)\]\n.*?(?=^\[|\Z))*'
+)
 
 if text.strip():
     if pattern.search(text):

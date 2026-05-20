@@ -10,9 +10,12 @@ an optional plugin manifest, not the source catalog.
 
 ## Client Wiring
 
-Codex, Claude, OpenCode, and Crush all use Executor Cloud:
+Codex, Claude, OpenCode, and Crush are wired to both Executor endpoints.
+Desktop is the default `executor` entry, and Cloud is available as
+`executor-cloud`:
 
-- `https://executor.sh/mcp`
+- `executor`: `http://127.0.0.1:4789/mcp`
+- `executor-cloud`: `https://executor.sh/mcp`
 
 Desktop owns its own local sidecar lifecycle when it is used interactively; this
 repo should not start a second background Executor runtime against the same
@@ -44,7 +47,7 @@ secrets, OAuth connections, and policies through Executor Cloud/Desktop.
 
 Chezmoi should manage the pieces that are stable text config:
 
-- agent client wiring that points at `https://executor.sh/mcp`
+- agent client wiring that points at Executor Cloud and Desktop MCP endpoints
 - operator docs
 
 Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Local Desktop
@@ -78,9 +81,9 @@ but Executor sources should not rely on committed env wiring.
 
 ## Project Scopes
 
-Global clients use Executor Cloud. Project repos should move project-specific
-tools and policies into project/workspace scopes instead of adding them to
-global dotfiles.
+Global clients use shared Executor endpoints. Project repos should move
+project-specific tools and policies into project/workspace scopes instead of
+adding them to global dotfiles.
 
 Examples of project-specific sources that should not live in global dotfiles:
 
@@ -162,7 +165,8 @@ Suggested personal Cloud baseline:
 ## Manual Operations
 
 ```bash
-npx add-mcp https://executor.sh/mcp --transport http --name executor
+npx add-mcp http://127.0.0.1:4789/mcp --transport http --name executor
+npx add-mcp https://executor.sh/mcp --transport http --name executor-cloud
 ```
 
 ## Troubleshooting
