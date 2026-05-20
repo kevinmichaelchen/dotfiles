@@ -4,7 +4,7 @@
 
 if command -v mise &> /dev/null; then
   echo "Running mise install..."
-  mise install --yes
+  mise install --yes -C "$HOME"
 
   echo "Pruning unused tool versions..."
   mise prune --yes
