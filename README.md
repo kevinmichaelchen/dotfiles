@@ -207,6 +207,16 @@ darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
 nix run home-manager -- switch --flake ~/dotfiles/home-manager
 ```
 
+#### Nix Maintenance
+
+```bash
+# Enable repo-managed Determinate Nix custom warnings
+~/dotfiles/scripts/configure-nix-custom.sh
+
+# Clean old Nix generations, collect garbage, and compact Nix caches
+~/dotfiles/scripts/cleanup.sh
+```
+
 #### Manage Personal Configs (via Chezmoi)
 
 ```bash

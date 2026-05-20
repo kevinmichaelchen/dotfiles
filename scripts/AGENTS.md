@@ -10,6 +10,7 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | File           | Purpose                               |
 | -------------- | ------------------------------------- |
 | `bootstrap.sh` | First-time setup for new machines     |
+| `configure-nix-custom.sh` | Machine-local Determinate Nix custom settings |
 | `executor/common.sh` | Shared constants and helpers for executor automation |
 | `executor/doctor.sh` | Safe Executor daemon/process/keychain diagnostics |
 | `executor/launchd-daemon.sh` | Run the shared Executor daemon under launchd |
@@ -17,7 +18,7 @@ configurations. Scripts are **idempotent** and **non-destructive**.
 | `executor/status.sh` | Print executor runtime + source inventory |
 | `update.sh`       | Pull latest changes and apply configs |
 | `update-tools.sh` | Upgrade Mise tools and Claude Code     |
-| `cleanup.sh`      | Nix store maintenance and GC            |
+| `cleanup.sh`      | Nix store/cache maintenance and GC      |
 
 ## BOOTSTRAP SEQUENCE
 
@@ -227,8 +228,9 @@ apply` when an intentional launchd reload is needed.
 
 ## CLEANUP SCRIPT
 
-The `cleanup.sh` script frees disk space by removing old Nix generations and
-garbage collecting unreferenced store paths.
+The `cleanup.sh` script frees disk space by removing old Nix generations,
+garbage collecting unreferenced store paths, and maintaining user-writable Nix
+caches.
 
 **What it cleans:**
 
@@ -238,6 +240,8 @@ garbage collecting unreferenced store paths.
 | home-manager generations  | `nix-env --delete-generations old --profile ~/.local/state/nix/profiles/home-manager` |
 | user profile generations  | `nix-env --delete-generations old`                                                    |
 | unreferenced store paths  | `nix-collect-garbage -d`                                                              |
+| historical tarball cache  | `rm -rf ~/.cache/nix/tarball-cache`                                                   |
+| tarball-cache-v2          | `git -C ~/.cache/nix/tarball-cache-v2 multi-pack-index ...`                           |
 
 **When to run:**
 
@@ -251,6 +255,27 @@ rollback to previous configurations. If you want to keep recent generations:
 ```bash
 # Keep last 3 generations instead of just current
 sudo nix-env --delete-generations +3 --profile /nix/var/nix/profiles/system
+```
+
+## DETERMINATE NIX CUSTOM CONFIG
+
+Determinate owns `/etc/nix/nix.conf`; do not edit it. User-managed Nix settings
+belong in `/etc/nix/nix.custom.conf`, which Determinate includes from the main
+config.
+
+Run `scripts/configure-nix-custom.sh` to install the repo's managed custom block.
+The script currently enables Nix 2.34 literal diagnostics as warnings:
+
+```bash
+lint-url-literals = warn
+lint-short-path-literals = warn
+lint-absolute-path-literals = warn
+```
+
+Preview the exact change with:
+
+```bash
+scripts/configure-nix-custom.sh --check
 ```
 
 ## DEBUGGING
