@@ -8,9 +8,9 @@ The default shared scope is:
 
 - `~/.executor`
 
-This repo pins Executor to `1.4.28`, the first local release where source state
-is clearly database-owned again. `executor.jsonc` is an optional plugin manifest,
-not the source catalog.
+This repo pins Executor to `1.4.31`. Executor `1.4.28` was the first local
+release where source state is clearly database-owned again. `executor.jsonc` is
+an optional plugin manifest, not the source catalog.
 
 ## Client Wiring
 
