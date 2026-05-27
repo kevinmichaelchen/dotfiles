@@ -13,9 +13,10 @@ locked_verify_provenance = true
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
-# Do not enable locked=true yet: npm/cargo/go backends are version-only in
-# mise.lock, so strict URL-locked installs would fail until those tools move to
-# aqua/github/http release-asset backends.
+# Do not enable locked=true yet: some npm/cargo/go backend tools still do not
+# get URL/checksum-locked entries. Migrate eligible CLIs to URL/checksum-capable
+# backends such as aqua/github/gitlab/http first, then re-evaluate strict locked
+# installs.
 
 [tools]
 
@@ -34,35 +35,20 @@ pnpm = "11.2.1"
 bun = "1.3.11"
 
 # npm global packages
-"npm:@charmland/crush" = "0.51.2"
-"npm:@google/gemini-cli" = "0.34.0"
-"npm:@openai/codex" = "0.116.0"
-"npm:markit-ai" = "0.5.0"       # exception: first npm release was 2026-03-25, so no 7-day-old version exists yet
-"npm:executor" = "1.4.33"       # desktop release + DB-owned source state; keep pinned across schema migrations
-"npm:agent-browser" = "0.22.0"
-"npm:hunkdiff" = "0.12.0"       # review-first terminal diff viewer
+"npm:markit-ai" = "0.5.3"
+"npm:hunkdiff" = "0.14.0"       # review-first terminal diff viewer
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
 # ============================================================================
-"cargo:bat" = "0.26.1"          # cat replacement with syntax highlighting
-"cargo:git-delta" = "0.19.1"    # git diff viewer (crate name is git-delta)
 "cargo:eza" = "0.23.4"          # ls replacement
-"cargo:fd-find" = "10.4.2"      # find replacement (crate name is fd-find)
-"cargo:tokei" = "14.0.0"        # code statistics
-"cargo:zoxide" = "0.9.9"        # z replacement (smarter cd)
-"cargo:projclean" = "0.8.0"     # Project build artifact cleaner
-"cargo:dprint" = "0.53.0"       # Fast pluggable code formatter
-"cargo:prek" = "0.3.8"          # pre-commit re-engineered in Rust
-"cargo:sd" = "1.0.0"            # sed replacement (simpler syntax)
-"github:abhinav/git-spice" = "0.24.2"  # Stacked git workflows (gh-stack successor)
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
 "github:charmbracelet/glow" = "2.1.1"  # markdown renderer (Go)
 "github:charmbracelet/gum" = "0.17.0"  # shell prompt tool (Go)
-"go:golang.org/x/vuln/cmd/govulncheck" = "1.1.4"  # Go vulnerability scanner
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"  # Go vulnerability scanner
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
@@ -71,11 +57,27 @@ bun = "1.3.11"
 "github:neiii/bridle" = "0.2.9"        # Claude profile switcher (Rust)
 "github:x-motemen/ghq" = "1.9.4"       # repository management (Go)
 "github:cli/cli" = "2.88.1"            # GitHub CLI (gh) (Go)
+"github:abhinav/git-spice" = "0.24.2"  # Stacked git workflows (gh-stack successor)
+"github:RhysSullivan/executor" = "1.4.33"  # desktop release + DB-owned source state; keep pinned across schema migrations
+"github:vercel-labs/agent-browser" = "0.27.0"
+"github:regenrek/peky" = "0.0.39"      # AI agent terminal multiplexer (Claude Code, Codex, etc.)
+"github:sigoden/projclean" = "0.9.0"   # Project build artifact cleaner
+"github:google-gemini/gemini-cli" = "0.43.0"
 "aqua:jqlang/jq" = "1.8.1"             # JSON processor (aqua has prebuilt binaries)
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
+"aqua:charmbracelet/crush" = "0.73.0"
+"aqua:openai/codex" = "0.134.0"
+"aqua:sharkdp/bat" = "0.26.1"  # cat replacement with syntax highlighting
+"aqua:dandavison/delta" = "0.19.2"  # git diff viewer
+"aqua:sharkdp/fd" = "10.4.2"   # find replacement
+"aqua:XAMPPRocky/tokei" = "14.0.0"  # code statistics
+"aqua:ajeetdsouza/zoxide" = "0.9.9"  # z replacement (smarter cd)
+"aqua:dprint/dprint" = "0.54.0"  # Fast pluggable code formatter
+"aqua:j178/prek" = "0.4.3"      # pre-commit re-engineered in Rust
+"aqua:chmln/sd" = "1.1.0"       # sed replacement (simpler syntax)
 "aqua:mikefarah/yq" = "4.52.5"  # YAML processor
 "aqua:terrastruct/d2" = "0.7.1"  # Diagram language
 "aqua:typst/typst" = "0.14.2"   # Typesetting system
@@ -89,8 +91,7 @@ bun = "1.3.11"
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
-"npm:peky" = "0.0.39"           # AI agent terminal multiplexer (Claude Code, Codex, etc.)
-"npm:wrangler" = "4.77.0"       # Cloudflare Workers CLI
+"npm:wrangler" = "4.95.0"       # Cloudflare Workers CLI
 
 # ============================================================================
 # Notes on Tools NOT Migrated to Mise
