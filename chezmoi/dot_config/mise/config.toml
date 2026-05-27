@@ -5,6 +5,17 @@
 [settings]
 # Save exact versions by default when adding tools with `mise use`.
 pin = true
+# Keep the generated lockfile active, limit future auto-locking to this Mac's
+# platform, and re-check available provenance during installs.
+lockfile = true
+lockfile_platforms = ["macos-arm64"]
+locked_verify_provenance = true
+# Avoid resolving brand-new releases before they have had basic ecosystem soak
+# time. This also applies to supported package-manager backends during install.
+minimum_release_age = "7d"
+# Do not enable locked=true yet: npm/cargo/go backends are version-only in
+# mise.lock, so strict URL-locked installs would fail until those tools move to
+# aqua/github/http release-asset backends.
 
 [tools]
 
