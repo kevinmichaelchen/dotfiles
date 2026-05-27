@@ -609,7 +609,7 @@ version = "0.22.0"
 backend = "npm:agent-browser"
 
 [[tools."npm:executor"]]
-version = "1.4.31"
+version = "1.4.33"
 backend = "npm:executor"
 
 [[tools."npm:hunkdiff"]]

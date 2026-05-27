@@ -4,7 +4,7 @@ Executor is the shared tool catalog for agent clients on this machine.
 Dotfiles manage how clients connect to Executor; Executor owns live runtime
 state, hosted sources, credentials, and policies.
 
-This repo pins Executor to `1.4.31`. Executor `1.4.28` was the first local
+This repo pins Executor to `1.4.33`. Executor `1.4.28` was the first local
 release where source state is clearly database-owned again. `executor.jsonc` is
 an optional plugin manifest, not the source catalog.
 
