@@ -13,7 +13,7 @@ chezmoi/
 ├── dot_agents/
 │   └── skills/         # Global ~/.agents/skills content
 ├── dot_config/
-│   ├── shell/          # Shell aliases and env vars (*.sh, *.sh.tmpl)
+│   ├── shell/          # Shell aliases and env vars (*.sh, private_*.sh.tmpl)
 │   ├── zsh/            # ZSH-specific config (custom.zsh)
 │   ├── mise/           # Dev tool versions (config.toml)
 │   ├── starship.toml   # Prompt theme (Rose Pine)
@@ -29,14 +29,14 @@ chezmoi/
 | Prefix/Suffix | Transformation            | Example                        |
 | ------------- | ------------------------- | ------------------------------ |
 | `dot_`        | Becomes `.` in target     | `dot_config/` → `.config/`     |
-| `.tmpl`       | Template (processes vars) | `github.sh.tmpl` → `github.sh` |
+| `.tmpl`       | Template (processes vars) | `private_github.sh.tmpl` → `github.sh` |
 | `private_`    | Sets chmod 600            | `private_ssh/` → `ssh/` (0600) |
 | `executable_` | Sets chmod +x             | `executable_script` → `script` |
 
 ## 1PASSWORD TEMPLATES
 
 Files ending in `.tmpl` are processed by Chezmoi's template engine. Use
-`onepasswordRead` for secrets:
+`private_*.tmpl` plus `onepasswordRead` for secrets:
 
 ```bash
 # In a .sh.tmpl file
@@ -58,13 +58,13 @@ export API_KEY={{ onepasswordRead "op://Work/API Key/password" }}
 | ----------------------- | ---------------------------- | --------------------------- |
 | Stable, rarely change   | `home-manager/home.nix`      | Declarative, version-pinned |
 | Evolving, tool-specific | `dot_config/shell/*.sh`      | Quick iteration, no rebuild |
-| Needs secrets           | `dot_config/shell/*.sh.tmpl` | 1Password integration       |
+| Needs secrets           | `dot_config/shell/private_*.sh.tmpl` | 1Password + private permissions |
 
 ### Environment Variables
 
 | Type                    | Location                                     |
 | ----------------------- | -------------------------------------------- |
-| Secrets (API keys)      | `dot_config/shell/*.sh.tmpl`                 |
+| Secrets (API keys)      | `dot_config/shell/private_*.sh.tmpl`         |
 | Tool config (no secret) | `dot_config/shell/*.sh`                      |
 | Session-wide            | `home-manager/home.nix` (`sessionVariables`) |
 
@@ -100,7 +100,7 @@ chezmoi apply --source=$HOME/dotfiles/chezmoi
 
 | Don't                            | Why                          | Do Instead                 |
 | -------------------------------- | ---------------------------- | -------------------------- |
-| Hardcode secrets                 | Exposes credentials in git   | Use `.tmpl` with 1Password |
+| Hardcode secrets                 | Exposes credentials in git   | Use `private_*.tmpl` with 1Password |
 | Edit `~/.config/*` directly      | Changes lost on next apply   | Edit here, then `cma`      |
 | Put dotfiles-only skills in `dot_agents/skills` | Leaks repo-specific helpers into global agent skills | Keep repo-local skills in top-level `.agents/skills` |
 | Run `chezmoi` without `--source` | Uses wrong source directory  | Use `cm*` aliases          |
