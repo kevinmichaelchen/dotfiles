@@ -16,6 +16,9 @@ if command -v mise >/dev/null 2>&1; then
     mise upgrade
   fi
 
+  echo "Refreshing Mise lockfile metadata..."
+  mise lock --global --platform macos-arm64
+
   echo "Pruning unused Mise versions..."
   mise prune --yes
 
