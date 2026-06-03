@@ -1,6 +1,8 @@
 # Nix build results
 result
 result-*
+!chezmoi/dot_agents/skills/result/
+!chezmoi/dot_agents/skills/result/**
 
 # Home Manager generations
 *.backup
