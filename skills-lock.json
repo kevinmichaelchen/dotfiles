@@ -5,78 +5,153 @@
       "source": "ast-grep/agent-skill",
       "sourceType": "github",
       "sourcePath": "ast-grep/skills/ast-grep",
+      "trackRef": "main",
       "ref": "577f4d4507678f2c8cee150fae25e6ce309f70b1",
-      "computedHash": "f3bdd9405b66b1973accc3b770a189df0e1f46315625e4fa6ef71b918c0f8962"
+      "computedHash": "9b7a969502c75fcd16c72ec84a00881dd9b4f60eac148c95a7d9f640899739cb"
     },
     "firecrawl": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-cli",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "b8956a49c1f31b8adbe1072e75e91e2cfb10a7441b7bc1d0206917ee48183995"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "272400ce6dcc80476ca03858acbad11d5e82739c0bed2284a73eed1a17c0c87c"
     },
     "firecrawl-agent": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-agent",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "e223e6f2a9b9451f812d40a59a7cde4d905e2855193b864d1868c8f1cbfd608d"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "1770b9a4aed85601cbb4aeba5ed9a51bb117485b40fbe60fa78aa0ec43e197f4"
     },
     "firecrawl-crawl": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-crawl",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "5a05029f8792b4a1a63c3c8848cfdff1917dc1d1c71d48d086ee1ae9b6d752ae"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "308bd33f05736d20aa40ddbfec3b40eb8b8ec3f48d5646a4c3e6db7d90b8969b"
     },
     "firecrawl-download": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-download",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "15463fa7eb446873630a7fa14314bd028557bbc9ac712d04a912081b15fafea2"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "a615bfd32352ff9153007e3b0368a30f93c957cf6c9827bce80ade23a9620882"
     },
     "firecrawl-interact": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-interact",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "489897cd882a79cc0c9abb0453622298e5686d65d1818353a9b2f62dea0aec14"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "3ab373be77c93dc33a6e546fa65fdc5c97712fd171c171d873b65c1b69dc560d"
     },
     "firecrawl-map": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-map",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "1ad82ebc3de0a7a0c3355eb06dbc685f5d378e0cf90fabd482baf9ed5b0b34d0"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "7d73bc93abd2010e955365e4dc8b855438351f61e80bfc76bf869c2a61c1e78d"
     },
     "firecrawl-parse": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-parse",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "6fab102bceee1436e52890707504387a206489dba0d9f90b4dee2613b9bad98e"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "2cbc8b168a6de519a226ae7b5ab3e712e32dfcfe077f638e581d3d0ed40cac76"
     },
     "firecrawl-scrape": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-scrape",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "991e0f06a154df0f58eda5e929b367cc56dd9a3e2a0804b62cc76ddaa1041bde"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "3c8e53285fab5e619ca7f0baf7d2be49a76cb1d1712b4b47b1941560d38257e1"
     },
     "firecrawl-search": {
       "source": "firecrawl/cli",
       "sourceType": "github",
       "sourcePath": "skills/firecrawl-search",
-      "ref": "846f111e666d5f8981ea0c51548db6869fdee317",
-      "computedHash": "2adf4abdd973ac2bd5552a3660b3b643742d9a38119eebea97f55084dac06abb"
+      "trackRef": "main",
+      "ref": "48a913d5b8cf5fefcd6bc1f9060a45913078f351",
+      "computedHash": "2278e1306d35affa3814d7493d4f4b68208a26e7b6eab49880712147ad014e8c"
     },
-    "nia": {
-      "source": "nozomio-labs/nia-skill",
+    "parallel-cli-setup": {
+      "source": "parallel-web/parallel-agent-skills",
       "sourceType": "github",
-      "sourcePath": ".",
-      "ref": "b253a81f257d219f9842d864f9991be287bfc66f",
-      "computedHash": "b51c6a78c27a7856feea72ce295c19673cfb40819b2a05dc046f6060cb2270c5"
+      "sourcePath": "skills/parallel-cli-setup",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "83f745661a981c0ba9aa287a7c27ec44439ea6f1e853ec7c09fbe60d5c6467b8"
+    },
+    "parallel-data-enrichment": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/parallel-data-enrichment",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "76b9eb61430879a4ef7c8aacb272e6df6c074d738b022b0ff8cdda760b8fff80"
+    },
+    "parallel-deep-research": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/parallel-deep-research",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "7379e294eb29a92c2a217a3541f00905f70c3e152755e06979c2806b6bee1219"
+    },
+    "parallel-findall": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/parallel-findall",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "878d78ce8f1114165b2f9fc7cfa17f48baf743d1414a0797b3cd119ceb6f79b8"
+    },
+    "parallel-monitor": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/parallel-monitor",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "6e93f9a3bc7f871acd62f962a4d05a30b82e504923829d6d39062e592ff3e4e1"
+    },
+    "parallel-web-extract": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/parallel-web-extract",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "fb10df2d062f87b3987c070b54b6e354422a2f0cf18991f9098134dbab503fff"
+    },
+    "parallel-web-search": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/parallel-web-search",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "3d417e552e26bd6fe43099c574af8ed29f02829e4e5b521607460e26c0c7f004"
+    },
+    "result": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/result",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "061c39e9b56d36a65d3c509ef079a26e27da7ba5f0b53d16e3d83d8d50c6aa8f"
+    },
+    "status": {
+      "source": "parallel-web/parallel-agent-skills",
+      "sourceType": "github",
+      "sourcePath": "skills/status",
+      "trackRef": "main",
+      "ref": "c618686fdd9ac27dc274640d57aef8c10cc7c012",
+      "computedHash": "ee402d01ab8a9dcc58302a2af30ea8aae138d4c26f57f23e593ac1dfe3fd3260"
     }
   }
 }
