@@ -217,8 +217,11 @@ nix run home-manager -- switch --flake ~/dotfiles/home-manager
 # Enable repo-managed Determinate Nix custom warnings
 ~/dotfiles/scripts/configure-nix-custom.sh
 
-# Clean old Nix generations, collect garbage, and compact Nix caches
+# Clean older Nix generations, keeping the 5 most recent rollback points
 ~/dotfiles/scripts/cleanup.sh
+
+# Override the retained generation count for a one-off run
+NIX_CLEANUP_KEEP_GENERATIONS=3 ~/dotfiles/scripts/cleanup.sh
 ```
 
 #### Manage Personal Configs (via Chezmoi)

@@ -1,38 +1,47 @@
 #!/usr/bin/env bash
 # Nix store/cache cleanup and maintenance
 #
-# Run periodically to free disk space by removing old generations
-# garbage collecting unreferenced store paths, and compacting Nix caches.
+# Run periodically to free disk space by removing older generations while
+# preserving recent rollback points, garbage collecting unreferenced store paths,
+# and compacting Nix caches.
 
 set -euo pipefail
 
 echo "=== Nix Store Cleanup ==="
+keep_generations="${NIX_CLEANUP_KEEP_GENERATIONS:-5}"
+
+if ! [[ "$keep_generations" =~ ^[1-9][0-9]*$ ]]; then
+    echo "NIX_CLEANUP_KEEP_GENERATIONS must be a positive integer" >&2
+    exit 1
+fi
+
+echo "Retention: keeping the most recent $keep_generations generations"
 echo "Before:"
 du -sh /nix/store
 du -sh "$HOME/.cache/nix" 2>/dev/null || true
 
 echo ""
-echo "Deleting old generations..."
+echo "Deleting generations outside the retention window..."
 
-# Delete old darwin-system generations (keeps only current)
+# Delete older darwin-system generations while keeping recent rollback points
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "  - darwin-system generations"
-    sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
+    sudo nix-env --delete-generations +"$keep_generations" --profile /nix/var/nix/profiles/system
 fi
 
-# Delete old home-manager generations
+# Delete older home-manager generations while keeping recent rollback points
 if [[ -d ~/.local/state/nix/profiles ]]; then
     echo "  - home-manager generations"
-    nix-env --delete-generations old --profile ~/.local/state/nix/profiles/home-manager 2>/dev/null || true
+    nix-env --delete-generations +"$keep_generations" --profile ~/.local/state/nix/profiles/home-manager 2>/dev/null || true
 fi
 
-# Delete old user profile generations
+# Delete older user profile generations while keeping recent rollback points
 echo "  - user profile generations"
-nix-env --delete-generations old
+nix-env --delete-generations +"$keep_generations"
 
 echo ""
 echo "Running garbage collection..."
-nix-collect-garbage -d
+nix-collect-garbage
 
 echo ""
 echo "Cleaning Nix tarball caches..."
