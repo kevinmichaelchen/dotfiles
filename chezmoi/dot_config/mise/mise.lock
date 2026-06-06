@@ -521,62 +521,6 @@ url = "https://github.com/google-gemini/gemini-cli/releases/download/v0.43.0/gem
 url_api = "https://api.github.com/repos/google-gemini/gemini-cli/releases/assets/426628866"
 github_attestations = "unavailable"
 
-[[tools."github:neiii/bridle"]]
-version = "0.2.9"
-backend = "github:neiii/bridle"
-
-[tools."github:neiii/bridle"."platforms.linux-arm64"]
-checksum = "sha256:0d6014477c585c232f7cc11893749bd855159c368a6571bf67f2b0940a4e98f3"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-aarch64-unknown-linux-gnu.tar.xz"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959806"
-github_attestations = "unavailable"
-
-[tools."github:neiii/bridle"."platforms.linux-arm64-musl"]
-checksum = "sha256:0d6014477c585c232f7cc11893749bd855159c368a6571bf67f2b0940a4e98f3"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-aarch64-unknown-linux-gnu.tar.xz"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959806"
-github_attestations = "unavailable"
-
-[tools."github:neiii/bridle"."platforms.linux-x64"]
-checksum = "sha256:93e767b0d93f6f31b7ec3c4d3ae5ab68c64275c8d43e554478c7057e3ec6007e"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-x86_64-unknown-linux-gnu.tar.xz"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959816"
-github_attestations = "unavailable"
-
-[tools."github:neiii/bridle"."platforms.linux-x64-musl"]
-checksum = "sha256:93e767b0d93f6f31b7ec3c4d3ae5ab68c64275c8d43e554478c7057e3ec6007e"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-x86_64-unknown-linux-gnu.tar.xz"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959816"
-github_attestations = "unavailable"
-
-[tools."github:neiii/bridle"."platforms.macos-arm64"]
-checksum = "sha256:b056463207b5dd8abb1519b86378abbb2b89ed1f00677889eeb83249f871dff1"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-aarch64-apple-darwin.tar.xz"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959805"
-github_attestations = "unavailable"
-
-[tools."github:neiii/bridle"."platforms.macos-x64"]
-checksum = "sha256:428fe671b933354783f7fa8903991bb1518a76c10540961007415e96a770b941"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-x86_64-apple-darwin.tar.xz"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959812"
-github_attestations = "unavailable"
-
-[tools."github:neiii/bridle"."platforms.windows-x64"]
-checksum = "sha256:eee079932dea9a357794cb8187507c85c23d780cac7ae6096c1c38472aac150f"
-url = "https://github.com/neiii/bridle/releases/download/v0.2.9/bridle-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/neiii/bridle/releases/assets/347959814"
-github_attestations = "unavailable"
-
-[[tools."github:regenrek/peky"]]
-version = "0.0.39"
-backend = "github:regenrek/peky"
-
-[tools."github:regenrek/peky"."platforms.macos-arm64"]
-checksum = "sha256:a3bc900c2f2f7290ced1cca60cec2ee19a8252456b5996b74978927d93ef24dd"
-url = "https://github.com/regenrek/peky/releases/download/v0.0.39/peky_0.0.39_darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/regenrek/peky/releases/assets/345251164"
-github_attestations = "unavailable"
-
 [[tools."github:sigoden/projclean"]]
 version = "0.9.0"
 backend = "github:sigoden/projclean"
