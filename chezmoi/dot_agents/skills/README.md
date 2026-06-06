@@ -13,9 +13,9 @@ Keep any still-vendored skills flat as direct children of this directory.
 These are declared in `~/dotfiles/skills-lock.json` and installed outside the
 repo:
 
-- `ast-grep/agent-skill`
+- [`ast-grep/agent-skill`](https://github.com/ast-grep/agent-skill)
   - `ast-grep`
-- `firecrawl/cli`
+- [`firecrawl/cli`](https://github.com/firecrawl/cli)
   - `firecrawl`
   - `firecrawl-agent`
   - `firecrawl-crawl`
@@ -25,7 +25,7 @@ repo:
   - `firecrawl-parse`
   - `firecrawl-scrape`
   - `firecrawl-search`
-- `parallel-web/parallel-agent-skills`
+- [`parallel-web/parallel-agent-skills`](https://github.com/parallel-web/parallel-agent-skills)
   - `parallel-cli-setup`
   - `parallel-data-enrichment`
   - `parallel-deep-research`
