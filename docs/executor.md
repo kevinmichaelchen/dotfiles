@@ -1,6 +1,6 @@
 # Executor
 
-Executor is the shared tool catalog for agent clients on this machine.
+Executor Cloud is the shared tool catalog for agent clients on this machine.
 Dotfiles manage how clients connect to Executor; Executor owns live runtime
 state, hosted sources, credentials, and policies.
 
@@ -10,16 +10,14 @@ an optional plugin manifest, not the source catalog.
 
 ## Client Wiring
 
-Codex, OpenCode, and Crush are wired to both Executor endpoints.
-Desktop is the default `executor` entry, and Cloud is available as
-`executor-cloud`:
+Codex, OpenCode, and Crush are wired to Executor Cloud as the single global MCP
+entry:
 
-- `executor`: `http://127.0.0.1:4789/mcp`
-- `executor-cloud`: `https://executor.sh/mcp`
+- `executor`: `https://executor.sh/mcp`
 
-Desktop owns its own local sidecar lifecycle when it is used interactively; this
-repo should not start a second background Executor runtime against the same
-local database.
+This repo does not wire agent clients to the local Desktop sidecar. Project-only
+or local-only MCPs should live in project/workspace scopes instead of global
+dotfiles.
 
 ## Ownership
 
@@ -41,27 +39,22 @@ Do not periodically rewrite Executor sources from dotfiles. That turns bash into
 a second control plane and fights Executor's own runtime model.
 
 There is intentionally no steady-state source sync script. Add or edit sources,
-secrets, OAuth connections, and policies through Executor Cloud/Desktop.
+secrets, OAuth connections, and policies through Executor Cloud.
 
 ## Chezmoi Boundary
 
 Chezmoi should manage the pieces that are stable text config:
 
-- agent client wiring that points at Executor Cloud and Desktop MCP endpoints
+- agent client wiring that points at the Executor Cloud MCP endpoint
 - operator docs
 
-Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Local Desktop
-state and hosted Cloud configuration belong to Executor's control plane.
+Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
+configuration belongs to Executor's control plane.
 
 If `doctor.sh` reports a lingering `sources` key in `executor.jsonc`, treat it
 as legacy state. Do not port it into dotfiles; verify the live source in
 Executor's UI/CLI and remove the stale config entry only after the database copy
 is healthy.
-
-## Local Runtime
-
-This repo no longer manages a macOS background service for Executor. If local
-Executor is needed, use Executor Desktop and let the app manage its own sidecar.
 
 ## Secrets
 
@@ -71,8 +64,6 @@ env blocks or checked-in source definitions.
 | Backend | Use When | Notes |
 | --- | --- | --- |
 | Executor Cloud / WorkOS Vault | Hosted or shared tools | Preferred for Cloud-connected sources |
-| 1Password | API tokens already live in 1Password | Local Desktop only |
-| macOS Keychain | You specifically want OS-keychain storage | Local Desktop only; can prompt when local runtimes probe entries |
 | file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
 
 For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
@@ -165,13 +156,10 @@ Suggested personal Cloud baseline:
 ## Manual Operations
 
 ```bash
-npx add-mcp http://127.0.0.1:4789/mcp --transport http --name executor
-npx add-mcp https://executor.sh/mcp --transport http --name executor-cloud
+npx add-mcp https://executor.sh/mcp --transport http --name executor
 ```
 
 ## Troubleshooting
 
-- Source auth broken? Fix it in Executor Cloud/Desktop, not in dotfiles.
-- Desktop fails to open? Make sure no separate local Executor process is holding
-  `~/.executor/data.db`.
+- Source auth broken? Fix it in Executor Cloud, not in dotfiles.
 - Project-only MCPs should live in project/workspace scopes.
