@@ -8,32 +8,6 @@ backend = "aqua:ajeetdsouza/zoxide"
 checksum = "sha256:57e733d0436309dae2ed97e46bba43937209395298e1d88812d4e893900cb40a"
 url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.9/zoxide-0.9.9-aarch64-apple-darwin.tar.gz"
 
-[[tools."aqua:ariga/atlas"]]
-version = "1.1.0"
-backend = "aqua:ariga/atlas"
-
-[tools."aqua:ariga/atlas"."platforms.linux-arm64"]
-url = "https://release.ariga.io/atlas/atlas-linux-arm64-1.1.0"
-
-[tools."aqua:ariga/atlas"."platforms.linux-arm64-musl"]
-url = "https://release.ariga.io/atlas/atlas-linux-arm64-1.1.0"
-
-[tools."aqua:ariga/atlas"."platforms.linux-x64"]
-url = "https://release.ariga.io/atlas/atlas-linux-amd64-1.1.0"
-
-[tools."aqua:ariga/atlas"."platforms.linux-x64-musl"]
-url = "https://release.ariga.io/atlas/atlas-linux-amd64-1.1.0"
-
-[tools."aqua:ariga/atlas"."platforms.macos-arm64"]
-checksum = "sha256:3b3825eef961c8bc07f3bfe3da7a4d99b615b7955b1c6115a40130b1c9767727"
-url = "https://release.ariga.io/atlas/atlas-darwin-arm64-v1.1.0"
-
-[tools."aqua:ariga/atlas"."platforms.macos-x64"]
-url = "https://release.ariga.io/atlas/atlas-darwin-amd64-1.1.0"
-
-[tools."aqua:ariga/atlas"."platforms.windows-x64"]
-url = "https://release.ariga.io/atlas/atlas-windows-amd64-1.1.0.exe"
-
 [[tools."aqua:aws/aws-cli"]]
 version = "2.34.18"
 backend = "aqua:aws/aws-cli"
@@ -211,14 +185,6 @@ backend = "aqua:openai/codex"
 [tools."aqua:openai/codex"."platforms.macos-arm64"]
 checksum = "sha256:2234ee207848a8770dffeba4b7aaae2718fed78741e700e5db57935f0f02231f"
 url = "https://github.com/openai/codex/releases/download/rust-v0.134.0/codex-aarch64-apple-darwin.zst"
-
-[[tools."aqua:planetscale/cli"]]
-version = "0.277.0"
-backend = "aqua:planetscale/cli"
-
-[tools."aqua:planetscale/cli"."platforms.macos-arm64"]
-checksum = "sha256:0d19609b9b00cb7c7749de987e25d5d237d1f0df64d27b75c096e5372b0c171c"
-url = "https://github.com/planetscale/cli/releases/download/v0.277.0/pscale_0.277.0_macOS_arm64.tar.gz"
 
 [[tools."aqua:sharkdp/bat"]]
 version = "0.26.1"
@@ -510,16 +476,6 @@ checksum = "sha256:8fdaac525d8919f9f8c265f99ffa26189e5f1fd3a35636adad4fd890a141a
 url = "https://github.com/cli/cli/releases/download/v2.88.1/gh_2.88.1_windows_amd64.zip"
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/372317959"
 provenance = "github-attestations"
-
-[[tools."github:google-gemini/gemini-cli"]]
-version = "0.43.0"
-backend = "github:google-gemini/gemini-cli"
-
-[tools."github:google-gemini/gemini-cli"."platforms.macos-arm64"]
-checksum = "sha256:74303a5dfe0fb8f91ef256dee824f8e259043ffe62951ea636e0564bc9118043"
-url = "https://github.com/google-gemini/gemini-cli/releases/download/v0.43.0/gemini-darwin-arm64-unsigned.zip"
-url_api = "https://api.github.com/repos/google-gemini/gemini-cli/releases/assets/426628866"
-github_attestations = "unavailable"
 
 [[tools."github:sigoden/projclean"]]
 version = "0.9.0"

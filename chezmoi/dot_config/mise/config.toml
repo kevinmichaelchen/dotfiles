@@ -67,7 +67,6 @@ bun = "1.3.11"
 "github:RhysSullivan/executor" = "1.4.33"  # desktop release + DB-owned source state; keep pinned across schema migrations
 "github:vercel-labs/agent-browser" = "0.27.0"
 "github:sigoden/projclean" = "0.9.0"   # Project build artifact cleaner
-"github:google-gemini/gemini-cli" = "0.43.0"
 "aqua:jqlang/jq" = "1.8.1"             # JSON processor (aqua has prebuilt binaries)
 
 # ============================================================================
@@ -87,10 +86,8 @@ bun = "1.3.11"
 "aqua:typst/typst" = "0.14.2"   # Typesetting system
 "aqua:golangci/golangci-lint" = "2.12.2"  # Go linter aggregator
 "github:astral-sh/uv" = "0.11.2"  # Python package manager
-"aqua:planetscale/cli" = "0.277.0"  # PlanetScale database CLI (pscale)
 "aqua:aws/aws-cli" = "2.34.18"       # AWS CLI
 "aqua:hashicorp/terraform" = "1.14.8"  # Infrastructure as Code
-"aqua:ariga/atlas" = "1.1.0"        # Database schema management
 
 # ============================================================================
 # Tools from npm (Node.js packages)
