@@ -64,7 +64,6 @@
   },
   "options": {
     "context_paths": [
-      "CLAUDE.md",
       "AGENTS.md",
       ".cursorrules"
     ],

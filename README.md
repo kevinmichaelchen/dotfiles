@@ -181,8 +181,7 @@ integration:
 
 Agent skills are declared in `skills-lock.json`. Chezmoi applies
 `run_after_02_sync-agent-skills.sh`, which installs those pinned skills into
-`~/.agents/skills`, then `run_after_03_sync-claude-skills.sh` links them into
-Claude.
+`~/.agents/skills`.
 
 ### Daily Usage
 

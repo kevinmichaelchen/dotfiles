@@ -10,7 +10,7 @@ an optional plugin manifest, not the source catalog.
 
 ## Client Wiring
 
-Codex, Claude, OpenCode, and Crush are wired to both Executor endpoints.
+Codex, OpenCode, and Crush are wired to both Executor endpoints.
 Desktop is the default `executor` entry, and Cloud is available as
 `executor-cloud`:
 
@@ -26,7 +26,7 @@ local database.
 Dotfiles own:
 
 - The pinned Executor CLI version in Mise.
-- MCP client wiring for Codex, Claude, OpenCode, and Crush.
+- MCP client wiring for Codex, OpenCode, and Crush.
 
 Executor owns:
 

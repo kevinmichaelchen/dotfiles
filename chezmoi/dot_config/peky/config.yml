@@ -15,15 +15,10 @@ dashboard:
 tool_detection:
   enabled: true
   allow:
-    claude: true
     codex: true
     lazygit: true
     gh-dash: true
   profiles:
-    claude:
-      bracketed_paste: true
-      submit: "\r"
-      submit_delay_ms: 30
     codex:
       bracketed_paste: true
       submit: "\r"

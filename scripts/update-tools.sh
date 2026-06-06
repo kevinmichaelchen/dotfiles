@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Update developer CLI tools managed by Mise and Claude Code.
+# Update developer CLI tools managed by Mise.
 
 set -euo pipefail
 
-echo "Updating developer tools (Mise + Claude Code)..."
+echo "Updating developer tools (Mise)..."
 
 if command -v mise >/dev/null 2>&1; then
   echo "Checking for outdated Mise tools..."
@@ -33,14 +33,6 @@ EOF
   mise outdated
 else
   echo "Warning: mise not found, skipping Mise upgrade/prune"
-fi
-
-if command -v claude >/dev/null 2>&1; then
-  echo "Updating Claude Code..."
-  claude update
-  echo "Claude version: $(claude --version 2>/dev/null | head -1)"
-else
-  echo "Warning: claude not found, skipping Claude update"
 fi
 
 echo "Developer tool update complete."
