@@ -11,9 +11,16 @@ if command -v mise >/dev/null 2>&1; then
 
   echo "Upgrading Mise tools..."
   if ! mise upgrade; then
-    echo "Mise upgrade failed; retrying github:cli/cli without GitHub attestations."
-    MISE_GITHUB_ATTESTATIONS=false mise install github:cli/cli@latest
-    mise upgrade
+    cat >&2 <<'EOF'
+Mise upgrade failed.
+
+GitHub attestations stay enabled during automatic updates. If the failure is a
+known temporary attestation outage for gh, recover manually after reviewing it:
+
+  MISE_GITHUB_ATTESTATIONS=false mise install github:cli/cli@latest
+  mise upgrade
+EOF
+    exit 1
   fi
 
   echo "Refreshing Mise lockfile metadata..."
