@@ -21,6 +21,8 @@
   home.packages = with pkgs; [
     # Bootstrap tools (needed before mise can install anything)
     chezmoi  # Must be in Nix - applies mise.toml config before mise install runs
+    curl     # Must be in Nix - fetches agent skills before mise install runs
+    jq       # Must be in Nix - reads skills-lock.json before mise install runs
     mise     # Must be in Nix - installs other dev tools
 
     # System packages (not available or not suitable for Mise)

@@ -179,6 +179,11 @@ integration:
    mise install          # Install npm packages from ~/.config/mise/config.toml
    ```
 
+Agent skills are declared in `skills-lock.json`. Chezmoi applies
+`run_after_02_sync-agent-skills.sh`, which installs those pinned skills into
+`~/.agents/skills`, then `run_after_03_sync-claude-skills.sh` links them into
+Claude.
+
 ### Daily Usage
 
 #### Update Everything
@@ -233,6 +238,19 @@ cma  # Apply all Chezmoi-managed configs
 chezmoi add ~/.some-config
 ```
 
+#### Manage Agent Skills
+
+```bash
+# Install skills declared by skills-lock.json, pruning removed lock entries
+~/dotfiles/scripts/agent-skills/sync.sh --prune
+
+# Check upstream, scan each updated skill, and bump refs/hashes in the lock
+~/dotfiles/scripts/agent-skills/update-lock.sh
+
+# Scan installed lock-managed skills and still-vendored Chezmoi skills
+~/dotfiles/scripts/agent-skills/scan.sh --all
+```
+
 ## 📝 Scripts
 
 ### `bootstrap.sh`
@@ -254,6 +272,17 @@ Daily update script that:
 - Pulls latest changes from git
 - Updates and applies Home-Manager configuration
 - Applies Chezmoi configuration changes
+
+### `agent-skills/`
+
+Maintains global agent skills without vendoring upstream payloads:
+
+- `sync.sh`: installs pinned skills from `skills-lock.json` into
+  `~/.agents/skills`, validating hashes and scanning before install.
+- `update-lock.sh`: resolves upstream `trackRef` values, scans each downloaded
+  skill, then updates pinned refs and hashes.
+- `scan.sh`: scans every installed and still-vendored skill with NVIDIA
+  SkillSpector.
 
 ## 🎯 Philosophy
 

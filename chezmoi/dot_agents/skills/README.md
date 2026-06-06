@@ -1,35 +1,55 @@
 # Agent Skills
 
+Prefer declaring upstream skills in `~/dotfiles/skills-lock.json` and installing
+them with `~/dotfiles/scripts/sync-agent-skills.sh`. This keeps the dotfiles repo
+from carrying large vendored skill payloads.
+
 ## Layout
 
-Keep skills flat as direct children of this directory.
+Keep any still-vendored skills flat as direct children of this directory.
 
-## Parallel
+## Lock-managed upstream skills
 
-From https://github.com/parallel-web/parallel-agent-skills.
+These are declared in `~/dotfiles/skills-lock.json` and installed outside the
+repo:
 
-Web search, extraction, deep research, enrichment, entity discovery, monitoring,
-CLI setup, and research task `status`/`result`.
+- `ast-grep`
+- `firecrawl`
+- `firecrawl-agent`
+- `firecrawl-crawl`
+- `firecrawl-download`
+- `firecrawl-interact`
+- `firecrawl-map`
+- `firecrawl-parse`
+- `firecrawl-scrape`
+- `firecrawl-search`
+- `parallel-cli-setup`
+- `parallel-data-enrichment`
+- `parallel-deep-research`
+- `parallel-findall`
+- `parallel-monitor`
+- `parallel-web-extract`
+- `parallel-web-search`
+- `result`
+- `status`
 
-## Firecrawl
+## Security pipeline
 
-From https://github.com/firecrawl/cli/tree/main/skills.
+Run `~/dotfiles/scripts/agent-skills/scan.sh --all` to scan all installed
+lock-managed skills plus all still-vendored skills. `sync.sh` and
+`update-lock.sh` also run SkillSpector on downloaded upstream skill directories
+by default.
 
-Web search, scraping, crawling, mapping, parsing, downloading, interaction,
-monitoring, agent, and CLI skills.
+## Still-vendored skills
 
-## ast-grep
+### Custom
 
-From https://github.com/ast-grep/agent-skill.
+These local skills remain vendored until they are moved to an upstream source or
+given explicit lock entries:
 
-Structural code search with ast-grep.
-
-## nia
-
-From https://github.com/nozomio-labs/nia-skill.
-
-Nia search and connector workflows.
-
-## Custom
-
-Everything else is custom-made.
+- `confluence-pages`
+- `find-skills`
+- `firecrawl-monitor`
+- `garden-tender`
+- `git-commit-convention`
+- `replicate`
