@@ -9,11 +9,6 @@
   "mcp": {
     "executor": {
       "type": "remote",
-      "url": "http://127.0.0.1:4789/mcp",
-      "enabled": true
-    },
-    "executor-cloud": {
-      "type": "remote",
       "url": "https://executor.sh/mcp",
       "enabled": true
     }
