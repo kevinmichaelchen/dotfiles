@@ -7,6 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 LOCK_FILE="${REPO_DIR}/skills-lock.json"
 TARGET_DIR="${AGENTS_SKILLS_DIR:-${HOME}/.agents/skills}"
+TARGET_EXPLICIT=0
 FORCE=0
 PRUNE=0
 SCAN=1
@@ -16,7 +17,7 @@ source "${SCRIPT_DIR}/lib.sh"
 
 usage() {
   cat <<'EOF'
-Usage: sync.sh [--force] [--prune] [--no-scan]
+Usage: sync.sh [--force] [--prune] [--no-scan] [--target DIR]
 
 Installs lock-managed upstream skills into ~/.agents/skills.
 
@@ -24,6 +25,7 @@ Options:
   --force    Reinstall even when the installed marker matches the lock entry.
   --prune    Remove previously managed skills that are no longer in the lock.
   --no-scan  Skip SkillSpector scanning before install.
+  --target   Install into DIR. Required for targets outside ~/.agents/skills.
 EOF
 }
 
@@ -38,6 +40,15 @@ while [[ $# -gt 0 ]]; do
     --no-scan)
       SCAN=0
       ;;
+    --target)
+      if [[ $# -lt 2 ]]; then
+        echo "Missing value for --target" >&2
+        exit 2
+      fi
+      TARGET_DIR="$2"
+      TARGET_EXPLICIT=1
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -50,6 +61,74 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+
+resolve_target_path() {
+  local path="$1"
+  local candidate suffix base_real
+
+  if [[ -z "${path}" ]]; then
+    echo "Refusing empty skill target" >&2
+    return 1
+  fi
+
+  if [[ "${path}" != /* ]]; then
+    path="${PWD}/${path}"
+  fi
+
+  if [[ -e "${path}" && ! -d "${path}" ]]; then
+    echo "Refusing skill target that is not a directory: ${path}" >&2
+    return 1
+  fi
+
+  candidate="${path}"
+  suffix=""
+
+  while [[ ! -e "${candidate}" && "${candidate}" != "/" ]]; do
+    suffix="/$(basename "${candidate}")${suffix}"
+    candidate="$(dirname "${candidate}")"
+  done
+
+  if [[ ! -d "${candidate}" ]]; then
+    echo "Refusing skill target with non-directory ancestor: ${path}" >&2
+    return 1
+  fi
+
+  base_real="$(cd "${candidate}" && pwd -P)"
+  printf '%s%s\n' "${base_real}" "${suffix}"
+}
+
+guard_target_dir() {
+  local requested="$1"
+  local explicit="$2"
+  local home_real allowed_root target_real
+
+  home_real="$(cd "${HOME}" && pwd -P)"
+  allowed_root="$(resolve_target_path "${HOME}/.agents/skills")"
+  target_real="$(resolve_target_path "${requested}")"
+
+  case "${target_real}" in
+    ""|"/"|"${home_real}")
+      echo "Refusing unsafe skill target: ${target_real}" >&2
+      return 1
+      ;;
+  esac
+
+  if [[ "${explicit}" -ne 1 ]]; then
+    case "${target_real}" in
+      "${allowed_root}"|"${allowed_root}/"*)
+        ;;
+      *)
+        echo "Refusing skill target outside ${allowed_root}: ${target_real}" >&2
+        echo "Pass --target ${requested} to opt into a non-default target." >&2
+        return 1
+        ;;
+    esac
+  fi
+
+  printf '%s\n' "${target_real}"
+}
+
+TARGET_DIR="$(guard_target_dir "${TARGET_DIR}" "${TARGET_EXPLICIT}")"
 
 agent_skills_require_tools jq curl tar
 

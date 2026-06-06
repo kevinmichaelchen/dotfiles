@@ -71,7 +71,7 @@ Gateway rather than to individual servers.
 | Human-in-the-loop    | Built-in: OAuth flows, approval pauses, `executor resume` | Manual credential setup via `docker mcp secret set`   |
 | Governance           | Nascent policy infrastructure                             | Built-in logging, call-tracing, custom catalogs       |
 | OpenAPI bridging     | First-class — point at a spec, get typed tools            | Not supported natively                                |
-| Multi-client support | Exposes itself as a single MCP server for any client      | Gateway supports Claude Code, Cursor, Zed, and others |
+| Multi-client support | Exposes itself as a single MCP server for any client      | Gateway supports Cursor, Zed, and others              |
 
 ## Source and Tool Management
 

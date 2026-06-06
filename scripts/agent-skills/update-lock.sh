@@ -7,6 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 LOCK_FILE="${REPO_DIR}/skills-lock.json"
 SCAN=1
+APPLY=0
 ONLY_SKILLS=()
 
 # shellcheck source=./lib.sh
@@ -14,15 +15,17 @@ source "${SCRIPT_DIR}/lib.sh"
 
 usage() {
   cat <<'EOF'
-Usage: update-lock.sh [--skill NAME] [--no-scan]
+Usage: update-lock.sh [--skill NAME] [--no-scan] [--apply]
 
 Resolves each skill's trackRef to the latest GitHub commit, downloads the skill
-sourcePath, scans it with SkillSpector, computes its directory hash, and updates
-skills-lock.json.
+sourcePath, scans it with SkillSpector, computes its directory hash, and prints
+the proposed skills-lock.json diff. Pass --apply after reviewing the diff to
+write the lock update.
 
 Options:
   --skill NAME  Update one skill. May be passed multiple times.
   --no-scan     Skip SkillSpector scanning before writing the lock.
+  --apply       Write the reviewed lock update to skills-lock.json.
 EOF
 }
 
@@ -34,6 +37,9 @@ while [[ $# -gt 0 ]]; do
       ;;
     --no-scan)
       SCAN=0
+      ;;
+    --apply)
+      APPLY=1
       ;;
     -h|--help)
       usage
@@ -151,5 +157,15 @@ done < <(
     ] | @tsv' "${LOCK_FILE}"
 )
 
-cp "${tmp_lock}" "${LOCK_FILE}"
-echo "Updated ${LOCK_FILE}"
+if diff -u "${LOCK_FILE}" "${tmp_lock}"; then
+  echo "No skills-lock.json updates available."
+  exit 0
+fi
+
+if [[ "${APPLY}" -eq 1 ]]; then
+  cp "${tmp_lock}" "${LOCK_FILE}"
+  echo "Updated ${LOCK_FILE}"
+else
+  echo
+  echo "Review the diff above, then rerun with --apply to update ${LOCK_FILE}."
+fi

@@ -181,8 +181,7 @@ integration:
 
 Agent skills are declared in `skills-lock.json`. Chezmoi applies
 `run_after_02_sync-agent-skills.sh`, which installs those pinned skills into
-`~/.agents/skills`, then `run_after_03_sync-claude-skills.sh` links them into
-Claude.
+`~/.agents/skills`.
 
 ### Daily Usage
 
@@ -244,8 +243,11 @@ chezmoi add ~/.some-config
 # Install skills declared by skills-lock.json, pruning removed lock entries
 ~/dotfiles/scripts/agent-skills/sync.sh --prune
 
-# Check upstream, scan each updated skill, and bump refs/hashes in the lock
+# Check upstream, scan each updated skill, and review proposed lock changes
 ~/dotfiles/scripts/agent-skills/update-lock.sh
+
+# Apply the lock update only after reviewing the diff
+~/dotfiles/scripts/agent-skills/update-lock.sh --apply
 
 # Scan installed lock-managed skills and still-vendored Chezmoi skills
 ~/dotfiles/scripts/agent-skills/scan.sh --all
@@ -278,9 +280,11 @@ Daily update script that:
 Maintains global agent skills without vendoring upstream payloads:
 
 - `sync.sh`: installs pinned skills from `skills-lock.json` into
-  `~/.agents/skills`, validating hashes and scanning before install.
+  `~/.agents/skills`, validating hashes and scanning before install. Custom
+  targets outside `~/.agents/skills` require an explicit `--target`.
 - `update-lock.sh`: resolves upstream `trackRef` values, scans each downloaded
-  skill, then updates pinned refs and hashes.
+  skill, then prints a proposed lock diff. Use `--apply` after reviewing the
+  diff to update pinned refs and hashes.
 - `scan.sh`: scans every installed and still-vendored skill with NVIDIA
   SkillSpector.
 

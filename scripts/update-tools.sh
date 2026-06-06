@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Update developer CLI tools managed by Mise and Claude Code.
+# Update developer CLI tools managed by Mise.
 
 set -euo pipefail
 
-echo "Updating developer tools (Mise + Claude Code)..."
+echo "Updating developer tools (Mise)..."
 
 if command -v mise >/dev/null 2>&1; then
   echo "Checking for outdated Mise tools..."
@@ -11,9 +11,16 @@ if command -v mise >/dev/null 2>&1; then
 
   echo "Upgrading Mise tools..."
   if ! mise upgrade; then
-    echo "Mise upgrade failed; retrying github:cli/cli without GitHub attestations."
-    MISE_GITHUB_ATTESTATIONS=false mise install github:cli/cli@latest
-    mise upgrade
+    cat >&2 <<'EOF'
+Mise upgrade failed.
+
+GitHub attestations stay enabled during automatic updates. If the failure is a
+known temporary attestation outage for gh, recover manually after reviewing it:
+
+  MISE_GITHUB_ATTESTATIONS=false mise install github:cli/cli@latest
+  mise upgrade
+EOF
+    exit 1
   fi
 
   echo "Refreshing Mise lockfile metadata..."
@@ -26,14 +33,6 @@ if command -v mise >/dev/null 2>&1; then
   mise outdated
 else
   echo "Warning: mise not found, skipping Mise upgrade/prune"
-fi
-
-if command -v claude >/dev/null 2>&1; then
-  echo "Updating Claude Code..."
-  claude update
-  echo "Claude version: $(claude --version 2>/dev/null | head -1)"
-else
-  echo "Warning: claude not found, skipping Claude update"
 fi
 
 echo "Developer tool update complete."
