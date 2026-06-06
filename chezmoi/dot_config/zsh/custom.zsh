@@ -30,7 +30,7 @@ eval "$(mise activate zsh)"
 
 # Fix PATH for nix-darwin (macOS path_helper overrides /etc/zshenv)
 # Add Nix paths AFTER mise so mise tools take precedence
-[[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="/etc/profiles/per-user/$USER/bin:$PATH"
+[[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="$PATH:/etc/profiles/per-user/$USER/bin"
 
 # Only append to PATH if these directories aren't already there
 [[ ":$PATH:" != *":$HOME/.opencode/bin:"* ]] && export PATH="$PATH:$HOME/.opencode/bin"
