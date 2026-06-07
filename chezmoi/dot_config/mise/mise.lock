@@ -31,12 +31,12 @@ url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.18.pkg"
 url = "https://awscli.amazonaws.com/AWSCLIV2-2.34.18.pkg"
 
 [[tools."aqua:charmbracelet/crush"]]
-version = "0.73.0"
+version = "0.76.0"
 backend = "aqua:charmbracelet/crush"
 
 [tools."aqua:charmbracelet/crush"."platforms.macos-arm64"]
-checksum = "sha256:e8a0aa570c5bbe8f31b444079b558dcba63d2d90fc0d4201f1248b2a84169017"
-url = "https://github.com/charmbracelet/crush/releases/download/v0.73.0/crush_0.73.0_Darwin_arm64.tar.gz"
+checksum = "sha256:6dec0cb0209219d95e4fbc64b62bb9acaf68ae6f1d44b342f69e2ec7098b56e1"
+url = "https://github.com/charmbracelet/crush/releases/download/v0.76.0/crush_0.76.0_Darwin_arm64.tar.gz"
 provenance = "cosign"
 
 [[tools."aqua:chmln/sd"]]
@@ -626,6 +626,10 @@ backend = "npm:hunkdiff"
 [[tools."npm:markit-ai"]]
 version = "0.5.3"
 backend = "npm:markit-ai"
+
+[[tools."npm:sfw"]]
+version = "2.0.6"
+backend = "npm:sfw"
 
 [[tools."npm:wrangler"]]
 version = "4.94.0"
