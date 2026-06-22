@@ -9,6 +9,8 @@
 	pager = delta
 [includeIf "gitdir:~/dev/github.com/kevinmichaelchen/"]
     path = ~/.config/git/kevinmichaelchen
+[include]
+	path = ~/.config/git/local
 [pager]
 	branch = false
 [git-town]
