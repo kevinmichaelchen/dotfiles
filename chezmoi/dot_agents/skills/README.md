@@ -55,4 +55,6 @@ given explicit lock entries:
 - `firecrawl-monitor`
 - `garden-tender`
 - `git-commit-convention`
+- `hegelian-dialectic-skill` from
+  [`KyleAMathews/hegelian-dialectic-skill`](https://github.com/KyleAMathews/hegelian-dialectic-skill)
 - `replicate`
