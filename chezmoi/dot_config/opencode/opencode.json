@@ -3,8 +3,7 @@
   "model": "fireworks-ai/accounts/fireworks/models/kimi-k2p6",
   "small_model": "opencode/mimo-v2-omni-free",
   "plugin": [
-    "opencode-openai-codex-auth",
-    "opencode-firecrawl"
+    "opencode-openai-codex-auth"
   ],
   "mcp": {
     "executor": {
