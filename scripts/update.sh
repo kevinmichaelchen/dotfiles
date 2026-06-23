@@ -13,12 +13,12 @@ git pull
 # Check if on macOS
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Updating nix-darwin..."
-    nix flake update "$HOME/dotfiles/nix-darwin"
-    darwin-rebuild switch --flake "$HOME/dotfiles/nix-darwin"
+    nix flake update --flake "$HOME/dotfiles/nix-darwin"
+    sudo darwin-rebuild switch --flake "$HOME/dotfiles/nix-darwin#$USER"
 else
     echo "Updating Home-Manager..."
-    nix flake update "$HOME/dotfiles/home-manager"
-    home-manager switch --flake "$HOME/dotfiles/home-manager"
+    nix flake update --flake "$HOME/dotfiles/home-manager"
+    home-manager switch --flake "$HOME/dotfiles/home-manager#$USER"
 fi
 
 # Update Chezmoi from explicit source dir

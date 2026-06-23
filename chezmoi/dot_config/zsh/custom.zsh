@@ -28,6 +28,9 @@ export EDITOR="vim"
 # Initialize mise FIRST so its PATH entries come before Nix's
 eval "$(mise activate zsh)"
 
+# Load OrbStack shell integration when OrbStack is installed.
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
 # Fix PATH for nix-darwin (macOS path_helper overrides /etc/zshenv)
 # Add Nix paths AFTER mise so mise tools take precedence
 [[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="$PATH:/etc/profiles/per-user/$USER/bin"
