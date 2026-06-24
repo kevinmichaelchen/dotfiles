@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-mise.url = "github:NixOS/nixpkgs/3e41b24abd260e8f71dbe2f5737d24122f972158";
     
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
@@ -33,8 +34,11 @@
     };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-replicate }:
+  outputs = { self, nixpkgs, nixpkgs-mise, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-replicate }:
   let
+    system = "aarch64-darwin";
+    misePkgs = import nixpkgs-mise { inherit system; };
+
     # Helper function to create a Darwin configuration for a specific user
     mkDarwinConfig = username: nix-darwin.lib.darwinSystem {
       modules = [
@@ -54,6 +58,10 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "backup";
+          home-manager.extraSpecialArgs = {
+            misePackage = misePkgs.mise;
+          };
           home-manager.users.${username} = { ... }: {
             imports = [ ../home-manager/home.nix ];
             home.username = username;
