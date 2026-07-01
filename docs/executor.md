@@ -4,27 +4,28 @@ Executor Cloud is the shared tool catalog for agent clients on this machine.
 Dotfiles manage how clients connect to Executor; Executor owns live runtime
 state, hosted sources, credentials, and policies.
 
-This repo pins Executor to `1.4.33`. Executor `1.4.28` was the first local
+This repo pins Executor to `1.5.27`. Executor `1.4.28` was the first local
 release where source state is clearly database-owned again. `executor.jsonc` is
 an optional plugin manifest, not the source catalog.
 
 ## Client Wiring
 
-Codex, OpenCode, and Crush are wired to Executor Cloud as the single global MCP
-entry:
+Codex, Claude Code, OpenCode, and Crush are wired to two global Executor MCP
+entries:
 
-- `executor`: `https://executor.sh/mcp`
+- `executor`: `https://executor.sh/kevin-chen-s-organization/mcp`
+- `executor-desktop`: `http://localhost:4789/mcp`
 
-This repo does not wire agent clients to the local Desktop sidecar. Project-only
-or local-only MCPs should live in project/workspace scopes instead of global
-dotfiles.
+Executor Cloud contains the shared hosted tool catalog. Executor Desktop exposes
+local Desktop-only connections, including the Atlassian connection used for
+Jira and Confluence.
 
 ## Ownership
 
 Dotfiles own:
 
 - The pinned Executor CLI version in Mise.
-- MCP client wiring for Codex, OpenCode, and Crush.
+- MCP client wiring for Codex, Claude Code, OpenCode, and Crush.
 
 Executor owns:
 
@@ -45,7 +46,7 @@ secrets, OAuth connections, and policies through Executor Cloud.
 
 Chezmoi should manage the pieces that are stable text config:
 
-- agent client wiring that points at the Executor Cloud MCP endpoint
+- agent client wiring that points at the Executor Cloud and Desktop MCP endpoints
 - operator docs
 
 Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
@@ -64,11 +65,17 @@ env blocks or checked-in source definitions.
 | Backend | Use When | Notes |
 | --- | --- | --- |
 | Executor Cloud / WorkOS Vault | Hosted or shared tools | Preferred for Cloud-connected sources |
+| 1Password | Executor Cloud MCP bearer | Stored as `op://Software/Executor Cloud API Key/password` |
+| 1Password | Local Executor Desktop bearer | Stored as `op://Software/Executor Desktop MCP/password` |
 | file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
 
 For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
 in Executor Cloud. The shell API-key templates can remain for non-Executor CLIs,
 but Executor sources should not rely on committed env wiring.
+
+Executor MCP bearer tokens are client wiring rather than source credentials.
+Store them in 1Password and render them into private Chezmoi-managed client
+configs.
 
 ## Project Scopes
 
@@ -156,7 +163,8 @@ Suggested personal Cloud baseline:
 ## Manual Operations
 
 ```bash
-npx add-mcp https://executor.sh/mcp --transport http --name executor
+npx add-mcp https://executor.sh/kevin-chen-s-organization/mcp --transport http --name executor --agent codex --header 'Authorization: Bearer ${EXECUTOR_CLOUD_API_KEY}'
+npx add-mcp http://localhost:4789/mcp --transport http --name executor-desktop --agent codex --header 'Authorization: Bearer ${EXECUTOR_DESKTOP_MCP_TOKEN}'
 ```
 
 ## Troubleshooting

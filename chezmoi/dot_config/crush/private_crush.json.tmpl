@@ -36,9 +36,20 @@
     "executor": {
       "type": "stdio",
       "command": "mise",
-      "args": ["exec", "--", "sfw", "npx", "-y", "mcp-remote@0.1.38", "https://executor.sh/mcp", "--transport", "http-only"],
+      "args": ["exec", "--", "sfw", "npx", "-y", "mcp-remote@0.1.38", "https://executor.sh/kevin-chen-s-organization/mcp", "--transport", "http-only", "--header", "Authorization: Bearer ${EXECUTOR_CLOUD_API_KEY}"],
       "env": {
-        "SFW_SKIP_UPDATE_CHECK": "1"
+        "SFW_SKIP_UPDATE_CHECK": "1",
+        "EXECUTOR_CLOUD_API_KEY": "{{ onepasswordRead "op://Software/Executor Cloud API Key/password" }}"
+      },
+      "timeout": 120
+    },
+    "executor-desktop": {
+      "type": "stdio",
+      "command": "mise",
+      "args": ["exec", "--", "sfw", "npx", "-y", "mcp-remote@0.1.38", "http://localhost:4789/mcp", "--transport", "http-only", "--header", "Authorization: Bearer ${EXECUTOR_DESKTOP_MCP_TOKEN}"],
+      "env": {
+        "SFW_SKIP_UPDATE_CHECK": "1",
+        "EXECUTOR_DESKTOP_MCP_TOKEN": "{{ onepasswordRead "op://Software/Executor Desktop MCP/password" }}"
       },
       "timeout": 120
     }
