@@ -50,5 +50,5 @@ Follow these guideliness when running models:
 - Don't set optional inputs unless you have a reason to. Stick to the required inputs and let the model's defaults do the work.
 - Use HTTPS URLs for file inputs whenever possible. You can also send base64-encoded files, but they should be avoided.
 - Fire off multiple predictions concurrently. Don't wait for one to finish before starting the next.
-- Output file URLs expire after 1 hour, so back them up if you need to keep them, using a service like Cloudflare R2.
+- Output file URLs expire after 1 hour, so back them up if you need to keep them, using durable object storage.
 - Webhooks are a good mechanism for receiving and storing prediction output.

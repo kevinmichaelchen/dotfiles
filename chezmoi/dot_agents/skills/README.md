@@ -1,8 +1,8 @@
 # Agent Skills
 
 Prefer declaring upstream skills in `~/dotfiles/skills-lock.json` and installing
-them with `~/dotfiles/scripts/sync-agent-skills.sh`. This keeps the dotfiles repo
-from carrying large vendored skill payloads.
+them with `~/dotfiles/scripts/agent-skills/sync.sh`. This keeps the dotfiles
+repo from carrying large vendored skill payloads.
 
 ## Layout
 
@@ -11,7 +11,9 @@ Keep any still-vendored skills flat as direct children of this directory.
 ## Lock-managed upstream skills
 
 These are declared in `~/dotfiles/skills-lock.json` and installed outside the
-repo:
+repo. Each lock entry pins the upstream commit and a computed directory hash, so
+updates are explicit and reviewable instead of blindly pulling the latest repo
+state.
 
 - [`ast-grep/agent-skill`](https://github.com/ast-grep/agent-skill)
   - `ast-grep`
@@ -43,6 +45,18 @@ lock-managed skills plus all still-vendored skills. `sync.sh` and
 `update-lock.sh` also run SkillSpector on downloaded upstream skill directories
 by default.
 
+## Claude Code projection
+
+`~/.agents/skills` is the canonical global skill directory shared by Codex,
+Claude Code, Crush, and OpenCode. Claude Code also reads personal skills from
+`~/.claude/skills`, so Chezmoi declares a curated set of symlinks in
+`~/dotfiles/chezmoi/dot_claude/skills/`.
+
+The Claude projection is intended to stay in parity with portable global skills
+except for explicit, reviewable exceptions. Do not link Codex-specific,
+private, or known-broken skills into `~/.claude/skills`; otherwise prefer adding
+the matching `symlink_...` source file when a global skill is added.
+
 ## Still-vendored skills
 
 ### Custom
@@ -50,9 +64,7 @@ by default.
 These local skills remain vendored until they are moved to an upstream source or
 given explicit lock entries:
 
-- `confluence-pages`
 - `find-skills`
 - `firecrawl-monitor`
-- `garden-tender`
 - `git-commit-convention`
 - `replicate`
