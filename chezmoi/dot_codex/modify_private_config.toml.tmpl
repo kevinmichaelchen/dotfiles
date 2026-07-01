@@ -9,6 +9,7 @@ trap 'rm -f "$tmp"' EXIT
 cat >"$tmp"
 
 python3 - "$tmp" <<'PY'
+import json
 from pathlib import Path
 import re
 import sys
@@ -16,23 +17,29 @@ import sys
 path = Path(sys.argv[1])
 text = path.read_text()
 
-block = '''[mcp_servers.executor]
-url = "https://executor.sh/mcp"
+desktop_authorization = json.dumps(
+    'Bearer {{ onepasswordRead "op://Software/Executor Desktop MCP/password" }}'
+)
 
+block = f'''[mcp_servers.executor]
+type = "http"
+url = "https://executor.sh/kevin-chen-s-organization/mcp"
+
+[mcp_servers.executor-desktop]
+type = "http"
+url = "http://localhost:4789/mcp"
+
+  [mcp_servers.executor-desktop.http_headers]
+  Authorization = {desktop_authorization}
 '''
 
 pattern = re.compile(
-    r'(?ms)^\[mcp_servers\.executor\]\n.*?(?=^\[|\Z)'
-    r'(?:^\[mcp_servers\.executor-(?:desktop|cloud)\]\n.*?(?=^\[|\Z))*'
+    r'(?ms)^\[mcp_servers\.(?:executor|executor-desktop|executor-cloud)(?:\.[^\]]+)?\]\n.*?(?=^\[|\Z)'
 )
 
 if text.strip():
-    if pattern.search(text):
-        text = pattern.sub(block, text)
-    else:
-        if not text.endswith("\n"):
-            text += "\n"
-        text += "\n" + block
+    text = pattern.sub("", text).rstrip()
+    text += "\n\n" + block
 else:
     text = block
 

@@ -8,7 +8,15 @@
   "mcp": {
     "executor": {
       "type": "remote",
-      "url": "https://executor.sh/mcp",
+      "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+      "enabled": true
+    },
+    "executor-desktop": {
+      "type": "remote",
+      "url": "http://localhost:4789/mcp",
+      "headers": {
+        "Authorization": "Bearer {{ onepasswordRead "op://Software/Executor Desktop MCP/password" }}"
+      },
       "enabled": true
     }
   },

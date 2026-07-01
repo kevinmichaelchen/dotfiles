@@ -6,7 +6,7 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 
 | File                          | Purpose                                                  |
 | ----------------------------- | -------------------------------------------------------- |
-| `opencode.json`               | Main config: plugins, providers, model definitions       |
+| `opencode.json`               | Main config: MCP, plugins, providers, model definitions  |
 | `create_package.json`         | Source manifest for bun-managed plugin dependencies      |
 
 ## Providers
@@ -28,7 +28,9 @@ Use `/connect` in OpenCode for OpenAI OAuth:
 
 OpenRouter uses `OPENROUTER_API_KEY` from your shell environment. Gemini is
 disabled in config and no longer part of this setup. Fireworks AI uses
-`FIREWORKS_API_KEY` from your shell environment.
+`FIREWORKS_API_KEY` from your shell environment. The local Executor Desktop MCP
+bearer is rendered from `op://Software/Executor Desktop MCP/password` by
+Chezmoi.
 
 ## Defaults
 

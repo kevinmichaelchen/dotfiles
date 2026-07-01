@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Manage only the Executor MCP entries in ~/.claude.json.
+# Preserve Claude runtime state and unrelated MCP servers.
+
+set -euo pipefail
+
+tmp="$(mktemp "${TMPDIR:-/tmp}/claude-config.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+cat >"$tmp"
+
+python3 - "$tmp" <<'PY'
+import json
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+raw = path.read_text().strip()
+data = json.loads(raw) if raw else {}
+
+servers = data.setdefault("mcpServers", {})
+for name in ("executor", "executor-desktop", "executor-cloud"):
+    servers.pop(name, None)
+
+servers["executor"] = {
+    "type": "http",
+    "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+}
+servers["executor-desktop"] = {
+    "type": "http",
+    "url": "http://localhost:4789/mcp",
+    "headers": {
+        "Authorization": 'Bearer {{ onepasswordRead "op://Software/Executor Desktop MCP/password" }}',
+    },
+}
+
+print(json.dumps(data, indent=2))
+print()
+PY
