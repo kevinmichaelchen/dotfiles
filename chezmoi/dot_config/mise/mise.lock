@@ -279,13 +279,13 @@ version = "14.0.0"
 backend = "cargo:tokei"
 
 [[tools."github:RhysSullivan/executor"]]
-version = "1.4.33"
+version = "1.5.27"
 backend = "github:RhysSullivan/executor"
 
 [tools."github:RhysSullivan/executor"."platforms.macos-arm64"]
-checksum = "sha256:96e692798838df4e95c65c2bc2fa1095dbf82cd324212408a2663bb28dfe8d92"
-url = "https://github.com/RhysSullivan/executor/releases/download/v1.4.33/executor-darwin-arm64.zip"
-url_api = "https://api.github.com/repos/RhysSullivan/executor/releases/assets/426452147"
+checksum = "sha256:a3154bfebe331e7268392c39e2b9c7f2e0d793f3780f4a0a065eb7ed4af9170e"
+url = "https://github.com/RhysSullivan/executor/releases/download/v1.5.27/executor-darwin-arm64.zip"
+url_api = "https://api.github.com/repos/RhysSullivan/executor/releases/assets/462767274"
 github_attestations = "unavailable"
 
 [[tools."github:abhinav/git-spice"]]
