@@ -28,9 +28,9 @@ Use `/connect` in OpenCode for OpenAI OAuth:
 
 OpenRouter uses `OPENROUTER_API_KEY` from your shell environment. Gemini is
 disabled in config and no longer part of this setup. Fireworks AI uses
-`FIREWORKS_API_KEY` from your shell environment. The local Executor Desktop MCP
-bearer is rendered from `op://Software/Executor Desktop MCP/password` by
-Chezmoi.
+`FIREWORKS_API_KEY` from your shell environment. Executor MCP bearers are
+rendered from `op://Software/Executor Cloud API Key/password` and
+`op://Software/Executor Desktop MCP/password` by Chezmoi.
 
 ## Defaults
 

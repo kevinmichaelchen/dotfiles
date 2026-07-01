@@ -24,6 +24,9 @@ for name in ("executor", "executor-desktop", "executor-cloud"):
 servers["executor"] = {
     "type": "http",
     "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+    "headers": {
+        "Authorization": 'Bearer {{ onepasswordRead "op://Software/Executor Cloud API Key/password" }}',
+    },
 }
 servers["executor-desktop"] = {
     "type": "http",

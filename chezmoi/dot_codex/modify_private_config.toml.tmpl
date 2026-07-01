@@ -17,6 +17,9 @@ import sys
 path = Path(sys.argv[1])
 text = path.read_text()
 
+cloud_authorization = json.dumps(
+    'Bearer {{ onepasswordRead "op://Software/Executor Cloud API Key/password" }}'
+)
 desktop_authorization = json.dumps(
     'Bearer {{ onepasswordRead "op://Software/Executor Desktop MCP/password" }}'
 )
@@ -24,6 +27,9 @@ desktop_authorization = json.dumps(
 block = f'''[mcp_servers.executor]
 type = "http"
 url = "https://executor.sh/kevin-chen-s-organization/mcp"
+
+  [mcp_servers.executor.http_headers]
+  Authorization = {cloud_authorization}
 
 [mcp_servers.executor-desktop]
 type = "http"

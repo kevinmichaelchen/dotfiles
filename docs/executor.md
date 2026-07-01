@@ -65,6 +65,7 @@ env blocks or checked-in source definitions.
 | Backend | Use When | Notes |
 | --- | --- | --- |
 | Executor Cloud / WorkOS Vault | Hosted or shared tools | Preferred for Cloud-connected sources |
+| 1Password | Executor Cloud MCP bearer | Stored as `op://Software/Executor Cloud API Key/password` |
 | 1Password | Local Executor Desktop bearer | Stored as `op://Software/Executor Desktop MCP/password` |
 | file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
 
@@ -72,9 +73,9 @@ For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
 in Executor Cloud. The shell API-key templates can remain for non-Executor CLIs,
 but Executor sources should not rely on committed env wiring.
 
-The local Executor Desktop MCP bearer is client wiring rather than a source
-credential. Store it in 1Password and render it into private Chezmoi-managed
-client configs.
+Executor MCP bearer tokens are client wiring rather than source credentials.
+Store them in 1Password and render them into private Chezmoi-managed client
+configs.
 
 ## Project Scopes
 
@@ -162,7 +163,7 @@ Suggested personal Cloud baseline:
 ## Manual Operations
 
 ```bash
-npx add-mcp https://executor.sh/kevin-chen-s-organization/mcp --transport http --name executor --agent codex
+npx add-mcp https://executor.sh/kevin-chen-s-organization/mcp --transport http --name executor --agent codex --header 'Authorization: Bearer ${EXECUTOR_CLOUD_API_KEY}'
 npx add-mcp http://localhost:4789/mcp --transport http --name executor-desktop --agent codex --header 'Authorization: Bearer ${EXECUTOR_DESKTOP_MCP_TOKEN}'
 ```
 

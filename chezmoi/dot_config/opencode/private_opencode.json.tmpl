@@ -9,6 +9,9 @@
     "executor": {
       "type": "remote",
       "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+      "headers": {
+        "Authorization": "Bearer {{ onepasswordRead "op://Software/Executor Cloud API Key/password" }}"
+      },
       "enabled": true
     },
     "executor-desktop": {
