@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@opencode-ai/plugin": "1.1.11",
+    "@opencode-ai/plugin": "1.17.14",
+    "@ramtinj95/opencode-tokenscope": "^1.7.2",
     "opencode-openai-codex-auth": "^4.4.0"
   }
 }
