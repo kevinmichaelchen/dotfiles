@@ -8,6 +8,7 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 | ----------------------------- | -------------------------------------------------------- |
 | `opencode.json`               | Main config: MCP, plugins, providers, model definitions  |
 | `create_package.json`         | Source manifest for bun-managed plugin dependencies      |
+| `command/tokenscope.md`       | `/tokenscope` command prompt for TokenScope reports       |
 
 ## Providers
 
@@ -42,6 +43,7 @@ rendered from `op://Software/Executor Cloud API Key/password` and
 | Plugin                                        | Purpose                     |
 | --------------------------------------------- | --------------------------- |
 | [opencode-openai-codex-auth][codex-auth]      | OpenAI OAuth authentication |
+| [@ramtinj95/opencode-tokenscope][tokenscope]  | Token usage and cost reports |
 
 ## Runtime Files (Not Managed)
 
@@ -62,6 +64,9 @@ opencode /models
 
 # Connect to a provider
 opencode /connect openai
+
+# Analyze token usage for the current session
+opencode /tokenscope
 ```
 
 ## References
@@ -71,4 +76,5 @@ opencode /connect openai
 [opencode-providers]: https://opencode.ai/docs/providers/
 [openrouter]: https://openrouter.ai/
 [codex-auth]: https://github.com/code-yeongyu/opencode-openai-codex-auth
+[tokenscope]: https://github.com/ramtinJ95/opencode-tokenscope
 [openai]: https://platform.openai.com/
