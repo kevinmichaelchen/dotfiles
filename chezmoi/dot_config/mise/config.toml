@@ -69,12 +69,12 @@ bun = "1.3.11"
 "github:vercel-labs/agent-browser" = "0.27.0"
 "github:sigoden/projclean" = "0.9.0"   # Project build artifact cleaner
 "aqua:jqlang/jq" = "1.8.1"             # JSON processor (aqua has prebuilt binaries)
+codex = "0.142.4"                      # OpenAI Codex CLI
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
 "aqua:charmbracelet/crush" = "0.76.0"
-"aqua:openai/codex" = "0.134.0"
 "aqua:sharkdp/bat" = "0.26.1"  # cat replacement with syntax highlighting
 "aqua:dandavison/delta" = "0.19.2"  # git diff viewer
 "aqua:sharkdp/fd" = "10.4.2"   # find replacement
