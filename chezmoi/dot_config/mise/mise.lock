@@ -174,6 +174,10 @@ provenance = "github-attestations"
 version = "0.11.0"
 backend = "aqua:koalaman/shellcheck"
 
+[tools."aqua:koalaman/shellcheck"."platforms.macos-arm64"]
+checksum = "sha256:56affdd8de5527894dca6dc3d7e0a99a873b0f004d7aabc30ae407d3f48b0a79"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.aarch64.tar.xz"
+
 [[tools."aqua:mikefarah/yq"]]
 version = "4.52.5"
 backend = "aqua:mikefarah/yq"
@@ -181,14 +185,6 @@ backend = "aqua:mikefarah/yq"
 [tools."aqua:mikefarah/yq"."platforms.macos-arm64"]
 checksum = "sha256:45a12e64d4bd8a31c72ee1b889e81f1b1110e801baad3d6f030c111db0068de0"
 url = "https://github.com/mikefarah/yq/releases/download/v4.52.5/yq_darwin_arm64"
-
-[[tools."aqua:openai/codex"]]
-version = "0.134.0"
-backend = "aqua:openai/codex"
-
-[tools."aqua:openai/codex"."platforms.macos-arm64"]
-checksum = "sha256:2234ee207848a8770dffeba4b7aaae2718fed78741e700e5db57935f0f02231f"
-url = "https://github.com/openai/codex/releases/download/rust-v0.134.0/codex-aarch64-apple-darwin.zst"
 
 [[tools."aqua:sharkdp/bat"]]
 version = "0.26.1"
@@ -278,15 +274,22 @@ backend = "cargo:eza"
 version = "14.0.0"
 backend = "cargo:tokei"
 
+[[tools.codex]]
+version = "0.142.4"
+backend = "aqua:openai/codex"
+
+[tools.codex."platforms.macos-arm64"]
+checksum = "sha256:259b55d03565decff6196f0bc6df49b9b775d95d97249953cba312ddabb2c73f"
+url = "https://github.com/openai/codex/releases/download/rust-v0.142.4/codex-aarch64-apple-darwin.zst"
+
 [[tools."github:RhysSullivan/executor"]]
 version = "1.5.27"
 backend = "github:RhysSullivan/executor"
 
 [tools."github:RhysSullivan/executor"."platforms.macos-arm64"]
 checksum = "sha256:a3154bfebe331e7268392c39e2b9c7f2e0d793f3780f4a0a065eb7ed4af9170e"
-url = "https://github.com/RhysSullivan/executor/releases/download/v1.5.27/executor-darwin-arm64.zip"
-url_api = "https://api.github.com/repos/RhysSullivan/executor/releases/assets/462767274"
-github_attestations = "unavailable"
+url = "https://github.com/UsefulSoftwareCo/executor/releases/download/v1.5.27/executor-darwin-arm64.zip"
+url_api = "https://api.github.com/repos/UsefulSoftwareCo/executor/releases/assets/462767274"
 
 [[tools."github:abhinav/git-spice"]]
 version = "0.24.2"
@@ -296,43 +299,36 @@ backend = "github:abhinav/git-spice"
 checksum = "sha256:4f749186097ac151866e809dc6d6696aa8b1a27510c68a8c0fd04a4afe5e9650"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Linux-aarch64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392715"
-github_attestations = "unavailable"
 
 [tools."github:abhinav/git-spice"."platforms.linux-arm64-musl"]
 checksum = "sha256:4f749186097ac151866e809dc6d6696aa8b1a27510c68a8c0fd04a4afe5e9650"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Linux-aarch64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392715"
-github_attestations = "unavailable"
 
 [tools."github:abhinav/git-spice"."platforms.linux-x64"]
 checksum = "sha256:90e3e42a3c94c7f1528b2e74d36972797727d51e502ecc80cec7ad422b711eae"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Linux-x86_64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392713"
-github_attestations = "unavailable"
 
 [tools."github:abhinav/git-spice"."platforms.linux-x64-musl"]
 checksum = "sha256:90e3e42a3c94c7f1528b2e74d36972797727d51e502ecc80cec7ad422b711eae"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Linux-x86_64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392713"
-github_attestations = "unavailable"
 
 [tools."github:abhinav/git-spice"."platforms.macos-arm64"]
 checksum = "sha256:1057e0fe6acc41e6629b5994497f86842e8387c328d556d85f1efb915e38e8c2"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Darwin-arm64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392706"
-github_attestations = "unavailable"
 
 [tools."github:abhinav/git-spice"."platforms.macos-x64"]
 checksum = "sha256:005c4843adb0aaf1cc7cd29c7a09de9a0bacfaa0a06250713b5b9695c6baa62b"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Darwin-x86_64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392702"
-github_attestations = "unavailable"
 
 [tools."github:abhinav/git-spice"."platforms.windows-x64"]
 checksum = "sha256:e1d5eb1cf2055b902b58c88b7fcd2eb6a75e1440298b58c1373ae6e25da7b1ab"
 url = "https://github.com/abhinav/git-spice/releases/download/v0.24.2/git-spice.Windows-x86_64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/360392726"
-github_attestations = "unavailable"
 
 [[tools."github:astral-sh/uv"]]
 version = "0.11.2"
@@ -352,43 +348,36 @@ backend = "github:charmbracelet/glow"
 checksum = "sha256:ab12a703cc6efd06caf24860344a2e8bc2518055fdd986f98eb761c47917ef3d"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Linux_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458572"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/glow"."platforms.linux-arm64-musl"]
 checksum = "sha256:ab12a703cc6efd06caf24860344a2e8bc2518055fdd986f98eb761c47917ef3d"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Linux_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458572"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/glow"."platforms.linux-x64"]
 checksum = "sha256:59106b08be69b2a0bda1178327bbb7accd584e7c113ba3d2f5ef6e48ff3ac27f"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Linux_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458575"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/glow"."platforms.linux-x64-musl"]
 checksum = "sha256:59106b08be69b2a0bda1178327bbb7accd584e7c113ba3d2f5ef6e48ff3ac27f"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Linux_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458575"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/glow"."platforms.macos-arm64"]
 checksum = "sha256:234a20a7d0cebc775cdc77ecd62d28da9479364a122b52d8bac9adf1312b860d"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Darwin_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458588"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/glow"."platforms.macos-x64"]
 checksum = "sha256:91334ebc659b44193327a6e2d198aa4e6c2953b1e003be00c983870685e9161b"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Darwin_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458586"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/glow"."platforms.windows-x64"]
 checksum = "sha256:b552952daa03afdfffa80be3f79ba8aec43426f8e78c026eb8502c7e6b604ed0"
 url = "https://github.com/charmbracelet/glow/releases/download/v2.1.1/glow_2.1.1_Windows_x86_64.zip"
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/259458579"
-github_attestations = "unavailable"
 
 [[tools."github:charmbracelet/gum"]]
 version = "0.17.0"
@@ -398,43 +387,36 @@ backend = "github:charmbracelet/gum"
 checksum = "sha256:b0b9ed95cbf7c8b7073f17b9591811f5c001e33c7cfd066ca83ce8a07c576f9c"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080957"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/gum"."platforms.linux-arm64-musl"]
 checksum = "sha256:b0b9ed95cbf7c8b7073f17b9591811f5c001e33c7cfd066ca83ce8a07c576f9c"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080957"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/gum"."platforms.linux-x64"]
 checksum = "sha256:69ee169bd6387331928864e94d47ed01ef649fbfe875baed1bbf27b5377a6fdb"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080949"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/gum"."platforms.linux-x64-musl"]
 checksum = "sha256:69ee169bd6387331928864e94d47ed01ef649fbfe875baed1bbf27b5377a6fdb"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Linux_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080949"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/gum"."platforms.macos-arm64"]
 checksum = "sha256:e2a4b8596efa05821d8c58d0c1afbcd7ad1699ba69c689cc3ff23a4a99c8b237"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080948"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/gum"."platforms.macos-x64"]
 checksum = "sha256:cd66576aeebe6cd19c771863c7e8d696e0e1d5387d1e7075666baa67c2052e53"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Darwin_x86_64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080970"
-github_attestations = "unavailable"
 
 [tools."github:charmbracelet/gum"."platforms.windows-x64"]
 checksum = "sha256:b2be80531c6babc8d4e0e6ca95773d58118a2e1582ae006aace08dbc55503072"
 url = "https://github.com/charmbracelet/gum/releases/download/v0.17.0/gum_0.17.0_Windows_x86_64.zip"
 url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/290080922"
-github_attestations = "unavailable"
 
 [[tools."github:cli/cli"]]
 version = "2.88.1"
@@ -489,7 +471,6 @@ backend = "github:sigoden/projclean"
 checksum = "sha256:d21d939d8a82a0f955fb3502dfd7233c077740b9247eab7b3fb4a21c999465ef"
 url = "https://github.com/sigoden/projclean/releases/download/v0.9.0/projclean-v0.9.0-aarch64-apple-darwin.tar.gz"
 url_api = "https://api.github.com/repos/sigoden/projclean/releases/assets/414034562"
-github_attestations = "unavailable"
 
 [[tools."github:vercel-labs/agent-browser"]]
 version = "0.27.0"
@@ -499,7 +480,6 @@ backend = "github:vercel-labs/agent-browser"
 checksum = "sha256:a703fd9b74836d2849cfd6deb279e5d8ddcb768aa7b3d9c00352166cb930757a"
 url = "https://github.com/vercel-labs/agent-browser/releases/download/v0.27.0/agent-browser-darwin-arm64"
 url_api = "https://api.github.com/repos/vercel-labs/agent-browser/releases/assets/414527082"
-github_attestations = "unavailable"
 
 [[tools."github:x-motemen/ghq"]]
 version = "1.9.4"
@@ -509,43 +489,36 @@ backend = "github:x-motemen/ghq"
 checksum = "sha256:9952724ef1369d9f3fc8cc566a7dedfc8770f56015d5f751e4d6d69a8aa0a07e"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_linux_arm64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187915"
-github_attestations = "unavailable"
 
 [tools."github:x-motemen/ghq"."platforms.linux-arm64-musl"]
 checksum = "sha256:9952724ef1369d9f3fc8cc566a7dedfc8770f56015d5f751e4d6d69a8aa0a07e"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_linux_arm64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187915"
-github_attestations = "unavailable"
 
 [tools."github:x-motemen/ghq"."platforms.linux-x64"]
 checksum = "sha256:33752b7c4fea9751c6d3fa092ea6fb33c3671cde641f20dd7f8328a3a9e240b3"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_linux_amd64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187911"
-github_attestations = "unavailable"
 
 [tools."github:x-motemen/ghq"."platforms.linux-x64-musl"]
 checksum = "sha256:33752b7c4fea9751c6d3fa092ea6fb33c3671cde641f20dd7f8328a3a9e240b3"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_linux_amd64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187911"
-github_attestations = "unavailable"
 
 [tools."github:x-motemen/ghq"."platforms.macos-arm64"]
 checksum = "sha256:4f778cacf48f41bf5ba7af8dd011d3af874f585b447a925c4b389ce724e0335c"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_darwin_arm64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187905"
-github_attestations = "unavailable"
 
 [tools."github:x-motemen/ghq"."platforms.macos-x64"]
 checksum = "sha256:8adeacc4f9db32bd362bbb6923cc330cff691faa85d60d084f8a9677f91d032a"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_darwin_amd64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187907"
-github_attestations = "unavailable"
 
 [tools."github:x-motemen/ghq"."platforms.windows-x64"]
 checksum = "sha256:4b7adbbfd2c3b74ef01739aad053aa4952cd5f1b0520450c2dcd2dccc502c58b"
 url = "https://github.com/x-motemen/ghq/releases/download/v1.9.4/ghq_windows_amd64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/357187917"
-github_attestations = "unavailable"
 
 [[tools.go]]
 version = "1.26.3"
