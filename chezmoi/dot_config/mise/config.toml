@@ -10,13 +10,12 @@ pin = true
 lockfile = true
 lockfile_platforms = ["macos-arm64"]
 locked_verify_provenance = true
+# Require lockfile URLs/checksums during installs; the current lockfile covers
+# all active tools on this Mac.
+locked = true
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
-# Do not enable locked=true yet: some npm/cargo/go backend tools still do not
-# get URL/checksum-locked entries. Migrate eligible CLIs to URL/checksum-capable
-# backends such as aqua/github/gitlab/http first, then re-evaluate strict locked
-# installs.
 
 [tools]
 
