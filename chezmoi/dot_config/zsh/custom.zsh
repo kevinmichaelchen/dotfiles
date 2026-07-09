@@ -22,18 +22,34 @@ setopt SHARE_HISTORY
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # Case-insensitive completion
 zstyle ':completion:*' menu select                          # Highlight selection in completion menu
 
-# Environment variables
-export EDITOR="vim"
+# Cache completion initialization for one day.
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 
-# Initialize mise FIRST so its PATH entries come before Nix's
-eval "$(mise activate zsh)"
+# Load Homebrew-provided Zsh plugins when present. mise's built-in Homebrew
+# installer does not require the brew CLI, so fall back to the native prefix.
+if command -v brew >/dev/null 2>&1; then
+  BREW_PREFIX="$(brew --prefix)"
+elif [[ -d /opt/homebrew ]]; then
+  BREW_PREFIX="/opt/homebrew"
+fi
+[[ -n "${BREW_PREFIX:-}" ]] && \
+  [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# Initialize mise before adding user-local fallback paths.
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+elif [[ -x "$HOME/.local/bin/mise" ]]; then
+  eval "$("$HOME/.local/bin/mise" activate zsh)"
+fi
 
 # Load OrbStack shell integration when OrbStack is installed.
 source ~/.orbstack/shell/init.zsh 2>/dev/null || :
-
-# Fix PATH for nix-darwin (macOS path_helper overrides /etc/zshenv)
-# Add Nix paths AFTER mise so mise tools take precedence
-[[ ":$PATH:" != *":/etc/profiles/per-user/$USER/bin:"* ]] && export PATH="$PATH:/etc/profiles/per-user/$USER/bin"
 
 # Only append to PATH if these directories aren't already there
 [[ ":$PATH:" != *":$HOME/.opencode/bin:"* ]] && export PATH="$PATH:$HOME/.opencode/bin"
@@ -50,6 +66,7 @@ export PATH="${(j/:/)path}"
 [[ -d "/opt/homebrew/opt/libpq/bin" ]] && [[ ":$PATH:" != *":/opt/homebrew/opt/libpq/bin:"* ]] && export PATH="$PATH:/opt/homebrew/opt/libpq/bin"
 
 # Load shell-agnostic aliases
+[[ -f ~/.config/shell/core.sh ]] && source ~/.config/shell/core.sh
 [[ -f ~/.config/shell/bat.sh ]] && source ~/.config/shell/bat.sh
 [[ -f ~/.config/shell/cerebras.sh ]] && source ~/.config/shell/cerebras.sh
 [[ -f ~/.config/shell/exa.sh ]] && source ~/.config/shell/exa.sh
@@ -76,6 +93,21 @@ eval "$(starship init zsh)"
 
 # Initialize zoxide (smarter cd)
 eval "$(zoxide init zsh)"
+
+# fzf shell key bindings and completion.
+if command -v fzf >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --strip-cwd-prefix --exclude .git'
+  export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --strip-cwd-prefix --exclude .git'
+  export FZF_ALT_C_COMMAND='fd --type d --hidden --strip-cwd-prefix --exclude .git'
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --info=inline'
+  source <(fzf --zsh)
+fi
+
+# Syntax highlighting must be sourced after other interactive shell setup.
+if [[ -n "${BREW_PREFIX:-}" ]] && \
+   [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 
 # Load machine-specific configuration if it exists
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

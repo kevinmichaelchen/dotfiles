@@ -1,60 +1,26 @@
 #!/usr/bin/env bash
-# Bootstrap script for new machines
+# Prepare a new workstation for the mise bootstrap workflow.
 
-# Colors for pretty output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m' # No Color
+set -euo pipefail
 
-echo -e "${CYAN}${BOLD}🚀 Setting up unified dotfiles...${NC}\n"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
+MISE_BIN="${MISE_BIN:-$HOME/.local/bin/mise}"
 
-# Clone repository if not already present
-if [ ! -d "$HOME/dotfiles" ]; then
-    echo -e "${BLUE}📦 Cloning dotfiles repository...${NC}"
-    git clone https://github.com/kevinmichaelchen/dotfiles.git ~/dotfiles
-else
-    echo -e "${GREEN}✓${NC} Dotfiles repository already exists at ~/dotfiles"
+if [[ ! -d "$DOTFILES_DIR/.git" ]]; then
+  git clone https://github.com/kevinmichaelchen/dotfiles.git "$DOTFILES_DIR"
 fi
 
-# Check if Nix is installed
-if ! command -v nix &> /dev/null; then
-    echo -e "${RED}✗${NC} Nix is not installed"
-    echo -e "${YELLOW}  Please install Nix first: ${BOLD}https://docs.determinate.systems/${NC}"
-    exit 1
-else
-    echo -e "${GREEN}✓${NC} Nix is already installed"
-fi
+echo "Installing the current mise release to $MISE_BIN..."
+curl --fail --location --show-error https://mise.run |
+  MISE_INSTALL_PATH="$MISE_BIN" sh
 
-# Check if on macOS
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo -e "${MAGENTA}🍎 Detected macOS${NC}"
-    NEXT_COMMAND="sudo nix run nix-darwin -- switch --flake ~/dotfiles/nix-darwin#default"
-    UPDATE_COMMAND="darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default"
-else
-    echo -e "${MAGENTA}🐧 Detected Linux/Unix${NC}"
-    NEXT_COMMAND="nix run home-manager -- switch --flake ~/dotfiles/home-manager"
-    UPDATE_COMMAND="nix run home-manager -- switch --flake ~/dotfiles/home-manager"
-fi
+export MISE_GLOBAL_CONFIG_FILE="$DOTFILES_DIR/chezmoi/dot_config/mise/config.toml"
 
-echo -e "\n${GREEN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}${BOLD}✨ Bootstrap preparation complete!${NC}"
-echo -e "${GREEN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+echo
+echo "Previewing workstation changes..."
+"$MISE_BIN" bootstrap --dry-run
 
-echo -e "${YELLOW}${BOLD}📋 Next Steps:${NC}\n"
-
-echo -e "${CYAN}1. Apply system configuration:${NC}"
-echo -e "   ${BOLD}${NEXT_COMMAND}${NC}\n"
-
-echo -e "${CYAN}2. After nix-darwin/home-manager installs packages, initialize Chezmoi:${NC}"
-echo -e "   ${BOLD}chezmoi init --source ~/dotfiles/chezmoi --apply${NC}\n"
-
-echo -e "${CYAN}3. For future updates, use:${NC}"
-echo -e "   ${BOLD}${UPDATE_COMMAND}${NC}"
-echo -e "   ${BOLD}chezmoi apply${NC}\n"
-
-echo -e "${GREEN}${BOLD}Happy hacking! 🎉${NC}"
+echo
+echo "Bootstrap preparation complete. Review the preview, then run:"
+echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap --yes --update"
+echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap status --missing"
