@@ -1,6 +1,8 @@
 # Mise global configuration
 # Managed by Chezmoi - edit via `cme ~/.config/mise/config.toml`
-# Apply with `mise install` after changes
+# Apply workstation state with `mise bootstrap` after changes
+
+min_version = "2026.6.7"
 
 [settings]
 # Save exact versions by default when adding tools with `mise use`.
@@ -16,6 +18,55 @@ locked = true
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
+
+# Machine-global packages remain separate from versioned development tools.
+# mise's built-in Homebrew support can install these without a pre-existing
+# Homebrew installation.
+[bootstrap.packages]
+"brew:chezmoi" = "latest"
+"brew:cloudflared" = "latest"
+"brew:git" = "latest"
+"brew:git-town" = "latest"
+"brew:jira-cli" = "latest"
+"brew:libpq" = "latest"
+"brew:mosh" = "latest"
+"brew:podman" = "latest"
+"brew:podman-compose" = "latest"
+"brew:ripgrep" = "latest"
+"brew:sesh" = "latest"
+"brew:tmux" = "latest"
+"brew:webp" = "latest"
+"brew:zsh-autosuggestions" = "latest"
+"brew:zsh-syntax-highlighting" = "latest"
+"brew-cask:1password-cli" = "latest"
+"brew-cask:ghostty" = "latest"
+
+[bootstrap.user]
+login_shell = "/bin/zsh"
+
+[bootstrap.macos.dock]
+autohide = true
+orientation = "left"
+show_recents = false
+
+[bootstrap.macos.finder]
+show_pathbar = true
+show_status_bar = true
+
+[bootstrap.macos.defaults."com.apple.finder"]
+AppleShowAllExtensions = true
+
+[bootstrap.macos.keyboard]
+key_repeat = 2
+initial_key_repeat = 15
+press_and_hold = false
+
+[bootstrap.macos.defaults.NSGlobalDomain]
+AppleKeyboardUIMode = 3
+
+[tasks.bootstrap]
+description = "Apply Chezmoi-managed workstation configuration"
+run = "MISE_BOOTSTRAP_ACTIVE=1 chezmoi apply --source=\"$HOME/dotfiles/chezmoi\""
 
 [tools]
 
@@ -35,9 +86,9 @@ bun = "1.3.11"
 
 # npm global packages
 "npm:markit-ai" = "0.5.3"
-"npm:hunkdiff" = "0.13.2"       # review-first terminal diff viewer
-"npm:@nozomioai/nia" = "0.5.2"  # Nia CLI only
-"npm:sfw" = "2.0.6"             # Socket Firewall wrapper for package manager network filtering
+"npm:hunkdiff" = "0.13.2"      # review-first terminal diff viewer
+"npm:@nozomioai/nia" = "0.5.2" # Nia CLI only
+"npm:sfw" = "2.0.6"            # Socket Firewall wrapper for package manager network filtering
 
 # ============================================================================
 # Python CLI Tools from PyPI
@@ -47,75 +98,61 @@ bun = "1.3.11"
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
 # ============================================================================
-"cargo:eza" = "0.23.4"          # ls replacement
-"cargo:tokei" = "14.0.0"        # code statistics
+"cargo:eza" = "0.23.4"   # ls replacement
+"cargo:tokei" = "14.0.0" # code statistics
 
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
-"github:charmbracelet/glow" = "2.1.1"  # markdown renderer (Go)
-"github:charmbracelet/gum" = "0.17.0"  # shell prompt tool (Go)
-"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0"  # Go vulnerability scanner
+"github:charmbracelet/glow" = "2.1.1"            # markdown renderer (Go)
+"github:charmbracelet/gum" = "0.17.0"            # shell prompt tool (Go)
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0" # Go vulnerability scanner
+"go:github.com/replicate/cli" = "0.8.0"          # Replicate cloud CLI
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
-# Note: chezmoi is in Nix (bootstrap tool - needed to apply this config)
-"github:x-motemen/ghq" = "1.9.4"       # repository management (Go)
-"github:cli/cli" = "2.88.1"            # GitHub CLI (gh) (Go)
-"github:abhinav/git-spice" = "0.24.2"  # Stacked git workflows (gh-stack successor)
+# Chezmoi is installed during the package phase before the bootstrap task.
+"github:x-motemen/ghq" = "1.9.4"              # repository management (Go)
+"github:cli/cli" = "2.88.1"                   # GitHub CLI (gh) (Go)
+"github:abhinav/git-spice" = "0.24.2"         # Stacked git workflows (gh-stack successor)
 "github:RhysSullivan/executor" = "1.5.27"
 "github:vercel-labs/agent-browser" = "0.27.0"
-"github:sigoden/projclean" = "0.9.0"   # Project build artifact cleaner
-"aqua:jqlang/jq" = "1.8.1"             # JSON processor (aqua has prebuilt binaries)
-codex = "0.142.4"                      # OpenAI Codex CLI
+"github:sigoden/projclean" = "0.9.0"          # Project build artifact cleaner
+"github:libkrun/krunkit" = "1.3.2"            # Podman libkrun VM provider
+"aqua:jqlang/jq" = "1.8.1"                    # JSON processor (aqua has prebuilt binaries)
+codex = "0.142.4"                             # OpenAI Codex CLI
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
 "aqua:charmbracelet/crush" = "0.76.0"
-"aqua:sharkdp/bat" = "0.26.1"  # cat replacement with syntax highlighting
-"aqua:dandavison/delta" = "0.19.2"  # git diff viewer
-"aqua:sharkdp/fd" = "10.4.2"   # find replacement
-"aqua:ajeetdsouza/zoxide" = "0.9.9"  # z replacement (smarter cd)
-"aqua:dprint/dprint" = "0.54.0"  # Fast pluggable code formatter
-"aqua:j178/prek" = "0.4.3"      # pre-commit re-engineered in Rust
-"aqua:chmln/sd" = "1.1.0"       # sed replacement (simpler syntax)
-"aqua:koalaman/shellcheck" = "0.11.0"  # Shell script static analyzer
-"aqua:mikefarah/yq" = "4.52.5"  # YAML processor
-"aqua:terrastruct/d2" = "0.7.1"  # Diagram language
-"aqua:typst/typst" = "0.14.2"   # Typesetting system
-"aqua:golangci/golangci-lint" = "2.12.2"  # Go linter aggregator
-"github:astral-sh/uv" = "0.11.2"  # Python package manager
-"aqua:aws/aws-cli" = "2.34.18"       # AWS CLI
-"aqua:hashicorp/terraform" = "1.14.8"  # Infrastructure as Code
+"aqua:sharkdp/bat" = "0.26.1"            # cat replacement with syntax highlighting
+"aqua:dandavison/delta" = "0.19.2"       # git diff viewer
+"aqua:sharkdp/fd" = "10.4.2"             # find replacement
+"aqua:junegunn/fzf" = "0.65.2"           # fuzzy finder and shell integration
+"aqua:ajeetdsouza/zoxide" = "0.9.9"      # z replacement (smarter cd)
+"aqua:dprint/dprint" = "0.54.0"          # Fast pluggable code formatter
+"aqua:j178/prek" = "0.4.3"               # pre-commit re-engineered in Rust
+"aqua:chmln/sd" = "1.1.0"                # sed replacement (simpler syntax)
+"aqua:koalaman/shellcheck" = "0.11.0"    # Shell script static analyzer
+"aqua:mikefarah/yq" = "4.52.5"           # YAML processor
+"aqua:terrastruct/d2" = "0.7.1"          # Diagram language
+"aqua:typst/typst" = "0.14.2"            # Typesetting system
+"aqua:starship/starship" = "1.23.0"      # cross-shell prompt
+"aqua:golangci/golangci-lint" = "2.12.2" # Go linter aggregator
+"github:astral-sh/uv" = "0.11.2"         # Python package manager
+"aqua:aws/aws-cli" = "2.34.18"           # AWS CLI
+"aqua:hashicorp/terraform" = "1.14.8"    # Infrastructure as Code
 
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
-"npm:wrangler" = "4.94.0"       # Cloudflare Workers CLI
+"npm:wrangler" = "4.94.0" # Cloudflare Workers CLI
 
 # ============================================================================
-# Notes on Tools NOT Migrated to Mise
+# Notes on Workstation Ownership
 # ============================================================================
-# The following tools remain in Nix/Homebrew:
-#
-# Bootstrap tools (must be in Nix to avoid chicken-and-egg):
-#   - chezmoi: applies this config before mise can run
-#   - mise: installs the tools defined here
-#
-# System-level packages (not available or not suitable for Mise):
-#   - git: macOS system package
-#   - git-town: advanced git workflows
-#   - _1password-cli: 1Password CLI
-#   - cloudflared: Cloudflare tunnel daemon (wrangler is Workers CLI, different tool)
-#   - podman: container runtime
-#   - podman-compose: docker-compose alternative
-#   - krunkit: GPU acceleration for Podman (Apple Silicon specific)
-#   - postgresql.pg_config: system library
-#   - python3Packages.pip: handled by Python runtime
-#   - sesh: terminal session manager
-#   - tmux: terminal multiplexer
-#   - mosh: remote shell
-#   - fzf: managed via home-manager programs.fzf
-#   - ripgrep: already in Homebrew (configuration.nix)
+#   - mise bootstrap: system packages, macOS defaults, login shell, and tools
+#   - Chezmoi: dotfiles, shell behavior, templates, and secret-backed config
+#   - mise.run: installs mise itself before this configuration is available

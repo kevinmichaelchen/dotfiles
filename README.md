@@ -1,384 +1,176 @@
 # Dotfiles
 
-A unified approach to managing system configuration using Nix/Home-Manager for
-reproducible package management and Chezmoi for personal dotfile
-synchronization.
+Workstation configuration built around mise for machine convergence and
+Chezmoi for personal, templated, and secret-backed files.
 
-## 📋 Overview
+## Architecture
 
-This repository combines the best of both worlds:
+The active configuration has two owners:
 
-- **Nix/Home-Manager**: Declarative, reproducible system package management
-- **Chezmoi**: Flexible, templated personal configuration management
+- **mise** manages machine-global packages, macOS defaults, language runtimes,
+  and development CLI versions.
+- **Chezmoi** manages dotfiles, shell behavior, application configuration,
+  machine-specific templates, and 1Password-backed secrets.
 
-## 🗂️ Directory Structure
+The previous `nix-darwin/` and `home-manager/` configurations remain in the
+repository temporarily as a rollback reference. They are not called by the
+bootstrap or update workflows.
 
-```
+```text
 ~/dotfiles/
-├── nix-darwin/            # macOS system configuration (includes Home-Manager)
-│   ├── flake.nix          # Flake with nix-darwin, Home-Manager, and nix-homebrew
-│   └── configuration.nix  # System-level macOS configuration
-│
-├── home-manager/          # Standalone Home-Manager (for non-macOS systems)
-│   ├── flake.nix          # Flake definition for reproducible builds
-│   ├── flake.lock         # Locked dependencies
-│   └── home.nix           # User packages and configuration
-│
-├── chezmoi/               # Chezmoi-managed personal configs
-│   ├── .chezmoiignore     # Files for Chezmoi to ignore
-│   ├── dot_gitconfig      # Git configuration
-│   ├── dot_vimrc          # Vim configuration
-│   ├── dot_config/        # .config directory files
-│   │   ├── git/
-│   │   │   └── kevinmichaelchen  # Personal git config for GitHub repos
-│   │   ├── opencode/      # OpenCode AI coding agent config
-│   │   │   ├── opencode.json
-│   │   ├── shell/
-│   │   │   ├── bat.sh     # bat aliases and functions (cat, batdiff, help)
-│   │   │   ├── git.sh     # Shell-agnostic git aliases
-│   │   │   ├── openrouter.sh.tmpl  # OpenRouter API key (1Password)
-│   │   │   ├── fireworks.sh.tmpl   # Fireworks API key (1Password)
-│   │   │   └── ...        # Other shell configs
-│   │   ├── mise/
-│   │   │   └── config.toml   # Mise version manager config (node, npm packages)
-│   │   ├── starship.toml  # Starship prompt configuration
-│   │   └── zsh/
-│   │       └── custom.zsh # Zsh configuration
-│   └── dot_local/
-│       └── share/
-│           └── crush/     # Crush AI coding agent config
-│               └── crush.json
-│
-└── scripts/               # Helper automation scripts
-    ├── bootstrap.sh       # Initial machine setup
-    └── update.sh          # Update both systems
+├── chezmoi/
+│   ├── dot_config/mise/config.toml  # workstation and tool declarations
+│   ├── dot_config/shell/            # shared shell environment and aliases
+│   ├── dot_config/zsh/custom.zsh    # interactive Zsh behavior
+│   └── dot_zshrc                    # Chezmoi-owned Zsh entry point
+├── scripts/
+│   ├── bootstrap.sh                 # install mise and preview convergence
+│   ├── update.sh                    # apply and upgrade managed state
+│   └── update-tools.sh              # upgrade and lock mise tools
+├── nix-darwin/                      # inactive migration fallback
+└── home-manager/                    # inactive migration fallback
 ```
 
-## 🏗️ Architecture
+## Bootstrap
 
-### macOS Systems
-
-On macOS, we use **nix-darwin** as the primary configuration manager with:
-
-- **nix-darwin**: System-level configuration (dock, Finder, keyboard settings)
-- **nix-homebrew**: Declarative Homebrew management (for macOS-only tools like
-  vfkit)
-- **Home-Manager**: Runs as a module within nix-darwin for user packages
-- **Chezmoi**: Personal dotfile management
-
-### Non-macOS Systems (Linux)
-
-On Linux, we use:
-
-- **Home-Manager**: Standalone user environment management
-- **Chezmoi**: Personal dotfile management
-
-## 🛠️ Technologies
-
-### Nix
-
-[Nix](https://nixos.org/) is a powerful package manager that makes package
-management reliable and reproducible. It provides:
-
-- **Declarative configuration**: Define your entire system setup in code
-- **Reproducibility**: Same configuration produces identical environments
-- **Rollbacks**: Easy reversion to previous configurations
-- **No dependency hell**: Each package gets its exact dependencies
-
-### nix-darwin
-
-[nix-darwin](https://github.com/LnL7/nix-darwin) provides declarative macOS
-system configuration:
-
-- System preferences and defaults
-- Homebrew package management
-- Service management
-- Integration with Home-Manager
-
-### Home-Manager
-
-[Home-Manager](https://github.com/nix-community/home-manager) is a Nix-based
-tool for managing user environments. It handles:
-
-- Installing and configuring user packages
-- Managing dotfiles through Nix
-- Setting up development environments
-- Configuring shells and terminal applications
-
-### Chezmoi
-
-[Chezmoi](https://www.chezmoi.io/) is a sophisticated dotfile manager that
-provides:
-
-- **Templating**: Machine-specific configurations
-- **Encryption**: Secure secret management
-- **Version control**: Git-based tracking
-- **Cross-platform**: Works on Linux, macOS, and Windows
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Git
-- [Nix](https://docs.determinate.systems/) (install via Determinate Systems)
-
-### Initial Setup
-
-For a new machine, run:
+The bootstrap script clones this repository when needed, installs the current
+mise release into `~/.local/bin`, and prints a dry run. It does not apply the
+previewed workstation changes.
 
 ```bash
-curl -L https://raw.githubusercontent.com/kevinmichaelchen/dotfiles/main/scripts/bootstrap.sh | bash
+curl -fsSL \
+  https://raw.githubusercontent.com/kevinmichaelchen/dotfiles/main/scripts/bootstrap.sh |
+  bash
 ```
 
-Or manually:
+After reviewing the dry run, apply the configuration:
 
 ```bash
-# Clone the repository
-git clone https://github.com/kevinmichaelchen/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-
-# Run the bootstrap script
-./scripts/bootstrap.sh
+export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/chezmoi/dot_config/mise/config.toml"
+~/.local/bin/mise bootstrap --yes --update
+~/.local/bin/mise bootstrap status --missing
 ```
 
-The bootstrap script will:
+`mise bootstrap` installs missing Homebrew formulae and casks, applies macOS
+defaults, installs versioned tools, and finally runs Chezmoi. Chezmoi owns the
+shell startup files, including mise activation and login-shell shims. The
+declarative phases are idempotent and skip state that already matches the
+configuration.
 
-1. Clone the dotfiles repository (if not already present)
-2. Verify Nix is installed (exits with instructions if not)
-3. Display clear next steps for completing the setup
+### 1Password
 
-After running the bootstrap script, you'll need to:
+Install and open the 1Password desktop app, then enable **Settings > Developer
+> Integrate with 1Password CLI**. The bootstrap package phase installs the CLI;
+the desktop integration authorizes Chezmoi's secret templates.
 
-1. Apply the system configuration (command provided by the script)
-2. Initialize Chezmoi after packages are installed
+## Daily Usage
 
-### Onboarding
-
-After the initial setup, complete these steps to enable 1Password CLI
-integration:
-
-1. **Download 1Password for macOS**
-   - Download from [1Password.com](https://1password.com/downloads/mac/) or the
-     Mac App Store
-
-2. **Enable 1Password CLI integration**
-   - Open 1Password → Settings → Developer
-   - Enable "Integrate with 1Password CLI"
-
-3. **Apply Chezmoi configuration**
-
-   ```bash
-   chezmoi apply --source=$HOME/dotfiles/chezmoi
-   ```
-
-   Note: After applying Home-Manager, you can use the `cma` alias instead.
-
-4. **Set up mise (Node.js and npm packages)**
-   ```bash
-   mise use node@24      # Install and activate Node.js
-   mise install          # Install npm packages from ~/.config/mise/config.toml
-   ```
-
-Agent skills are declared in `skills-lock.json`. Chezmoi applies
-`run_after_02_sync-agent-skills.sh`, which installs those pinned skills into
-`~/.agents/skills`.
-
-### Daily Usage
-
-#### Update Everything
+Apply the current checkout without upgrading existing packages:
 
 ```bash
-# On macOS
-darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
-
-# On Linux (standalone Home-Manager)
-nix run home-manager -- switch --flake ~/dotfiles/home-manager
-
-# Or use the shortcut (works on any system)
-dot-update  # Pulls latest changes and applies appropriate configuration
+export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/chezmoi/dot_config/mise/config.toml"
+mise bootstrap --yes
 ```
 
-#### Manage Packages
+Pull the repository, converge machine state, upgrade machine-global packages,
+and update locked development tools:
 
 ```bash
-# Edit package list
-hme  # Opens home.nix in your editor
-
-# Apply changes (macOS)
-darwin-rebuild switch --flake ~/dotfiles/nix-darwin#default
-
-# Apply changes (Linux)
-nix run home-manager -- switch --flake ~/dotfiles/home-manager
+dot-update
 ```
 
-#### Nix Maintenance
+Inspect drift without changing the machine:
 
 ```bash
-# Enable repo-managed Determinate Nix custom warnings
-~/dotfiles/scripts/configure-nix-custom.sh
-
-# Clean older Nix generations, keeping the 5 most recent rollback points
-~/dotfiles/scripts/cleanup.sh
-
-# Override the retained generation count for a one-off run
-NIX_CLEANUP_KEEP_GENERATIONS=3 ~/dotfiles/scripts/cleanup.sh
+mise bootstrap status
+mise bootstrap status --missing
+mise bootstrap packages status
+mise bootstrap macos defaults status
 ```
 
-#### Manage Personal Configs (via Chezmoi)
+Preview any application step with `--dry-run`:
 
 ```bash
-# Edit a config file
-cme ~/.vimrc  # Opens in editor through Chezmoi
-
-# View changes
-cmd  # Show diff of pending changes
-
-# Apply changes
-cma  # Apply all Chezmoi-managed configs
-
-# Add a new config file
-chezmoi add ~/.some-config
+mise bootstrap --dry-run
+mise bootstrap packages apply --dry-run
+mise bootstrap macos defaults apply --dry-run
 ```
 
-#### Manage Agent Skills
+## Ownership
+
+Add machine-global libraries, services, terminal programs, and macOS apps to
+`[bootstrap.packages]` in `chezmoi/dot_config/mise/config.toml`. Use `brew:`,
+`brew-cask:`, or the appropriate Linux package-manager prefix.
+
+Add runtimes and versioned developer CLIs to `[tools]` in the same file. Prefer
+checksum-capable Aqua, GitHub, or core mise backends where available, and
+update `mise.lock` after changing versions.
+
+Add macOS preferences to the friendly `[bootstrap.macos.*]` sections or to
+`[bootstrap.macos.defaults]` for raw scalar defaults.
+
+Keep personal files and shell behavior under `chezmoi/`. Secret environment
+variables belong in `.tmpl` files using 1Password references; never commit
+plaintext credentials.
+
+## Chezmoi Commands
 
 ```bash
-# Install skills declared by skills-lock.json, pruning removed lock entries
+cme ~/.gitconfig  # edit a managed file
+cmd               # preview Chezmoi changes
+cma               # apply Chezmoi files
+cmu               # update from the Chezmoi source
+```
+
+The aliases always use `~/dotfiles/chezmoi` as the explicit source directory.
+
+## Agent Skills
+
+Agent skills are declared in `skills-lock.json`. Chezmoi runs
+`run_after_02_sync-agent-skills.sh`, which installs and verifies pinned skills
+under `~/.agents/skills`.
+
+```bash
 ~/dotfiles/scripts/agent-skills/sync.sh --prune
-
-# Check upstream, scan each updated skill, and review proposed lock changes
 ~/dotfiles/scripts/agent-skills/update-lock.sh
-
-# Apply the lock update only after reviewing the diff
 ~/dotfiles/scripts/agent-skills/update-lock.sh --apply
-
-# Scan installed lock-managed skills and still-vendored Chezmoi skills
 ~/dotfiles/scripts/agent-skills/scan.sh --all
 ```
 
-## 📝 Scripts
+## Validation
 
-### `bootstrap.sh`
-
-Initial setup script for new machines. It:
-
-- Checks for and clones the dotfiles repository if needed
-- Installs Nix (if not present) using Determinate Systems installer
-- Provides colorful output with clear next steps
-- Shows the exact commands to run for your system (macOS vs Linux)
-
-Note: The script prepares your system but doesn't run commands requiring sudo.
-You'll need to run the provided commands manually to complete the setup.
-
-### `update.sh`
-
-Daily update script that:
-
-- Pulls latest changes from git
-- Updates and applies Home-Manager configuration
-- Applies Chezmoi configuration changes
-
-### `agent-skills/`
-
-Maintains global agent skills without vendoring upstream payloads:
-
-- `sync.sh`: installs pinned skills from `skills-lock.json` into
-  `~/.agents/skills`, validating hashes and scanning before install. Custom
-  targets outside `~/.agents/skills` require an explicit `--target`.
-- `update-lock.sh`: resolves upstream `trackRef` values, scans each downloaded
-  skill, then prints a proposed lock diff. Use `--apply` after reviewing the
-  diff to update pinned refs and hashes.
-- `scan.sh`: scans every installed and still-vendored skill with NVIDIA
-  SkillSpector.
-
-## 🎯 Philosophy
-
-Following the ["use Nix less"](https://jade.fyi/blog/use-nix-less/) principle
-for better iteration speed and simplicity.
-
-### What Goes Where?
-
-**Home-Manager** manages:
-
-- Package installations (ripgrep, fd, chezmoi, zsh, starship, etc.)
-- Enabling shells and tools (zsh with autosuggestions, syntax highlighting)
-- Stable shell aliases (that rarely change)
-- Development tools (rustc, cargo, mise, etc.)
-- The base .zshrc file (for proper plugin initialization)
-
-**Chezmoi** manages:
-
-- Shell configuration (~/.config/zsh/custom.zsh, starship.toml)
-- Personal configuration files (.gitconfig, .vimrc)
-- Shell aliases and functions (via shell-agnostic scripts: bat.sh, git.sh,
-  pnpm.sh, python.sh, zed.sh)
-- Mise configuration (~/.config/mise/config.toml for Node.js and npm global
-  packages)
-- Machine-specific settings
-- Secrets and API keys (encrypted)
-- Quick-iteration configs
-
-### Best Practices
-
-1. **Shell configs & prompts** → Edit via Chezmoi for instant application
-2. **New software packages** → Add to home.nix for reproducible installation
-3. **Frequently edited configs** → Manage with Chezmoi
-4. **Stable aliases** → Keep in Home-Manager
-5. **Cross-shell compatibility** → Use shared scripts like git.sh
-
-## 🔧 Useful Aliases
-
-The configuration includes these helpful aliases:
-
-- `dot` - Navigate to dotfiles directory
-- `dot-update` - Update everything
-- `dr` - Apply nix-darwin changes (includes Home-Manager)
-- `dru` - Update flake and apply nix-darwin
-- `dre` - Edit nix-darwin configuration.nix
-- `hme` - Edit Home-Manager home.nix
-- `cm` - Chezmoi command (uses ~/dotfiles/chezmoi as source)
-- `cma` - Apply Chezmoi changes
-- `cmd` - Show Chezmoi diff
-- `cme` - Edit file with Chezmoi
-- `cmu` - Update Chezmoi
-
-## 🔄 Workflow Examples
-
-### Adding a new package
+Repository-only checks that do not apply workstation state:
 
 ```bash
-hme                    # Edit home.nix
-# Add package to the list
-dr                     # Apply changes
+shellcheck scripts/bootstrap.sh scripts/update.sh
+zsh -n chezmoi/dot_zshrc chezmoi/dot_config/zsh/custom.zsh
+mkdir -p /tmp/dotfiles-mise-check
+cp chezmoi/dot_config/mise/config.toml /tmp/dotfiles-mise-check/mise.toml
+(cd /tmp/dotfiles-mise-check && mise fmt --check)
 ```
 
-### Modifying personal config
+The bootstrap features require mise `2026.6.7` or newer and are currently
+marked experimental by mise. The config declares that minimum explicitly so an
+older executable fails with update guidance instead of misinterpreting it.
+
+## Retiring nix-darwin
+
+Keep the current nix-darwin generation in place until `mise bootstrap` has
+completed, `mise bootstrap status --missing` succeeds, and a fresh login shell
+can resolve the expected commands. Then remove nix-darwin's activated system
+integration with its locally installed uninstaller:
 
 ```bash
-cme ~/.gitconfig       # Edit via Chezmoi
-cma                    # Apply changes
+sudo darwin-uninstaller
+exec zsh -l
 ```
 
-### Syncing to another machine
+This does not uninstall Determinate Nix itself. The legacy configuration remains
+in this repository until the mise migration has been exercised successfully.
 
-```bash
-# On source machine
-git add -A
-git commit -m "Update configs"
-git push
+## Resources
 
-# On target machine
-dot-update            # Pull and apply everything
-```
-
-## 📚 Resources
-
-- [Nix Documentation](https://nixos.org/learn.html)
-- [Home-Manager Manual](https://nix-community.github.io/home-manager/)
-- [Chezmoi User Guide](https://www.chezmoi.io/user-guide/command-overview/)
-- [Determinate Systems](https://determinate.systems/)
-
-## 📄 License
-
-This repository is for personal configuration management. Feel free to use it as
-inspiration for your own dotfiles setup!
+- [mise bootstrap](https://mise.jdx.dev/cli/bootstrap.html)
+- [mise bootstrap packages](https://mise.jdx.dev/bootstrap/packages/)
+- [mise macOS defaults](https://mise.jdx.dev/bootstrap/macos-defaults.html)
+- [Chezmoi user guide](https://www.chezmoi.io/user-guide/command-overview/)
