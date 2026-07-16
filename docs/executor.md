@@ -10,16 +10,18 @@ an optional plugin manifest, not the source catalog.
 
 ## Client Authentication
 
-Dotfiles do not render Executor MCP bearer tokens or manage authenticated MCP
-entries. Clients should connect through their own OAuth, browser-login, or
-connected-app flow. Executor Cloud contains the shared hosted tool catalog;
-Executor Desktop exposes local Desktop-only connections.
+Dotfiles manage the Executor Cloud and Desktop MCP entries for Codex, Claude,
+OpenCode, and Crush. The two bearer credentials live in the machine-local
+`~/.config/shell/executor-auth.sh`, never in Git or the Chezmoi source state.
+Run `~/dotfiles/scripts/configure-executor-auth.sh` once per laptop to prompt
+for both values and update the four client configs.
 
 ## Ownership
 
 Dotfiles own:
 
 - The pinned Executor CLI version in Mise.
+- MCP endpoint wiring for Codex, Claude, OpenCode, and Crush.
 
 Executor owns:
 
@@ -38,8 +40,8 @@ secrets, OAuth connections, and policies through Executor Cloud.
 
 ## Chezmoi Boundary
 
-Chezmoi should manage operator docs, but not authenticated Executor client
-wiring.
+Chezmoi manages the stable Executor endpoint wiring. The credential values stay
+in a local mode-`0600` file outside Chezmoi.
 
 Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
 configuration belongs to Executor's control plane.
@@ -60,8 +62,8 @@ env blocks or checked-in source definitions.
 | file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
 
 For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
-in Executor Cloud. Dotfiles must not provide committed or templated environment
-wiring for those credentials.
+in Executor Cloud. Dotfiles must not provide their API keys. The two Executor
+client bearer tokens are the narrow exception and remain machine-local.
 
 ## Project Scopes
 
@@ -148,9 +150,8 @@ Suggested personal Cloud baseline:
 
 ## Manual Operations
 
-Connect clients through their authenticated UI, OAuth flow, or connected-app
-integration. Do not place Executor bearer tokens in shell environment variables
-or Chezmoi-managed files.
+Run `~/dotfiles/scripts/configure-executor-auth.sh` to configure the shared
+Executor Cloud and Desktop endpoints on a new machine.
 
 ## Troubleshooting
 

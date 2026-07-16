@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Manage only the Executor MCP entries in ~/.config/crush/crush.json.
+
+set -euo pipefail
+
+tmp="$(mktemp "${TMPDIR:-/tmp}/crush-config.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+cat >"$tmp"
+
+python3 - "$tmp" <<'PY'
+import json
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+raw = path.read_text().strip()
+data = json.loads(raw) if raw else {"$schema": "https://charm.land/crush.json"}
+
+servers = data.setdefault("mcp", {})
+for name in ("executor", "executor-desktop", "executor-cloud"):
+    servers.pop(name, None)
+
+def server(url, token):
+    return {
+        "type": "stdio",
+        "command": "mise",
+        "args": [
+            "exec", "--", "sfw", "npx", "-y", "mcp-remote@0.1.38", url,
+            "--transport", "http-only", "--header", "Authorization: Bearer ${EXECUTOR_TOKEN}",
+        ],
+        "env": {"SFW_SKIP_UPDATE_CHECK": "1", "EXECUTOR_TOKEN": token},
+        "timeout": 120,
+    }
+
+servers["executor"] = server(
+    "https://executor.sh/kevin-chen-s-organization/mcp",
+    '{{ env "EXECUTOR_CLOUD_API_KEY" }}',
+)
+servers["executor-desktop"] = server(
+    "http://localhost:4789/mcp",
+    '{{ env "EXECUTOR_DESKTOP_MCP_TOKEN" }}',
+)
+
+print(json.dumps(data, indent=2))
+print()
+PY

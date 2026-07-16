@@ -16,29 +16,4 @@ rm -f \
   "$HOME/.config/shell/parallel.sh" \
   "$HOME/.config/shell/perplexity.sh" \
   "$HOME/.config/shell/railway.sh" \
-  "$HOME/.config/shell/replicate.sh" \
-  "$HOME/.config/crush/crush.json" \
-  "$HOME/.config/opencode/opencode.json"
-
-python3 <<'PY'
-import json
-from pathlib import Path
-import re
-
-claude_path = Path.home() / ".claude.json"
-if claude_path.exists():
-    data = json.loads(claude_path.read_text())
-    servers = data.get("mcpServers", {})
-    for name in ("executor", "executor-desktop", "executor-cloud"):
-        servers.pop(name, None)
-    claude_path.write_text(json.dumps(data, indent=2) + "\n")
-
-codex_path = Path.home() / ".codex" / "config.toml"
-if codex_path.exists():
-    text = codex_path.read_text()
-    pattern = re.compile(
-        r"(?ms)^\[mcp_servers\.(?:executor|executor-desktop|executor-cloud)(?:\.[^\]]+)?\]\n.*?(?=^\[|\Z)"
-    )
-    cleaned = pattern.sub("", text).strip()
-    codex_path.write_text(cleaned + "\n" if cleaned else "")
-PY
+  "$HOME/.config/shell/replicate.sh"

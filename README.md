@@ -108,6 +108,18 @@ Keep personal files and shell behavior under `chezmoi/`. Keep API keys and
 bearer tokens out of this repository and its templates. Authenticate with each
 provider's browser/OAuth flow, CLI credential store, or connected app instead.
 
+Executor Cloud and Desktop are the only retained bearer credentials. Provision
+them once per machine into an unmanaged mode-`0600` shell file, then let the
+script update the four client configs:
+
+```bash
+~/dotfiles/scripts/configure-executor-auth.sh
+```
+
+New shells load `~/.config/shell/executor-auth.sh` automatically. Until that
+file is provisioned, Chezmoi skips only the Executor client targets and applies
+everything else.
+
 ## Chezmoi Commands
 
 ```bash

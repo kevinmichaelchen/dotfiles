@@ -17,8 +17,10 @@ Use `/connect` in OpenCode for provider-owned authentication. For example:
 /connect openai      # OAuth via Codex plugin
 ```
 
-Chezmoi does not manage OpenCode API keys, bearer tokens, providers, or MCP
-authentication.
+Chezmoi manages only the two Executor MCP entries. Their bearer values come
+from the machine-local `~/.config/shell/executor-auth.sh`, created with
+`~/dotfiles/scripts/configure-executor-auth.sh`. Other provider authentication
+belongs to OpenCode's `/connect` flow.
 
 ## Plugins
 

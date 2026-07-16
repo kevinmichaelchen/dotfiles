@@ -66,6 +66,7 @@ export PATH="${(j/:/)path}"
 [[ -d "/opt/homebrew/opt/libpq/bin" ]] && [[ ":$PATH:" != *":/opt/homebrew/opt/libpq/bin:"* ]] && export PATH="$PATH:/opt/homebrew/opt/libpq/bin"
 
 # Load shell-agnostic aliases
+[[ -f ~/.config/shell/executor-auth.sh ]] && source ~/.config/shell/executor-auth.sh
 [[ -f ~/.config/shell/core.sh ]] && source ~/.config/shell/core.sh
 [[ -f ~/.config/shell/bat.sh ]] && source ~/.config/shell/bat.sh
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
