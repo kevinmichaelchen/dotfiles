@@ -28,13 +28,9 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    homebrew-replicate = {
-      url = "github:replicate/homebrew-tap";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-mise, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask, homebrew-replicate }:
+  outputs = { self, nixpkgs, nixpkgs-mise, nix-darwin, home-manager, nix-homebrew, homebrew-core, homebrew-cask }:
   let
     system = "aarch64-darwin";
     misePkgs = import nixpkgs-mise { inherit system; };
@@ -85,7 +81,6 @@
             taps = {
               "homebrew/homebrew-core" = homebrew-core;
               "homebrew/homebrew-cask" = homebrew-cask;
-              "replicate/homebrew-tap" = homebrew-replicate;
             };
 
             # IMPORTANT: mutableTaps must be true to avoid errors with casks like ghostty

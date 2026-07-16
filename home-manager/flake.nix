@@ -17,9 +17,6 @@
       system = "aarch64-darwin";
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-          "1password-cli"
-        ];
       };
       misePkgs = import nixpkgs-mise { inherit system; };
 

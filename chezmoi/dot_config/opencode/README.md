@@ -6,37 +6,19 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 
 | File                          | Purpose                                                  |
 | ----------------------------- | -------------------------------------------------------- |
-| `opencode.json`               | Main config: MCP, plugins, providers, model definitions  |
 | `create_package.json`         | Source manifest for bun-managed plugin dependencies      |
 | `command/tokenscope.md`       | `/tokenscope` command prompt for TokenScope reports       |
 
-## Providers
-
-### Configured Providers
-
-- **[OpenCode][opencode]** - `mimo-v2-pro-free`, `mimo-v2-omni-free`
-- **Fireworks AI** - `accounts/fireworks/models/kimi-k2p6`
-- **[OpenRouter][openrouter]** - `moonshotai/kimi-k2.6`
-- **[OpenAI][openai]** - GPT-5.x series (via OAuth/Codex)
-
 ### Authentication
 
-Use `/connect` in OpenCode for OpenAI OAuth:
+Use `/connect` in OpenCode for provider-owned authentication. For example:
 
 ```
 /connect openai      # OAuth via Codex plugin
 ```
 
-OpenRouter uses `OPENROUTER_API_KEY` from your shell environment. Gemini is
-disabled in config and no longer part of this setup. Fireworks AI uses
-`FIREWORKS_API_KEY` from your shell environment. Executor MCP bearers are
-rendered from `op://Software/Executor Cloud API Key/password` and
-`op://Software/Executor Desktop MCP/password` by Chezmoi.
-
-## Defaults
-
-- `model`: `fireworks-ai/accounts/fireworks/models/kimi-k2p6`
-- `small_model`: `opencode/mimo-v2-omni-free`
+Chezmoi does not manage OpenCode API keys, bearer tokens, providers, or MCP
+authentication.
 
 ## Plugins
 
@@ -74,7 +56,5 @@ opencode /tokenscope
 [opencode]: https://opencode.ai/
 [opencode-docs]: https://opencode.ai/docs/
 [opencode-providers]: https://opencode.ai/docs/providers/
-[openrouter]: https://openrouter.ai/
 [codex-auth]: https://github.com/code-yeongyu/opencode-openai-codex-auth
 [tokenscope]: https://github.com/ramtinJ95/opencode-tokenscope
-[openai]: https://platform.openai.com/

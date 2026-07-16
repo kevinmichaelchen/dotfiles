@@ -67,4 +67,3 @@ given explicit lock entries:
 - `find-skills`
 - `firecrawl-monitor`
 - `git-commit-convention`
-- `replicate`

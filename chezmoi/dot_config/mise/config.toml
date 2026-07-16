@@ -38,7 +38,6 @@ minimum_release_age = "7d"
 "brew:webp" = "latest"
 "brew:zsh-autosuggestions" = "latest"
 "brew:zsh-syntax-highlighting" = "latest"
-"brew-cask:1password-cli" = "latest"
 "brew-cask:ghostty" = "latest"
 
 [bootstrap.user]
@@ -107,7 +106,6 @@ bun = "1.3.11"
 "github:charmbracelet/glow" = "2.1.1"            # markdown renderer (Go)
 "github:charmbracelet/gum" = "0.17.0"            # shell prompt tool (Go)
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0" # Go vulnerability scanner
-"go:github.com/replicate/cli" = "0.8.0"          # Replicate cloud CLI
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)

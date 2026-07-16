@@ -29,7 +29,6 @@
     cloudflared
     git
     git-town
-    _1password-cli
     jira-cli-go
     podman
     podman-compose

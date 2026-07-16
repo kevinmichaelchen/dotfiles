@@ -47,7 +47,6 @@
     brews = [
       "libpq"  # PostgreSQL client (psql) without full server
       "pipx"   # Install Python CLI tools in isolated environments
-      "replicate/tap/replicate"  # Replicate CLI for running ML models
       "ripgrep"
       "webp"   # WebP image format tools (cwebp, dwebp)
     ];

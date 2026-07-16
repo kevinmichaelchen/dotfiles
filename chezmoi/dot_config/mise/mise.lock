@@ -594,10 +594,6 @@ url = "https://dl.google.com/go/go1.26.3.darwin-amd64.tar.gz"
 checksum = "sha256:20d2ceafb4ed41b96b879010927b28bc92a5be57a7c1801ce365a9ca51d3224a"
 url = "https://dl.google.com/go/go1.26.3.windows-amd64.zip"
 
-[[tools."go:github.com/replicate/cli"]]
-version = "0.8.0"
-backend = "go:github.com/replicate/cli"
-
 [[tools."go:golang.org/x/vuln/cmd/govulncheck"]]
 version = "1.3.0"
 backend = "go:golang.org/x/vuln/cmd/govulncheck"

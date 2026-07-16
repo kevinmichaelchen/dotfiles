@@ -37,7 +37,7 @@
   `monitor` for recurring change tracking.
 - For web scraping, crawling, site maps, browser-like page interaction, file
   parsing, structured extraction, or recurring scrape/crawl monitoring, use
-  [`firecrawl`][firecrawl-cli] when authenticated with `FIRECRAWL_API_KEY`.
+  [`firecrawl`][firecrawl-cli] after authenticating with `firecrawl login --browser`.
   Start with `scrape` for known URLs, `crawl` for a site section, `map` for URL
   discovery, `parse` for local documents, `search` for web search, `agent` for
   structured web extraction, `interact` for dynamic pages, and `monitor` for
@@ -46,8 +46,7 @@
   with `tools.search()` and configured sources with
   `tools.executor.sources.list()`. Current sources may include [Exa][exa-docs]
   for search, contents, similar-page, answer, and research tasks;
-  [Perplexity][perplexity-docs] for search and reasoned answers with web
-  context; [DeepWiki][deepwiki] for GitHub repository documentation; Grep MCP
+  [DeepWiki][deepwiki] for GitHub repository documentation; Grep MCP
   for literal public-code pattern search; and other authenticated workspace
   tools.
 
@@ -64,5 +63,4 @@ gap instead of silently substituting a weaker source.
 [markit]: https://github.com/Michaelliv/markit
 [nia-cli]: https://docs.trynia.ai/cli/index
 [parallel-cli]: https://docs.parallel.ai/integrations/cli
-[perplexity-docs]: https://docs.perplexity.ai/
 [webpull]: https://www.npmjs.com/package/webpull
