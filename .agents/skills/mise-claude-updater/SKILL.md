@@ -24,7 +24,7 @@ Primary entrypoint: `scripts/update-tools.sh`.
 
 ## Guardrails
 - Do not edit `chezmoi/dot_config/mise/config.toml` for update-only requests.
-- Do not run full system updates unless requested (`scripts/update.sh` does Nix/Home-Manager too).
+- Do not run the full workstation convergence workflow unless requested (`scripts/update.sh`).
 - Keep changes idempotent and safe to rerun.
 
 ## Completion Checklist

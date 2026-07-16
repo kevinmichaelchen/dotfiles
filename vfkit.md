@@ -188,39 +188,25 @@ configuration.
 
 ## Configuration in Your Dotfiles
 
-### Current Configuration (nix-darwin/configuration.nix)
+### Current Configuration
 
-```nix
-homebrew = {
-  enable = true;
+Machine packages and developer tools are declared in
+`chezmoi/dot_config/mise/config.toml`:
 
-  brews = [
-    "vfkit"  # Required for podman applehv backend
-  ];
+```toml
+[bootstrap.packages]
+"brew:podman" = "latest"
+"brew:podman-compose" = "latest"
 
-  casks = [
-    "docker"  # Docker Desktop (currently not installed)
-  ];
-};
+[tools]
+"github:libkrun/krunkit" = "1.3.2"
 ```
 
 ### Recommended Cleanup
 
-Since Docker Desktop isn't installed on your system:
-
-```nix
-homebrew = {
-  enable = true;
-
-  brews = [
-    "vfkit"  # Keep if using applehv, remove if using libkrun
-  ];
-
-  casks = [
-    # Remove "docker" if you're not using Docker Desktop
-  ];
-};
-```
+The active configuration uses libkrun/krunkit. If an existing Podman machine
+still uses the `applehv` provider, migrate it before removing a separately
+installed `vfkit` package.
 
 ## Best Practices
 

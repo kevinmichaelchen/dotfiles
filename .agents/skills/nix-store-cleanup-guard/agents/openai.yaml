@@ -1,3 +1,0 @@
-interface:
-  display_name: "Nix Store Cleanup Guard"
-  short_description: "Help with Nix Store Cleanup Guard tasks"

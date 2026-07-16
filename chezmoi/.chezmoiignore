@@ -1,11 +1,8 @@
-# Ignore Nix/Home-Manager files
-home-manager/
+# Repository-only files
 scripts/
 .git/
 README.md
 PLAN.md
-*.nix
-flake.lock
 
 # OpenCode runtime files (managed by opencode/bun)
 .config/opencode/node_modules
