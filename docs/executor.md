@@ -8,24 +8,32 @@ This repo pins Executor to `1.5.27`. Executor `1.4.28` was the first local
 release where source state is clearly database-owned again. `executor.jsonc` is
 an optional plugin manifest, not the source catalog.
 
-## Client Wiring
+## Client Authentication
 
-Codex, Claude Code, OpenCode, and Crush are wired to two global Executor MCP
-entries:
+Dotfiles manage the Executor Cloud and Desktop MCP entries for Codex, Claude,
+OpenCode, and Crush without distributing bearer credentials. Cloud clients use
+Executor's MCP OAuth discovery and keep their own refreshable sessions. Desktop
+clients run `executor mcp` over stdio instead of authenticating to the local
+HTTP endpoint.
 
-- `executor`: `https://executor.sh/kevin-chen-s-organization/mcp`
-- `executor-desktop`: `http://localhost:4789/mcp`
+After applying Chezmoi on a new laptop, authenticate the Cloud endpoint:
 
-Executor Cloud contains the shared hosted tool catalog. Executor Desktop exposes
-local Desktop-only connections, including the Atlassian connection used for
-Jira and Confluence.
+```bash
+codex mcp login executor
+claude mcp login executor
+opencode mcp auth executor
+```
+
+Crush uses `mcp-remote`, which starts its OAuth flow when the endpoint first
+connects. `executor login` is separate: it authenticates the Executor CLI to a
+hosted server and does not provide credentials to these MCP clients.
 
 ## Ownership
 
 Dotfiles own:
 
 - The pinned Executor CLI version in Mise.
-- MCP client wiring for Codex, Claude Code, OpenCode, and Crush.
+- MCP endpoint wiring for Codex, Claude, OpenCode, and Crush.
 
 Executor owns:
 
@@ -44,10 +52,8 @@ secrets, OAuth connections, and policies through Executor Cloud.
 
 ## Chezmoi Boundary
 
-Chezmoi should manage the pieces that are stable text config:
-
-- agent client wiring that points at the Executor Cloud and Desktop MCP endpoints
-- operator docs
+Chezmoi manages stable endpoint and command wiring, not Executor credentials or
+client OAuth sessions.
 
 Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
 configuration belongs to Executor's control plane.
@@ -65,23 +71,16 @@ env blocks or checked-in source definitions.
 | Backend | Use When | Notes |
 | --- | --- | --- |
 | Executor Cloud / WorkOS Vault | Hosted or shared tools | Preferred for Cloud-connected sources |
-| 1Password | Executor Cloud MCP bearer | Stored as `op://Software/Executor Cloud API Key/password` |
-| 1Password | Local Executor Desktop bearer | Stored as `op://Software/Executor Desktop MCP/password` |
 | file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
 
 For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
-in Executor Cloud. The shell API-key templates can remain for non-Executor CLIs,
-but Executor sources should not rely on committed env wiring.
-
-Executor MCP bearer tokens are client wiring rather than source credentials.
-Store them in 1Password and render them into private Chezmoi-managed client
-configs.
+in Executor Cloud. Dotfiles must not provide their API keys.
 
 ## Project Scopes
 
-Global clients use shared Executor endpoints. Project repos should move
-project-specific tools and policies into project/workspace scopes instead of
-adding them to global dotfiles.
+Project repos should keep project-specific tools and policies in
+project/workspace scopes instead of adding authenticated endpoints to global
+dotfiles.
 
 Examples of project-specific sources that should not live in global dotfiles:
 
@@ -162,10 +161,9 @@ Suggested personal Cloud baseline:
 
 ## Manual Operations
 
-```bash
-npx add-mcp https://executor.sh/kevin-chen-s-organization/mcp --transport http --name executor --agent codex --header 'Authorization: Bearer ${EXECUTOR_CLOUD_API_KEY}'
-npx add-mcp http://localhost:4789/mcp --transport http --name executor-desktop --agent codex --header 'Authorization: Bearer ${EXECUTOR_DESKTOP_MCP_TOKEN}'
-```
+Use `executor login` only when the Executor CLI itself needs hosted API access.
+Use the client-specific MCP OAuth commands above for Executor Cloud. Local
+Desktop access needs no login because it runs through `executor mcp` stdio.
 
 ## Troubleshooting
 

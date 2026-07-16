@@ -15,7 +15,7 @@ management and **Chezmoi** for templated personal configs. macOS-focused
 │   └── configuration.nix # Homebrew, system defaults
 ├── home-manager/         # Standalone HM for Linux (imports home.nix)
 │   └── home.nix          # Shared: packages, aliases, programs
-├── chezmoi/              # Personal configs (templates, secrets)
+├── chezmoi/              # Personal configs and machine-specific templates
 │   ├── dot_config/
 │   │   ├── shell/        # Shell-agnostic aliases (git, bat, etc.)
 │   │   ├── zsh/          # ZSH config (sources shell/*.sh)
@@ -39,19 +39,19 @@ management and **Chezmoi** for templated personal configs. macOS-focused
 | Add shell alias (evolving)    | `chezmoi/dot_config/shell/*.sh`       | Sourced by custom.zsh  |
 | Edit ZSH config               | `chezmoi/dot_config/zsh/custom.zsh`   | PATH, evals, sources   |
 | Edit prompt                   | `chezmoi/dot_config/starship.toml`    | Rose Pine theme        |
-| Add secret/template           | `chezmoi/dot_config/shell/*.sh.tmpl`  | 1Password integration  |
+| Configure tool authentication | Provider CLI or connected app         | Keep keys out of Chezmoi |
 
 ## CONVENTIONS
 
 ### Philosophy: "Use Nix Less"
 
 - **Nix/HM**: Stable packages, shells, one-time setups
-- **Chezmoi**: Quick-iteration configs, templates, secrets
+- **Chezmoi**: Quick-iteration configs and templates
 - **Mise**: Dev runtimes and tools (node, go, rust, cargo:_, npm:_)
 
 ### Naming
 
-- Chezmoi prefixes: `dot_` → `.`, `.tmpl` → templated with 1Password
+- Chezmoi prefixes: `dot_` → `.`, `.tmpl` → machine-specific template
 - Shell scripts: `*.sh` (shell-agnostic, sourced by zsh/bash)
 
 ### PATH Order (intentional)
@@ -77,7 +77,7 @@ mise takes precedence over Nix for dev tools.
 | Add dev tools to home.nix    | Mise manages runtimes    | Add to `mise/config.toml`      |
 | Edit ~/.zshrc directly       | HM generates it          | Edit `chezmoi/.../custom.zsh`  |
 | Use nix-darwin on Linux      | Linux uses standalone HM | Check `$OSTYPE` in scripts     |
-| Hardcode secrets             | Use 1Password templates  | `.sh.tmpl` files in chezmoi    |
+| Put API keys in Chezmoi      | Use provider-owned auth  | Browser/OAuth login or app connection |
 | Run `chezmoi` without source | Uses wrong source dir    | Use `cm`, `cma`, `cme` aliases |
 
 ## COMMANDS
@@ -109,5 +109,3 @@ mise install
   `configuration.nix` comments.
 - **libpq**: Keg-only in Homebrew, PATH added in `custom.zsh` for psql.
 - **Bootstrap sequence**: Nix → darwin-rebuild → chezmoi apply → mise install
-- **1Password CLI**: Required for `.tmpl` files. Enable "Integrate with
-  1Password CLI" in 1Password settings.

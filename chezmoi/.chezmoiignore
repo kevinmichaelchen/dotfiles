@@ -11,6 +11,7 @@ flake.lock
 .config/opencode/node_modules
 .config/opencode/bun.lock
 .config/opencode/.gitignore
+
 {{ if ne .chezmoi.os "darwin" }}
 Library/
 {{ end }}

@@ -68,25 +68,12 @@ export PATH="${(j/:/)path}"
 # Load shell-agnostic aliases
 [[ -f ~/.config/shell/core.sh ]] && source ~/.config/shell/core.sh
 [[ -f ~/.config/shell/bat.sh ]] && source ~/.config/shell/bat.sh
-[[ -f ~/.config/shell/cerebras.sh ]] && source ~/.config/shell/cerebras.sh
-[[ -f ~/.config/shell/exa.sh ]] && source ~/.config/shell/exa.sh
-[[ -f ~/.config/shell/firecrawl.sh ]] && source ~/.config/shell/firecrawl.sh
 [[ -f ~/.config/shell/git.sh ]] && source ~/.config/shell/git.sh
 [[ -f ~/.config/shell/pnpm.sh ]] && source ~/.config/shell/pnpm.sh
 [[ -f ~/.config/shell/python.sh ]] && source ~/.config/shell/python.sh
 [[ -f ~/.config/shell/testcontainers.sh ]] && source ~/.config/shell/testcontainers.sh
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 [[ -f ~/.config/shell/github.sh ]] && source ~/.config/shell/github.sh
-[[ -f ~/.config/shell/huggingface.sh ]] && source ~/.config/shell/huggingface.sh
-[[ -f ~/.config/shell/hygraph.sh ]] && source ~/.config/shell/hygraph.sh
-[[ -f ~/.config/shell/jira.sh ]] && source ~/.config/shell/jira.sh
-[[ -f ~/.config/shell/nia.sh ]] && source ~/.config/shell/nia.sh
-[[ -f ~/.config/shell/parallel.sh ]] && source ~/.config/shell/parallel.sh
-[[ -f ~/.config/shell/perplexity.sh ]] && source ~/.config/shell/perplexity.sh
-[[ -f ~/.config/shell/railway.sh ]] && source ~/.config/shell/railway.sh
-[[ -f ~/.config/shell/replicate.sh ]] && source ~/.config/shell/replicate.sh
-[[ -f ~/.config/shell/fireworks.sh ]] && source ~/.config/shell/fireworks.sh
-[[ -f ~/.config/shell/openrouter.sh ]] && source ~/.config/shell/openrouter.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"

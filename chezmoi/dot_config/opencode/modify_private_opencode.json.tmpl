@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Manage only the Executor MCP entries in ~/.claude.json.
+# Manage only the Executor MCP entries in ~/.config/opencode/opencode.json.
 
 set -euo pipefail
 
-tmp="$(mktemp "${TMPDIR:-/tmp}/claude-config.XXXXXX")"
+tmp="$(mktemp "${TMPDIR:-/tmp}/opencode-config.XXXXXX")"
 trap 'rm -f "$tmp"' EXIT
 cat >"$tmp"
 
@@ -14,20 +14,21 @@ import sys
 
 path = Path(sys.argv[1])
 raw = path.read_text().strip()
-data = json.loads(raw) if raw else {}
+data = json.loads(raw) if raw else {"$schema": "https://opencode.ai/config.json"}
 
-servers = data.setdefault("mcpServers", {})
+servers = data.setdefault("mcp", {})
 for name in ("executor", "executor-desktop", "executor-cloud"):
     servers.pop(name, None)
 
 servers["executor"] = {
-    "type": "http",
+    "type": "remote",
     "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+    "enabled": True,
 }
 servers["executor-desktop"] = {
-    "type": "stdio",
-    "command": "executor",
-    "args": ["mcp"],
+    "type": "local",
+    "command": ["executor", "mcp"],
+    "enabled": True,
 }
 
 print(json.dumps(data, indent=2))

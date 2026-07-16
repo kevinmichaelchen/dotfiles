@@ -1,7 +1,7 @@
 # Dotfiles
 
 Workstation configuration built around mise for machine convergence and
-Chezmoi for personal, templated, and secret-backed files.
+Chezmoi for personal configuration files.
 
 ## Architecture
 
@@ -10,7 +10,8 @@ The active configuration has two owners:
 - **mise** manages machine-global packages, macOS defaults, language runtimes,
   and development CLI versions.
 - **Chezmoi** manages dotfiles, shell behavior, application configuration,
-  machine-specific templates, and 1Password-backed secrets.
+  and machine-specific templates. Authentication belongs to each tool or
+  connected app, not to Chezmoi.
 
 The previous `nix-darwin/` and `home-manager/` configurations remain in the
 repository temporarily as a rollback reference. They are not called by the
@@ -56,12 +57,6 @@ defaults, installs versioned tools, and finally runs Chezmoi. Chezmoi owns the
 shell startup files, including mise activation and login-shell shims. The
 declarative phases are idempotent and skip state that already matches the
 configuration.
-
-### 1Password
-
-Install and open the 1Password desktop app, then enable **Settings > Developer
-> Integrate with 1Password CLI**. The bootstrap package phase installs the CLI;
-the desktop integration authorizes Chezmoi's secret templates.
 
 ## Daily Usage
 
@@ -109,9 +104,22 @@ update `mise.lock` after changing versions.
 Add macOS preferences to the friendly `[bootstrap.macos.*]` sections or to
 `[bootstrap.macos.defaults]` for raw scalar defaults.
 
-Keep personal files and shell behavior under `chezmoi/`. Secret environment
-variables belong in `.tmpl` files using 1Password references; never commit
-plaintext credentials.
+Keep personal files and shell behavior under `chezmoi/`. Keep API keys and
+bearer tokens out of this repository and its templates. Authenticate with each
+provider's browser/OAuth flow, CLI credential store, or connected app instead.
+
+Executor does not require a dotfiles-managed bearer token. Cloud uses each MCP
+client's OAuth flow, while Desktop runs locally over `executor mcp` stdio.
+After the first apply on a machine, authenticate the Cloud endpoint in the
+clients that expose an explicit login command:
+
+```bash
+codex mcp login executor
+claude mcp login executor
+opencode mcp auth executor
+```
+
+Crush connects through `mcp-remote`, which starts its OAuth flow when needed.
 
 ## Chezmoi Commands
 
