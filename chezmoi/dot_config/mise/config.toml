@@ -87,7 +87,6 @@ bun = "1.3.14"
 
 # npm global packages
 "npm:markit-ai" = "0.5.3"
-"npm:hunkdiff" = "0.17.1"
 "npm:@nozomioai/nia" = "0.5.2" # Nia CLI only
 "npm:sfw" = "2.0.6"            # Socket Firewall wrapper for package manager network filtering
 
@@ -142,7 +141,6 @@ bun = "1.3.14"
 "aqua:golangci/golangci-lint" = "2.12.2" # Go linter aggregator
 "github:astral-sh/uv" = "0.11.29"
 "aqua:aws/aws-cli" = "2.35.24"
-"aqua:hashicorp/terraform" = "1.15.8"
 
 # ============================================================================
 # Tools from npm (Node.js packages)

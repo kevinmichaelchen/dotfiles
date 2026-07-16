@@ -82,14 +82,6 @@ provenance = "github-attestations"
 [tools."aqua:golangci/golangci-lint"."platforms.windows-x64"]
 provenance = "github-attestations"
 
-[[tools."aqua:hashicorp/terraform"]]
-version = "1.15.8"
-backend = "aqua:hashicorp/terraform"
-
-[tools."aqua:hashicorp/terraform"."platforms.macos-arm64"]
-checksum = "sha256:f210110c5698b94d803a7a63cdb0251b5455c150841478808e2bbb343f95ed68"
-url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_darwin_arm64.zip"
-
 [[tools."aqua:j178/prek"]]
 version = "0.4.10"
 backend = "aqua:j178/prek"
@@ -344,10 +336,6 @@ url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-darwin-arm64.tar.gz"
 [[tools."npm:@nozomioai/nia"]]
 version = "0.5.2"
 backend = "npm:@nozomioai/nia"
-
-[[tools."npm:hunkdiff"]]
-version = "0.17.1"
-backend = "npm:hunkdiff"
 
 [[tools."npm:markit-ai"]]
 version = "0.5.3"
