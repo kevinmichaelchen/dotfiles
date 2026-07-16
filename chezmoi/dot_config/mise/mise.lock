@@ -125,9 +125,9 @@ version = "4.53.3"
 backend = "aqua:mikefarah/yq"
 
 [tools."aqua:mikefarah/yq"."platforms.macos-arm64"]
-checksum = "sha256:b4ba1ecce3c47f00803f4f964de38394326c7a32eb6540616e04fb2935a0f08d"
-url = "https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_darwin_amd64"
-url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/440146744"
+checksum = "sha256:877de31753a4dd2401aa048937aa9a7fc4d5f6ce858cf31508c5802954297213"
+url = "https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_darwin_arm64"
+url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/440146762"
 provenance = "cosign"
 
 [[tools."aqua:sharkdp/bat"]]
@@ -336,6 +336,10 @@ url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-darwin-arm64.tar.gz"
 [[tools."npm:@nozomioai/nia"]]
 version = "0.5.2"
 backend = "npm:@nozomioai/nia"
+
+[[tools."npm:firecrawl-cli"]]
+version = "1.19.26"
+backend = "npm:firecrawl-cli"
 
 [[tools."npm:markit-ai"]]
 version = "0.5.3"
