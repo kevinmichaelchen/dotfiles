@@ -10,7 +10,7 @@ The active configuration has two owners:
 - **mise** manages machine-global packages, macOS defaults, language runtimes,
   and development CLI versions.
 - **Chezmoi** manages dotfiles, shell behavior, application configuration,
-  machine-specific templates, and 1Password-backed secrets.
+  machine-specific templates, and age-encrypted secrets.
 
 The previous `nix-darwin/` and `home-manager/` configurations remain in the
 repository temporarily as a rollback reference. They are not called by the
@@ -47,6 +47,7 @@ After reviewing the dry run, apply the configuration:
 
 ```bash
 export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/chezmoi/dot_config/mise/config.toml"
+export CHEZMOI_AGE_IDENTITY_FILE=/path/to/key.txt
 ~/.local/bin/mise bootstrap --yes --update
 ~/.local/bin/mise bootstrap status --missing
 ```
@@ -57,11 +58,41 @@ shell startup files, including mise activation and login-shell shims. The
 declarative phases are idempotent and skip state that already matches the
 configuration.
 
-### 1Password
+### Age identity
 
-Install and open the 1Password desktop app, then enable **Settings > Developer
-> Integrate with 1Password CLI**. The bootstrap package phase installs the CLI;
-the desktop integration authorizes Chezmoi's secret templates.
+The age private identity is the one irreducible bootstrap secret. Copy it from
+removable media or another trusted path; never commit it. Mise installs `rage`
+before its Chezmoi task runs. The task copies the supplied identity to
+`~/.config/chezmoi/key.txt` with mode `0600`, initializes Chezmoi's age
+configuration, and applies the source state.
+
+Only the machine establishing the repository's first encrypted file should
+generate an identity. While no `.age` source files exist, run:
+
+```bash
+CHEZMOI_AGE_GENERATE=1 mise bootstrap --yes
+```
+
+Back up `~/.config/chezmoi/key.txt` outside this repository before encrypting
+secrets. Once encrypted source files exist, the provisioning script refuses to
+generate a replacement key because it could not decrypt them.
+
+Age protects ciphertext committed to Git; it does not hide secrets from a
+process that can read the private identity on the machine. Agents with access
+to `~/.config/chezmoi/key.txt` can decrypt every file addressed to that key.
+Use separate identities and OS-level access boundaries if secrets need distinct
+agent access policies.
+
+Migrate each existing 1Password-backed target only when its rendered value is
+available locally:
+
+```bash
+chezmoi add --encrypt ~/.config/shell/private_example.sh
+```
+
+Verify the encrypted source file, remove its old `onepasswordRead` template,
+and apply again. Do not remove the 1Password package until all references found
+by `grep -R onepasswordRead chezmoi` have been migrated.
 
 ## Daily Usage
 
@@ -110,8 +141,9 @@ Add macOS preferences to the friendly `[bootstrap.macos.*]` sections or to
 `[bootstrap.macos.defaults]` for raw scalar defaults.
 
 Keep personal files and shell behavior under `chezmoi/`. Secret environment
-variables belong in `.tmpl` files using 1Password references; never commit
-plaintext credentials.
+variables belong in age-encrypted Chezmoi source files; never commit plaintext
+credentials or the age identity. Existing 1Password templates are transitional
+until their values have been migrated into encrypted source files.
 
 ## Chezmoi Commands
 

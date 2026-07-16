@@ -22,5 +22,6 @@ echo "Previewing workstation changes..."
 
 echo
 echo "Bootstrap preparation complete. Review the preview, then run:"
-echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap --yes --update"
+echo "  Supply the repository age identity from removable media or another trusted path:"
+echo "  CHEZMOI_AGE_IDENTITY_FILE=/path/to/key.txt MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap --yes --update"
 echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap status --missing"

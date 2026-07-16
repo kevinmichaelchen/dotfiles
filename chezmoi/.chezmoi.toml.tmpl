@@ -1,0 +1,7 @@
+encryption = "age"
+sourceDir = "{{ .chezmoi.homeDir }}/dotfiles/chezmoi"
+
+[age]
+    command = "rage"
+    identity = "{{ .chezmoi.homeDir }}/.config/chezmoi/key.txt"
+    recipient = "{{ output "rage-keygen" "-y" (joinPath .chezmoi.homeDir ".config/chezmoi/key.txt") | trim }}"

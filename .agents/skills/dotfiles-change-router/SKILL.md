@@ -25,7 +25,7 @@ Route each requested change to the smallest correct file set before editing anyt
 | global agent skills for `~/.agents/skills` | `chezmoi/dot_agents/skills/` | Use for skills that should be available across repos/tools on this machine |
 | repo-local dotfiles skills | top-level `.agents/skills/` | Use only for skills specific to maintaining this dotfiles repo |
 | personal shell behavior and fast iteration aliases | `chezmoi/dot_config/shell/*.sh` | Use plain `.sh` for non-secret config |
-| secret-backed env vars | `chezmoi/dot_config/shell/*.sh.tmpl` | Use `onepasswordRead` templates, never hardcode secrets |
+| secret-backed env vars | age-encrypted files under `chezmoi/dot_config/shell/` | Add with `chezmoi add --encrypt`; never hardcode secrets or commit the identity |
 | zsh load order/path wiring | `chezmoi/dot_config/zsh/custom.zsh` | Update when adding a new shell module file |
 | automation workflow scripts | `scripts/*.sh` | Keep idempotent and non-destructive defaults |
 | operator guidance for scripts | `scripts/AGENTS.md` | Update when behavior/contracts change |

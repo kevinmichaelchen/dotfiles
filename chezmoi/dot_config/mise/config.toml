@@ -33,6 +33,7 @@ minimum_release_age = "7d"
 "brew:podman" = "latest"
 "brew:podman-compose" = "latest"
 "brew:ripgrep" = "latest"
+"brew:rage" = "latest"
 "brew:sesh" = "latest"
 "brew:tmux" = "latest"
 "brew:webp" = "latest"
@@ -66,7 +67,10 @@ AppleKeyboardUIMode = 3
 
 [tasks.bootstrap]
 description = "Apply Chezmoi-managed workstation configuration"
-run = "MISE_BOOTSTRAP_ACTIVE=1 chezmoi apply --source=\"$HOME/dotfiles/chezmoi\""
+run = '''
+"$HOME/dotfiles/scripts/provision-age-identity.sh"
+MISE_BOOTSTRAP_ACTIVE=1 chezmoi init --apply --source="$HOME/dotfiles/chezmoi"
+'''
 
 [tools]
 
