@@ -30,6 +30,7 @@ minimum_release_age = "7d"
 "brew:jira-cli" = "latest"
 "brew:libpq" = "latest"
 "brew:mosh" = "latest"
+"brew:opencode" = "latest"
 "brew:podman" = "latest"
 "brew:podman-compose" = "latest"
 "brew:ripgrep" = "latest"
@@ -38,6 +39,7 @@ minimum_release_age = "7d"
 "brew:webp" = "latest"
 "brew:zsh-autosuggestions" = "latest"
 "brew:zsh-syntax-highlighting" = "latest"
+"brew-cask:codex" = "latest"
 "brew-cask:ghostty" = "latest"
 
 [bootstrap.user]
@@ -72,27 +74,26 @@ run = "MISE_BOOTSTRAP_ACTIVE=1 chezmoi apply --source=\"$HOME/dotfiles/chezmoi\"
 # ============================================================================
 # Core Language Runtimes
 # ============================================================================
-node = "24.14.1"
-python = "3.14.3"
-go = "1.26.3"
-rust = "1.94.1"
+node = "26.5.0"
+python = "3.14.6"
+go = "1.26.5"
+rust = "1.97.1"
 
 # ============================================================================
 # Node.js Tools & Package Managers
 # ============================================================================
-pnpm = "11.2.1"
-bun = "1.3.11"
+pnpm = "11.13.1"
+bun = "1.3.14"
 
 # npm global packages
 "npm:markit-ai" = "0.5.3"
-"npm:hunkdiff" = "0.13.2"      # review-first terminal diff viewer
 "npm:@nozomioai/nia" = "0.5.2" # Nia CLI only
 "npm:sfw" = "2.0.6"            # Socket Firewall wrapper for package manager network filtering
 
 # ============================================================================
 # Python CLI Tools from PyPI
 # ============================================================================
-"pipx:parallel-web-tools" = { version = "0.5.0", extras = "cli" } # Parallel CLI
+"pipx:parallel-web-tools" = { version = "0.7.1", extras = "cli" }
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
@@ -103,50 +104,48 @@ bun = "1.3.11"
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
-"github:charmbracelet/glow" = "2.1.1"            # markdown renderer (Go)
+"github:charmbracelet/glow" = "2.1.2"
 "github:charmbracelet/gum" = "0.17.0"            # shell prompt tool (Go)
-"go:golang.org/x/vuln/cmd/govulncheck" = "1.3.0" # Go vulnerability scanner
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.6.0"
 
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
 # Chezmoi is installed during the package phase before the bootstrap task.
-"github:x-motemen/ghq" = "1.9.4"              # repository management (Go)
-"github:cli/cli" = "2.88.1"                   # GitHub CLI (gh) (Go)
-"github:abhinav/git-spice" = "0.24.2"         # Stacked git workflows (gh-stack successor)
-"github:RhysSullivan/executor" = "1.5.27"
-"github:vercel-labs/agent-browser" = "0.27.0"
+"github:x-motemen/ghq" = "1.10.1"
+"github:cli/cli" = "2.96.0"
+"github:abhinav/git-spice" = "0.31.0"
+"github:RhysSullivan/executor" = "1.5.33"
+"github:vercel-labs/agent-browser" = "0.32.0"
 "github:sigoden/projclean" = "0.9.0"          # Project build artifact cleaner
 "github:libkrun/krunkit" = "1.3.2"            # Podman libkrun VM provider
-"aqua:jqlang/jq" = "1.8.1"                    # JSON processor (aqua has prebuilt binaries)
-codex = "0.142.4"                             # OpenAI Codex CLI
+"aqua:jqlang/jq" = "1.8.2"
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
-"aqua:charmbracelet/crush" = "0.76.0"
+"aqua:charmbracelet/crush" = "0.85.0"
 "aqua:sharkdp/bat" = "0.26.1"            # cat replacement with syntax highlighting
 "aqua:dandavison/delta" = "0.19.2"       # git diff viewer
 "aqua:sharkdp/fd" = "10.4.2"             # find replacement
-"aqua:junegunn/fzf" = "0.65.2"           # fuzzy finder and shell integration
-"aqua:ajeetdsouza/zoxide" = "0.9.9"      # z replacement (smarter cd)
-"aqua:dprint/dprint" = "0.54.0"          # Fast pluggable code formatter
-"aqua:j178/prek" = "0.4.3"               # pre-commit re-engineered in Rust
+"aqua:junegunn/fzf" = "0.74.0"
+"aqua:ajeetdsouza/zoxide" = "0.10.0"
+"aqua:dprint/dprint" = "0.55.2"
+"aqua:j178/prek" = "0.4.10"
 "aqua:chmln/sd" = "1.1.0"                # sed replacement (simpler syntax)
 "aqua:koalaman/shellcheck" = "0.11.0"    # Shell script static analyzer
-"aqua:mikefarah/yq" = "4.52.5"           # YAML processor
+"aqua:mikefarah/yq" = "4.53.3"
 "aqua:terrastruct/d2" = "0.7.1"          # Diagram language
-"aqua:typst/typst" = "0.14.2"            # Typesetting system
-"aqua:starship/starship" = "1.23.0"      # cross-shell prompt
+"aqua:typst/typst" = "0.15.0"
+"aqua:starship/starship" = "1.26.0"
 "aqua:golangci/golangci-lint" = "2.12.2" # Go linter aggregator
-"github:astral-sh/uv" = "0.11.2"         # Python package manager
-"aqua:aws/aws-cli" = "2.34.18"           # AWS CLI
-"aqua:hashicorp/terraform" = "1.14.8"    # Infrastructure as Code
+"github:astral-sh/uv" = "0.11.29"
+"aqua:aws/aws-cli" = "2.35.24"
 
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
-"npm:wrangler" = "4.94.0" # Cloudflare Workers CLI
+"npm:wrangler" = "4.111.0"
 
 # ============================================================================
 # Notes on Workstation Ownership

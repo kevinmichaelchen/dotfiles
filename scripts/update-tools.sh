@@ -10,7 +10,7 @@ if command -v mise >/dev/null 2>&1; then
   mise outdated || true
 
   echo "Upgrading Mise tools..."
-  if ! mise upgrade; then
+  if ! mise upgrade --bump; then
     cat >&2 <<'EOF'
 Mise upgrade failed.
 
@@ -18,7 +18,7 @@ GitHub attestations stay enabled during automatic updates. If the failure is a
 known temporary attestation outage for gh, recover manually after reviewing it:
 
   MISE_GITHUB_ATTESTATIONS=false mise install github:cli/cli@latest
-  mise upgrade
+  mise upgrade --bump
 EOF
     exit 1
   fi
