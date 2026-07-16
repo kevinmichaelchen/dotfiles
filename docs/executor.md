@@ -11,10 +11,22 @@ an optional plugin manifest, not the source catalog.
 ## Client Authentication
 
 Dotfiles manage the Executor Cloud and Desktop MCP entries for Codex, Claude,
-OpenCode, and Crush. The two bearer credentials live in the machine-local
-`~/.config/shell/executor-auth.sh`, never in Git or the Chezmoi source state.
-Run `~/dotfiles/scripts/configure-executor-auth.sh` once per laptop to prompt
-for both values and update the four client configs.
+OpenCode, and Crush without distributing bearer credentials. Cloud clients use
+Executor's MCP OAuth discovery and keep their own refreshable sessions. Desktop
+clients run `executor mcp` over stdio instead of authenticating to the local
+HTTP endpoint.
+
+After applying Chezmoi on a new laptop, authenticate the Cloud endpoint:
+
+```bash
+codex mcp login executor
+claude mcp login executor
+opencode mcp auth executor
+```
+
+Crush uses `mcp-remote`, which starts its OAuth flow when the endpoint first
+connects. `executor login` is separate: it authenticates the Executor CLI to a
+hosted server and does not provide credentials to these MCP clients.
 
 ## Ownership
 
@@ -40,8 +52,8 @@ secrets, OAuth connections, and policies through Executor Cloud.
 
 ## Chezmoi Boundary
 
-Chezmoi manages the stable Executor endpoint wiring. The credential values stay
-in a local mode-`0600` file outside Chezmoi.
+Chezmoi manages stable endpoint and command wiring, not Executor credentials or
+client OAuth sessions.
 
 Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
 configuration belongs to Executor's control plane.
@@ -62,8 +74,7 @@ env blocks or checked-in source definitions.
 | file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
 
 For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
-in Executor Cloud. Dotfiles must not provide their API keys. The two Executor
-client bearer tokens are the narrow exception and remain machine-local.
+in Executor Cloud. Dotfiles must not provide their API keys.
 
 ## Project Scopes
 
@@ -150,8 +161,9 @@ Suggested personal Cloud baseline:
 
 ## Manual Operations
 
-Run `~/dotfiles/scripts/configure-executor-auth.sh` to configure the shared
-Executor Cloud and Desktop endpoints on a new machine.
+Use `executor login` only when the Executor CLI itself needs hosted API access.
+Use the client-specific MCP OAuth commands above for Executor Cloud. Local
+Desktop access needs no login because it runs through `executor mcp` stdio.
 
 ## Troubleshooting
 

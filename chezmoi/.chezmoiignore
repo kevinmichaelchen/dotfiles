@@ -12,13 +12,6 @@ flake.lock
 .config/opencode/bun.lock
 .config/opencode/.gitignore
 
-# Executor client wiring is optional until this machine has local credentials.
-{{ if or (eq (env "EXECUTOR_CLOUD_API_KEY") "") (eq (env "EXECUTOR_DESKTOP_MCP_TOKEN") "") }}
-.claude.json
-.codex/config.toml
-.config/crush/crush.json
-.config/opencode/opencode.json
-{{ end }}
 {{ if ne .chezmoi.os "darwin" }}
 Library/
 {{ end }}

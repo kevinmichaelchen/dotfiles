@@ -23,12 +23,11 @@ for name in ("executor", "executor-desktop", "executor-cloud"):
 servers["executor"] = {
     "type": "http",
     "url": "https://executor.sh/kevin-chen-s-organization/mcp",
-    "headers": {"Authorization": 'Bearer {{ env "EXECUTOR_CLOUD_API_KEY" }}'},
 }
 servers["executor-desktop"] = {
-    "type": "http",
-    "url": "http://localhost:4789/mcp",
-    "headers": {"Authorization": 'Bearer {{ env "EXECUTOR_DESKTOP_MCP_TOKEN" }}'},
+    "type": "stdio",
+    "command": "executor",
+    "args": ["mcp"],
 }
 
 print(json.dumps(data, indent=2))

@@ -108,17 +108,18 @@ Keep personal files and shell behavior under `chezmoi/`. Keep API keys and
 bearer tokens out of this repository and its templates. Authenticate with each
 provider's browser/OAuth flow, CLI credential store, or connected app instead.
 
-Executor Cloud and Desktop are the only retained bearer credentials. Provision
-them once per machine into an unmanaged mode-`0600` shell file, then let the
-script update the four client configs:
+Executor does not require a dotfiles-managed bearer token. Cloud uses each MCP
+client's OAuth flow, while Desktop runs locally over `executor mcp` stdio.
+After the first apply on a machine, authenticate the Cloud endpoint in the
+clients that expose an explicit login command:
 
 ```bash
-~/dotfiles/scripts/configure-executor-auth.sh
+codex mcp login executor
+claude mcp login executor
+opencode mcp auth executor
 ```
 
-New shells load `~/.config/shell/executor-auth.sh` automatically. Until that
-file is provisioned, Chezmoi skips only the Executor client targets and applies
-everything else.
+Crush connects through `mcp-remote`, which starts its OAuth flow when needed.
 
 ## Chezmoi Commands
 

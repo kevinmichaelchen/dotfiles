@@ -23,13 +23,11 @@ for name in ("executor", "executor-desktop", "executor-cloud"):
 servers["executor"] = {
     "type": "remote",
     "url": "https://executor.sh/kevin-chen-s-organization/mcp",
-    "headers": {"Authorization": 'Bearer {{ env "EXECUTOR_CLOUD_API_KEY" }}'},
     "enabled": True,
 }
 servers["executor-desktop"] = {
-    "type": "remote",
-    "url": "http://localhost:4789/mcp",
-    "headers": {"Authorization": 'Bearer {{ env "EXECUTOR_DESKTOP_MCP_TOKEN" }}'},
+    "type": "local",
+    "command": ["executor", "mcp"],
     "enabled": True,
 }
 

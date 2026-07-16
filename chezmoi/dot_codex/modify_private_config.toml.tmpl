@@ -8,7 +8,6 @@ trap 'rm -f "$tmp"' EXIT
 cat >"$tmp"
 
 python3 - "$tmp" <<'PY'
-import json
 from pathlib import Path
 import re
 import sys
@@ -16,22 +15,13 @@ import sys
 path = Path(sys.argv[1])
 text = path.read_text()
 
-cloud_authorization = json.dumps('Bearer {{ env "EXECUTOR_CLOUD_API_KEY" }}')
-desktop_authorization = json.dumps('Bearer {{ env "EXECUTOR_DESKTOP_MCP_TOKEN" }}')
-
-block = f'''[mcp_servers.executor]
+block = '''[mcp_servers.executor]
 type = "http"
 url = "https://executor.sh/kevin-chen-s-organization/mcp"
 
-[mcp_servers.executor.http_headers]
-Authorization = {cloud_authorization}
-
 [mcp_servers.executor-desktop]
-type = "http"
-url = "http://localhost:4789/mcp"
-
-[mcp_servers.executor-desktop.http_headers]
-Authorization = {desktop_authorization}
+command = "executor"
+args = ["mcp"]
 '''
 
 pattern = re.compile(
