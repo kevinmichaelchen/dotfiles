@@ -1,12 +1,12 @@
 ---
 name: dotfiles-change-router
-description: Route dotfiles changes to the correct location in this repository and block common anti-patterns. Use when deciding where a change belongs across nix-darwin, home-manager, chezmoi, mise, scripts, or docs; when a request spans multiple layers; or when validating that a planned edit follows repo conventions.
+description: Route dotfiles changes to the correct location in this repository and block common anti-patterns. Use when deciding where a change belongs across Chezmoi, Mise, scripts, or docs; when a request spans multiple layers; or when validating that a planned edit follows repo conventions.
 ---
 
 # Dotfiles Change Router
 
 ## Overview
-Route each requested change to the smallest correct file set before editing anything. Prefer consistency with the repo's "use Nix less" split: stable system/user config in Nix/Home-Manager, fast-iterating personal config in Chezmoi, and dev runtimes in Mise.
+Route each requested change to the smallest correct file set before editing anything. Mise owns machine convergence and tool installation; Chezmoi owns personal configuration and shell behavior.
 
 ## Routing Steps
 1. Parse the requested outcome into atomic change intents.
@@ -18,10 +18,9 @@ Route each requested change to the smallest correct file set before editing anyt
 ## Routing Matrix
 | Change intent | Primary location | Notes |
 | --- | --- | --- |
-| macOS defaults, Homebrew brews/casks | `nix-darwin/configuration.nix` | Use for system-level macOS behavior and brew/cask declarations |
-| darwin user/host profile wiring | `nix-darwin/flake.nix` | Touch when changing `mkDarwinConfig` users or outputs |
-| shared user packages, stable aliases, HM programs | `home-manager/home.nix` | Use for stable shell aliases and Home-Manager-managed programs |
-| dev runtimes and CLI toolchain versions | `chezmoi/dot_config/mise/config.toml` | Prefer Mise for node/python/go/rust and many CLIs |
+| macOS defaults, Homebrew brews/casks | `chezmoi/dot_config/mise/config.toml` | Use Mise bootstrap declarations for machine state |
+| dev runtimes and CLI toolchain versions | `chezmoi/dot_config/mise/config.toml` | Prefer Mise for node/python/go/rust and CLIs |
+| shared aliases and environment | `chezmoi/dot_config/shell/*.sh` | Keep shell-agnostic behavior in focused modules |
 | global agent skills for `~/.agents/skills` | `chezmoi/dot_agents/skills/` | Use for skills that should be available across repos/tools on this machine |
 | repo-local dotfiles skills | top-level `.agents/skills/` | Use only for skills specific to maintaining this dotfiles repo |
 | personal shell behavior and fast iteration aliases | `chezmoi/dot_config/shell/*.sh` | Use plain `.sh` for non-secret config |
@@ -32,7 +31,7 @@ Route each requested change to the smallest correct file set before editing anyt
 | tmux docs/config guidance | `docs/tmux.md` and/or `chezmoi/dot_config/tmux/tmux.conf` | Keep docs and runtime behavior aligned |
 
 ## Hard Rules
-- Do not put dev runtime/tool version management into `home-manager/home.nix` when it belongs in Mise.
+- Do not introduce a second package or machine-configuration owner alongside Mise.
 - Do not put dotfiles-specific skills into `chezmoi/dot_agents/skills`; those belong in top-level `.agents/skills`.
 - Do not put secrets or secret-fetching templates in Chezmoi.
 - Do not edit generated user dotfiles directly; edit source in `chezmoi/`.

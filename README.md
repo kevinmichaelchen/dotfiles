@@ -13,10 +13,6 @@ The active configuration has two owners:
   and machine-specific templates. Authentication belongs to each tool or
   connected app, not to Chezmoi.
 
-The previous `nix-darwin/` and `home-manager/` configurations remain in the
-repository temporarily as a rollback reference. They are not called by the
-bootstrap or update workflows.
-
 ```text
 ~/dotfiles/
 ├── chezmoi/
@@ -28,8 +24,6 @@ bootstrap or update workflows.
 │   ├── bootstrap.sh                 # install mise and preview convergence
 │   ├── update.sh                    # apply and upgrade managed state
 │   └── update-tools.sh              # upgrade and lock mise tools
-├── nix-darwin/                      # inactive migration fallback
-└── home-manager/                    # inactive migration fallback
 ```
 
 ## Bootstrap
@@ -160,21 +154,6 @@ cp chezmoi/dot_config/mise/config.toml /tmp/dotfiles-mise-check/mise.toml
 The bootstrap features require mise `2026.6.7` or newer and are currently
 marked experimental by mise. The config declares that minimum explicitly so an
 older executable fails with update guidance instead of misinterpreting it.
-
-## Retiring nix-darwin
-
-Keep the current nix-darwin generation in place until `mise bootstrap` has
-completed, `mise bootstrap status --missing` succeeds, and a fresh login shell
-can resolve the expected commands. Then remove nix-darwin's activated system
-integration with its locally installed uninstaller:
-
-```bash
-sudo darwin-uninstaller
-exec zsh -l
-```
-
-This does not uninstall Determinate Nix itself. The legacy configuration remains
-in this repository until the mise migration has been exercised successfully.
 
 ## Resources
 
