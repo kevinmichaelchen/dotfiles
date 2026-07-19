@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Manage only the Executor MCP entries in ~/.config/opencode/opencode.json.
+# Keep only the Executor MCP entries in ~/.config/opencode/opencode.json.
 
 set -euo pipefail
 
@@ -16,19 +16,17 @@ path = Path(sys.argv[1])
 raw = path.read_text().strip()
 data = json.loads(raw) if raw else {"$schema": "https://opencode.ai/config.json"}
 
-servers = data.setdefault("mcp", {})
-for name in ("executor", "executor-desktop", "executor-cloud"):
-    servers.pop(name, None)
-
-servers["executor"] = {
-    "type": "remote",
-    "url": "https://executor.sh/kevin-chen-s-organization/mcp",
-    "enabled": True,
-}
-servers["executor-desktop"] = {
-    "type": "local",
-    "command": ["executor", "mcp"],
-    "enabled": True,
+data["mcp"] = {
+    "executor": {
+        "type": "remote",
+        "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+        "enabled": True,
+    },
+    "executor-desktop": {
+        "type": "local",
+        "command": ["executor", "mcp"],
+        "enabled": True,
+    },
 }
 
 print(json.dumps(data, indent=2))

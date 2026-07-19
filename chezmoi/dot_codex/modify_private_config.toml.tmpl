@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Manage only the Executor MCP stanzas in ~/.codex/config.toml.
+# Keep only the Executor MCP stanzas in ~/.codex/config.toml.
 
 set -euo pipefail
 
@@ -25,7 +25,7 @@ args = ["mcp"]
 '''
 
 pattern = re.compile(
-    r'(?ms)^\[mcp_servers\.(?:executor|executor-desktop|executor-cloud)(?:\.[^\]]+)?\]\n.*?(?=^\[|\Z)'
+    r'(?ms)^\[mcp_servers\.[^\]]+\]\n.*?(?=^\[|\Z)'
 )
 text = pattern.sub("", text).rstrip()
 text = text + "\n\n" + block if text else block
