@@ -89,6 +89,7 @@ bun = "1.3.14"
 "npm:markit-ai" = "0.5.3"
 "npm:@nozomioai/nia" = "0.5.2" # Nia CLI only
 "npm:sfw" = "2.0.6"            # Socket Firewall wrapper for package manager network filtering
+"npm:firecrawl-cli" = "1.19.26"
 
 # ============================================================================
 # Python CLI Tools from PyPI
