@@ -139,6 +139,7 @@ bun = "1.3.14"
 "aqua:terrastruct/d2" = "0.7.1"          # Diagram language
 "aqua:typst/typst" = "0.15.0"
 "aqua:starship/starship" = "1.26.0"
+"aqua:str4d/rage" = "0.12.0"             # age encryption in Rust
 "aqua:golangci/golangci-lint" = "2.12.2" # Go linter aggregator
 "github:astral-sh/uv" = "0.11.29"
 "aqua:aws/aws-cli" = "2.35.24"
