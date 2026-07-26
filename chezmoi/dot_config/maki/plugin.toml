@@ -1,0 +1,4 @@
+# The Semble plugin reads process state and launches the local `semble` CLI.
+[permissions]
+env = true
+run = true

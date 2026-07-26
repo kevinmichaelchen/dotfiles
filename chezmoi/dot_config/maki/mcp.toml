@@ -1,0 +1,2 @@
+[mcp.ast-grep]
+command = ["bash", "-lc", "exec \"$HOME/.config/maki/ast-grep-mcp.sh\""]

@@ -1,0 +1,3 @@
+maki.setup({})
+
+require("semble")
