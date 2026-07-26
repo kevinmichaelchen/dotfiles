@@ -95,6 +95,7 @@ bun = "1.3.14"
 # Python CLI Tools from PyPI
 # ============================================================================
 "pipx:parallel-web-tools" = { version = "0.7.1", extras = "cli" }
+"pipx:huggingface_hub" = "1.23.0" # hf CLI
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
@@ -113,6 +114,7 @@ bun = "1.3.14"
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
 # Chezmoi is installed during the package phase before the bootstrap task.
+"github:rtk-ai/rtk" = "0.28.2"                 # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
 "github:cli/cli" = "2.96.0"
 "github:abhinav/git-spice" = "0.31.0"
