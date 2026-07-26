@@ -1,2 +1,8 @@
 [mcp.ast-grep]
 command = ["bash", "-lc", "exec \"$HOME/.config/maki/ast-grep-mcp.sh\""]
+
+[mcp.executor]
+url = "https://executor.sh/kevin-chen-s-organization/mcp"
+
+[mcp.executor-desktop]
+command = ["executor", "mcp"]
