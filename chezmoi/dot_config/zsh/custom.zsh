@@ -74,11 +74,82 @@ export PATH="${(j/:/)path}"
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 [[ -f ~/.config/shell/github.sh ]] && source ~/.config/shell/github.sh
 
-# Detect the work machine once instead of probing from every prompt.
+# Build a stable machine label once, then reuse it across every future shell.
 if [[ -d /Applications/Cisco ]]; then
-  export STARSHIP_MACHINE_KIND="work"
+  export STARSHIP_MACHINE_LABEL="work"
 else
-  unset STARSHIP_MACHINE_KIND
+  _starship_machine_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/starship"
+  _starship_machine_cache="${_starship_machine_cache_dir}/machine-slug"
+  _starship_machine_slug=""
+
+  if [[ -r "$_starship_machine_cache" ]]; then
+    IFS= read -r _starship_machine_slug < "$_starship_machine_cache"
+  fi
+
+  # Cache miss: derive a readable, collision-resistant slug from macOS hardware.
+  if [[ -z "$_starship_machine_slug" ]]; then
+    mkdir -p "$_starship_machine_cache_dir"
+    if mkdir "${_starship_machine_cache}.lock" 2>/dev/null; then
+      () {
+        setopt LOCAL_OPTIONS
+        unsetopt BG_NICE
+        (
+          _starship_hardware_json="$(/usr/sbin/system_profiler SPHardwareDataType -json 2>/dev/null)"
+          _starship_machine_name="$(
+            print -rn -- "$_starship_hardware_json" |
+              /usr/bin/plutil -extract SPHardwareDataType.0.machine_name raw -o - - 2>/dev/null
+          )"
+          _starship_chip_type="$(
+            print -rn -- "$_starship_hardware_json" |
+              /usr/bin/plutil -extract SPHardwareDataType.0.chip_type raw -o - - 2>/dev/null
+          )"
+          _starship_platform_uuid="$(
+            print -rn -- "$_starship_hardware_json" |
+              /usr/bin/plutil -extract SPHardwareDataType.0.platform_UUID raw -o - - 2>/dev/null
+          )"
+
+          _starship_machine_name="${(L)_starship_machine_name}"
+          _starship_machine_name="${_starship_machine_name//[^a-z0-9]##/-}"
+          _starship_machine_name="${_starship_machine_name##-}"
+          _starship_machine_name="${_starship_machine_name%%-}"
+
+          _starship_chip_type="${(L)_starship_chip_type}"
+          _starship_chip_type="${_starship_chip_type#apple }"
+          _starship_chip_type="${_starship_chip_type//[^a-z0-9]##/-}"
+          _starship_chip_type="${_starship_chip_type##-}"
+          _starship_chip_type="${_starship_chip_type%%-}"
+
+          if [[ -n "$_starship_machine_name" && -n "$_starship_platform_uuid" ]]; then
+            _starship_machine_hash="$(
+              print -rn -- "$_starship_platform_uuid" | /sbin/md5 -q
+            )"
+            _starship_machine_hash="${_starship_machine_hash[1,6]}"
+            _starship_machine_slug="${_starship_machine_name}"
+            [[ -n "$_starship_chip_type" ]] &&
+              _starship_machine_slug+="-${_starship_chip_type}"
+            _starship_machine_slug+="-${_starship_machine_hash}"
+
+            _starship_machine_cache_tmp="${_starship_machine_cache}.$$"
+            (umask 077; print -r -- "$_starship_machine_slug" >| "$_starship_machine_cache_tmp")
+            mv -f "$_starship_machine_cache_tmp" "$_starship_machine_cache"
+          fi
+          rmdir "${_starship_machine_cache}.lock"
+        ) &!
+      }
+    fi
+  fi
+
+  # Hardware profiling failure or a concurrent first shell: use Zsh's hostname.
+  if [[ -z "$_starship_machine_slug" ]]; then
+    _starship_machine_slug="${(L)HOST%%.*}"
+    _starship_machine_slug="${_starship_machine_slug//[^a-z0-9]##/-}"
+  fi
+
+  export STARSHIP_MACHINE_LABEL="personal:${_starship_machine_slug:-mac}"
+  unset _starship_machine_cache_dir _starship_machine_cache
+  unset _starship_machine_slug _starship_hardware_json
+  unset _starship_machine_name _starship_chip_type _starship_platform_uuid
+  unset _starship_machine_hash _starship_machine_cache_tmp
 fi
 
 # Initialize Starship prompt

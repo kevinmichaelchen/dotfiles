@@ -21,7 +21,7 @@ muted = "#6e6a86"
 base = "#191724"
 
 format = """
-${env_var.machine_kind}\
+${env_var.machine_label}\
 $directory\
 $git_branch\
 $git_status\
@@ -138,9 +138,9 @@ style = "love"
 map_symbol = true
 disabled = false
 
-# Zsh detects the work machine once; prompt rendering only reads the result.
-[env_var.machine_kind]
-variable = "STARSHIP_MACHINE_KIND"
+# Zsh builds this once; prompt rendering only reads the result.
+[env_var.machine_label]
+variable = "STARSHIP_MACHINE_LABEL"
 format = "[$env_value](bold rose):"
 
 [battery]
