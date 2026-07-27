@@ -21,7 +21,7 @@ muted = "#6e6a86"
 base = "#191724"
 
 format = """
-$hostname\
+${env_var.machine_kind}\
 $directory\
 $git_branch\
 $git_status\
@@ -138,12 +138,10 @@ style = "love"
 map_symbol = true
 disabled = false
 
-# Avoid network-aware commands in the prompt's hot path.
-[hostname]
-ssh_only = false
-format = "[$hostname](bold rose):"
-trim_at = "."
-disabled = false
+# Zsh detects the work machine once; prompt rendering only reads the result.
+[env_var.machine_kind]
+variable = "STARSHIP_MACHINE_KIND"
+format = "[$env_value](bold rose):"
 
 [battery]
 disabled = true

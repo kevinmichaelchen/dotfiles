@@ -74,6 +74,13 @@ export PATH="${(j/:/)path}"
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 [[ -f ~/.config/shell/github.sh ]] && source ~/.config/shell/github.sh
 
+# Detect the work machine once instead of probing from every prompt.
+if [[ -d /Applications/Cisco ]]; then
+  export STARSHIP_MACHINE_KIND="work"
+else
+  unset STARSHIP_MACHINE_KIND
+fi
+
 # Initialize Starship prompt
 eval "$(starship init zsh)"
 
