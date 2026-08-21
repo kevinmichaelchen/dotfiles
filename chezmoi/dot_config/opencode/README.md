@@ -4,38 +4,77 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 
 ## Files
 
-| File                          | Purpose                                                  |
-| ----------------------------- | -------------------------------------------------------- |
-| `create_package.json`         | Source manifest for bun-managed plugin dependencies      |
-| `command/tokenscope.md`       | `/tokenscope` command prompt for TokenScope reports       |
+| File                                   | Purpose                                             |
+| -------------------------------------- | --------------------------------------------------- |
+| `modify_private_opencode.json.tmpl`    | Merges Executor MCP entries and the model catalog   |
+| `create_package.json`                  | Source manifest for bun-managed plugin dependencies |
+| `command/tokenscope.md`                | `/tokenscope` command prompt for TokenScope reports |
+
+### What Chezmoi owns
+
+`modify_private_opencode.json.tmpl` rewrites only part of
+`~/.config/opencode/opencode.json` and passes the rest through untouched.
+
+| Key                        | Owner          |
+| -------------------------- | -------------- |
+| `mcp.executor{,-desktop}`  | Chezmoi        |
+| `provider.*`               | Chezmoi        |
+| `model`, `small_model`     | Machine-local  |
+| `plugin`, everything else  | Machine-local  |
+
+`model` and `small_model` are deliberately unmanaged so switching models in the
+TUI is not reverted on the next `chezmoi apply`.
 
 ### Authentication
 
-Use `/connect` in OpenCode for provider-owned authentication. For example:
+Credentials never live in this repository. Authenticate each provider once per
+machine; OpenCode stores the result in `~/.local/share/opencode/auth.json`.
 
-```
-/connect openai      # OAuth via Codex plugin
+```bash
+opencode providers        # add or inspect provider credentials (alias: auth)
+opencode mcp auth executor  # OAuth for the Executor Cloud MCP endpoint
 ```
 
-Chezmoi manages only the two Executor MCP entries. Executor Cloud uses
-OpenCode's OAuth flow (`opencode mcp auth executor`), and Executor Desktop runs
-locally through `executor mcp` over stdio. Other provider authentication belongs
-to OpenCode's `/connect` flow.
+Executor Desktop runs locally over `executor mcp` stdio and needs no token.
+
+## Models
+
+The catalog declares entries that the upstream [models.dev][modelsdev] catalog
+does not provide on its own:
+
+| Provider     | Entries                                     | Why declared                           |
+| ------------ | ------------------------------------------- | -------------------------------------- |
+| `openai`     | `gpt-5.5`, `gpt-5.2{,-codex}` effort splits | models.dev ships base models only      |
+| `openrouter` | `moonshotai/kimi-k2.6`                       | `data_collection: deny` routing        |
+| `openrouter` | `deepseek/deepseek-v4-pro-0813`              | dated checkpoint + routing             |
+| `openrouter` | `deepseek/deepseek-v4-flash-0731`            | dated checkpoint + routing             |
+
+Everything else resolves from the built-in models.dev catalog.
 
 ## Plugins
 
-| Plugin                                        | Purpose                     |
-| --------------------------------------------- | --------------------------- |
-| [opencode-openai-codex-auth][codex-auth]      | OpenAI OAuth authentication |
-| [@ramtinj95/opencode-tokenscope][tokenscope]  | Token usage and cost reports |
+| Plugin                                       | Purpose                      |
+| -------------------------------------------- | ---------------------------- |
+| [opencode-openai-codex-auth][codex-auth]     | OpenAI OAuth authentication  |
+| [@ramtinj95/opencode-tokenscope][tokenscope] | Token usage and cost reports |
+
+`create_package.json` uses Chezmoi's `create_` prefix: the target is written
+only when it does not already exist, so `bun install` may rewrite it freely.
+The trade-off is that bumping a version here reaches new machines only. Update
+an existing machine by hand:
+
+```bash
+cd ~/.config/opencode && bun install
+```
 
 ## Runtime Files (Not Managed)
 
-These files are generated at runtime and excluded from chezmoi:
+Generated at runtime and excluded from Chezmoi via `.chezmoiignore`:
 
 - `node_modules/` - Plugin dependencies
 - `bun.lock` - Lockfile
 - `.gitignore` - Auto-generated
+- `skills/` - Symlinks into `~/.agents/skills`
 
 ## Quick Reference
 
@@ -43,20 +82,25 @@ These files are generated at runtime and excluded from chezmoi:
 # Install plugin dependencies
 cd ~/.config/opencode && bun install
 
-# List available models
-opencode /models
+# List available models, optionally for one provider
+opencode models
+opencode models openrouter
 
-# Connect to a provider
-opencode /connect openai
+# Manage provider credentials
+opencode providers
 
-# Analyze token usage for the current session
-opencode /tokenscope
+# Run a one-off prompt against a specific model
+opencode run -m openrouter/deepseek/deepseek-v4-flash-0731 "..."
 ```
+
+`/tokenscope` is a TUI slash command; run it from inside `opencode`, not the
+shell.
 
 ## References
 
 [opencode]: https://opencode.ai/
 [opencode-docs]: https://opencode.ai/docs/
 [opencode-providers]: https://opencode.ai/docs/providers/
+[modelsdev]: https://models.dev/
 [codex-auth]: https://github.com/code-yeongyu/opencode-openai-codex-auth
 [tokenscope]: https://github.com/ramtinJ95/opencode-tokenscope

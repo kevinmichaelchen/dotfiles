@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Manage only the Executor MCP entries in ~/.config/opencode/opencode.json.
+# Manage the Executor MCP entries and the model catalog in
+# ~/.config/opencode/opencode.json.
+#
+# Owned by Chezmoi:  mcp.executor, mcp.executor-desktop, provider.*
+# Left machine-local: model, small_model, plugin, and every other key.
+#
+# `model` and `small_model` are deliberately not managed so switching models
+# in the OpenCode TUI survives `chezmoi apply`.
 
 set -euo pipefail
 
@@ -16,6 +23,7 @@ path = Path(sys.argv[1])
 raw = path.read_text().strip()
 data = json.loads(raw) if raw else {"$schema": "https://opencode.ai/config.json"}
 
+# --- MCP -------------------------------------------------------------------
 servers = data.setdefault("mcp", {})
 for name in ("executor", "executor-desktop", "executor-cloud"):
     servers.pop(name, None)
@@ -30,6 +38,89 @@ servers["executor-desktop"] = {
     "command": ["executor", "mcp"],
     "enabled": True,
 }
+
+# --- Model catalog ---------------------------------------------------------
+# OpenAI reasoning-effort variants. models.dev exposes the base models but not
+# per-effort entries, so each effort we actually use is declared here.
+TEXT_IMAGE = {"input": ["text", "image"], "output": ["text"]}
+GPT_LIMIT = {"context": 272000, "output": 128000}
+
+
+def gpt(name, effort, summary="auto", verbosity="medium"):
+    return {
+        "name": name,
+        "limit": dict(GPT_LIMIT),
+        "modalities": dict(TEXT_IMAGE),
+        "options": {
+            "reasoningEffort": effort,
+            "reasoningSummary": summary,
+            "textVerbosity": verbosity,
+            "include": ["reasoning.encrypted_content"],
+            "store": False,
+        },
+    }
+
+
+openai_models = {
+    "gpt-5.5": gpt("GPT 5.5 (OAuth)", "low"),
+    "gpt-5.2-none": gpt("GPT 5.2 None (OAuth)", "none"),
+    "gpt-5.2-low": gpt("GPT 5.2 Low (OAuth)", "low"),
+    "gpt-5.2-medium": gpt("GPT 5.2 Medium (OAuth)", "medium"),
+    "gpt-5.2-high": gpt("GPT 5.2 High (OAuth)", "high", "detailed"),
+    "gpt-5.2-xhigh": gpt("GPT 5.2 Extra High (OAuth)", "xhigh", "detailed"),
+    "gpt-5.2-codex-low": gpt("GPT 5.2 Codex Low (OAuth)", "low"),
+    "gpt-5.2-codex-medium": gpt("GPT 5.2 Codex Medium (OAuth)", "medium"),
+    "gpt-5.2-codex-high": gpt("GPT 5.2 Codex High (OAuth)", "high", "detailed"),
+    "gpt-5.2-codex-xhigh": gpt("GPT 5.2 Codex Extra High (OAuth)", "xhigh", "detailed"),
+}
+# gpt-5.5 carries the 1M context window; the 5.2 family is capped at 272k.
+openai_models["gpt-5.5"]["limit"] = {"context": 1000000, "output": 128000}
+
+# OpenRouter entries exist to carry routing preferences and to pin dated
+# checkpoints that a stale local models.dev cache may not list yet.
+NO_COLLECT = {"provider": {"data_collection": "deny"}}
+
+openrouter_models = {
+    "moonshotai/kimi-k2.6": {
+        "name": "Kimi K2.6 (OpenRouter)",
+        "limit": {"context": 262144, "output": 32768},
+        "modalities": dict(TEXT_IMAGE),
+        "options": dict(NO_COLLECT),
+    },
+    "deepseek/deepseek-v4-pro-0813": {
+        "name": "DeepSeek V4 Pro 0813 (OpenRouter)",
+        "limit": {"context": 1048576, "output": 384000},
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "options": dict(NO_COLLECT),
+    },
+    "deepseek/deepseek-v4-flash-0731": {
+        "name": "DeepSeek V4 Flash 0731 (OpenRouter)",
+        "limit": {"context": 1310720, "output": 384000},
+        "modalities": {"input": ["text"], "output": ["text"]},
+        "options": dict(NO_COLLECT),
+    },
+}
+
+providers = data.setdefault("provider", {})
+
+# Credentials come from `opencode providers` (~/.local/share/opencode/auth.json),
+# never from this repository. Drop any legacy inline apiKey scaffolding.
+providers.pop("fireworks-ai", None)
+
+openai = providers.setdefault("openai", {})
+openai["options"] = {
+    "reasoningEffort": "medium",
+    "reasoningSummary": "auto",
+    "textVerbosity": "medium",
+    "include": ["reasoning.encrypted_content"],
+    "store": False,
+}
+openai["models"] = openai_models
+
+openrouter = providers.setdefault("openrouter", {})
+for stale in ("npm", "name", "options"):
+    openrouter.pop(stale, None)
+openrouter["models"] = openrouter_models
 
 print(json.dumps(data, indent=2))
 print()
