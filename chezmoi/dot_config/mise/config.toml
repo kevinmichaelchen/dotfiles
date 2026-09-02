@@ -119,7 +119,7 @@ bun = "1.3.14"
 # Chezmoi is installed during the package phase before the bootstrap task.
 "github:rtk-ai/rtk" = "0.45.0"                 # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
-"github:cli/cli" = "2.97.0"
+"github:cli/cli" = "2.99.0"
 "github:abhinav/git-spice" = "0.31.2"
 "github:RhysSullivan/executor" = "1.5.42"
 "github:vercel-labs/agent-browser" = "0.34.0"
