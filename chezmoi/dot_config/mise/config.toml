@@ -42,7 +42,6 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 "brew:webp" = "latest"
 "brew:zsh-autosuggestions" = "latest"
 "brew:zsh-syntax-highlighting" = "latest"
-"brew-cask:codex" = "latest"
 "brew-cask:ghostty" = "latest"
 
 [bootstrap.user]
@@ -90,6 +89,7 @@ bun = "1.4.0"
 
 # npm global packages
 "npm:markit-ai" = "0.6.1"
+"npm:@openai/codex" = "0.154.0"
 "npm:@nozomioai/nia" = "0.5.2" # Nia CLI only
 "npm:sfw" = "2.0.6"            # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.23.3"
