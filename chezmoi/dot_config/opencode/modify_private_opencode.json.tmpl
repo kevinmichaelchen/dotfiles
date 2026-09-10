@@ -2,11 +2,11 @@
 # Manage the Executor MCP entries and the model catalog in
 # ~/.config/opencode/opencode.json.
 #
-# Owned by Chezmoi:  mcp.executor, mcp.executor-desktop, provider.*
-# Left machine-local: model, small_model, plugin, and every other key.
+# Owned by Chezmoi:  mcp.executor, mcp.executor-desktop, provider.*, small_model
+# Left machine-local: model, plugin, and every other key.
 #
-# `model` and `small_model` are deliberately not managed so switching models
-# in the OpenCode TUI survives `chezmoi apply`.
+# `model` remains unmanaged so switching the primary model in the OpenCode TUI
+# survives `chezmoi apply`. The inexpensive small-model default is managed.
 
 set -euo pipefail
 
@@ -84,6 +84,9 @@ openrouter = providers.setdefault("openrouter", {})
 for stale in ("npm", "name", "options"):
     openrouter.pop(stale, None)
 openrouter["models"] = openrouter_models
+
+# Use the verified low-cost coding model for lightweight background work.
+data["small_model"] = "openrouter/deepseek/deepseek-v4.1-flash"
 
 print(json.dumps(data, indent=2))
 print()
