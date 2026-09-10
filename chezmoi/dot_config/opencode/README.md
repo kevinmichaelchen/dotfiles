@@ -44,10 +44,9 @@ does not provide on its own:
 
 | Provider     | Entries                                     | Why declared                           |
 | ------------ | ------------------------------------------- | -------------------------------------- |
-| `openai`     | `gpt-5.5`, `gpt-5.2{,-codex}` effort splits | models.dev ships base models only      |
-| `openrouter` | `moonshotai/kimi-k2.6`                       | `data_collection: deny` routing        |
-| `openrouter` | `deepseek/deepseek-v4-pro-0813`              | dated checkpoint + routing             |
-| `openrouter` | `deepseek/deepseek-v4-flash-0731`            | dated checkpoint + routing             |
+| `openai`     | OpenCode's current provider catalog           | provider-wide reasoning/privacy defaults |
+| `openrouter` | `moonshotai/kimi-k3`                          | current Kimi flagship + privacy routing |
+| `openrouter` | `deepseek/deepseek-v4.1-flash`                | current efficient DeepSeek flagship     |
 
 Everything else resolves from the built-in models.dev catalog.
 
@@ -90,7 +89,7 @@ opencode models openrouter
 opencode providers
 
 # Run a one-off prompt against a specific model
-opencode run -m openrouter/deepseek/deepseek-v4-flash-0731 "..."
+opencode run -m openrouter/deepseek/deepseek-v4.1-flash "..."
 ```
 
 `/tokenscope` is a TUI slash command; run it from inside `opencode`, not the

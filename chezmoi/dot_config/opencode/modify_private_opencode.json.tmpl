@@ -40,63 +40,25 @@ servers["executor-desktop"] = {
 }
 
 # --- Model catalog ---------------------------------------------------------
-# OpenAI reasoning-effort variants. models.dev exposes the base models but not
-# per-effort entries, so each effort we actually use is declared here.
+# OpenAI's catalog changes frequently, so use the catalog supplied by OpenCode
+# and manage only provider-wide defaults here.
 TEXT_IMAGE = {"input": ["text", "image"], "output": ["text"]}
-GPT_LIMIT = {"context": 272000, "output": 128000}
-
-
-def gpt(name, effort, summary="auto", verbosity="medium"):
-    return {
-        "name": name,
-        "limit": dict(GPT_LIMIT),
-        "modalities": dict(TEXT_IMAGE),
-        "options": {
-            "reasoningEffort": effort,
-            "reasoningSummary": summary,
-            "textVerbosity": verbosity,
-            "include": ["reasoning.encrypted_content"],
-            "store": False,
-        },
-    }
-
-
-openai_models = {
-    "gpt-5.5": gpt("GPT 5.5 (OAuth)", "low"),
-    "gpt-5.2-none": gpt("GPT 5.2 None (OAuth)", "none"),
-    "gpt-5.2-low": gpt("GPT 5.2 Low (OAuth)", "low"),
-    "gpt-5.2-medium": gpt("GPT 5.2 Medium (OAuth)", "medium"),
-    "gpt-5.2-high": gpt("GPT 5.2 High (OAuth)", "high", "detailed"),
-    "gpt-5.2-xhigh": gpt("GPT 5.2 Extra High (OAuth)", "xhigh", "detailed"),
-    "gpt-5.2-codex-low": gpt("GPT 5.2 Codex Low (OAuth)", "low"),
-    "gpt-5.2-codex-medium": gpt("GPT 5.2 Codex Medium (OAuth)", "medium"),
-    "gpt-5.2-codex-high": gpt("GPT 5.2 Codex High (OAuth)", "high", "detailed"),
-    "gpt-5.2-codex-xhigh": gpt("GPT 5.2 Codex Extra High (OAuth)", "xhigh", "detailed"),
-}
-# gpt-5.5 carries the 1M context window; the 5.2 family is capped at 272k.
-openai_models["gpt-5.5"]["limit"] = {"context": 1000000, "output": 128000}
 
 # OpenRouter entries exist to carry routing preferences and to pin dated
 # checkpoints that a stale local models.dev cache may not list yet.
 NO_COLLECT = {"provider": {"data_collection": "deny"}}
 
 openrouter_models = {
-    "moonshotai/kimi-k2.6": {
-        "name": "Kimi K2.6 (OpenRouter)",
-        "limit": {"context": 262144, "output": 32768},
-        "modalities": dict(TEXT_IMAGE),
+    "moonshotai/kimi-k3": {
+        "name": "Kimi K3 (OpenRouter)",
+        "limit": {"context": 1048576, "output": 943718},
+        "modalities": {"input": ["text", "image", "video"], "output": ["text"]},
         "options": dict(NO_COLLECT),
     },
-    "deepseek/deepseek-v4-pro-0813": {
-        "name": "DeepSeek V4 Pro 0813 (OpenRouter)",
+    "deepseek/deepseek-v4.1-flash": {
+        "name": "DeepSeek V4.1 Flash (OpenRouter)",
         "limit": {"context": 1048576, "output": 384000},
-        "modalities": {"input": ["text"], "output": ["text"]},
-        "options": dict(NO_COLLECT),
-    },
-    "deepseek/deepseek-v4-flash-0731": {
-        "name": "DeepSeek V4 Flash 0731 (OpenRouter)",
-        "limit": {"context": 1310720, "output": 384000},
-        "modalities": {"input": ["text"], "output": ["text"]},
+        "modalities": dict(TEXT_IMAGE),
         "options": dict(NO_COLLECT),
     },
 }
@@ -108,6 +70,8 @@ providers = data.setdefault("provider", {})
 providers.pop("fireworks-ai", None)
 
 openai = providers.setdefault("openai", {})
+# Remove the static catalog written by earlier versions of this template.
+openai.pop("models", None)
 openai["options"] = {
     "reasoningEffort": "medium",
     "reasoningSummary": "auto",
@@ -115,7 +79,6 @@ openai["options"] = {
     "include": ["reasoning.encrypted_content"],
     "store": False,
 }
-openai["models"] = openai_models
 
 openrouter = providers.setdefault("openrouter", {})
 for stale in ("npm", "name", "options"):
