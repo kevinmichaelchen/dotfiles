@@ -191,6 +191,16 @@ checksum = "sha256:a2c362d19a818ed1745e7308a40e7eedc57e462eba839fae752e287dbd405
 url = "https://github.com/abhinav/git-spice/releases/download/v0.31.2/git-spice.Darwin-arm64.tar.gz"
 url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/484895560"
 
+[[tools."github:anomalyco/opencode"]]
+version = "1.18.30"
+backend = "github:anomalyco/opencode"
+
+[tools."github:anomalyco/opencode"."platforms.macos-arm64"]
+checksum = "sha256:a5e43d6887386efc7d68ce49ae28e3bbdfdee3dfd1d7169b612c3ce67e53b1e8"
+url = "https://github.com/anomalyco/opencode/releases/download/v1.18.30/opencode-darwin-arm64.zip"
+url_api = "https://api.github.com/repos/anomalyco/opencode/releases/assets/551875293"
+provenance = "github-attestations"
+
 [[tools."github:astral-sh/uv"]]
 version = "0.12.9"
 backend = "github:astral-sh/uv"

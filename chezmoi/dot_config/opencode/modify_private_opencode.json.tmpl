@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Manage only the Executor MCP entries in ~/.config/opencode/opencode.json.
+# Manage the Executor MCP entries and the model catalog in
+# ~/.config/opencode/opencode.json.
+#
+# Owned by Chezmoi:  mcp.executor, mcp.executor-desktop, provider.*
+# Left machine-local: model, small_model, plugin, and every other key.
+#
+# `model` and `small_model` are deliberately not managed so switching models
+# in the OpenCode TUI survives `chezmoi apply`.
 
 set -euo pipefail
 
@@ -16,6 +23,7 @@ path = Path(sys.argv[1])
 raw = path.read_text().strip()
 data = json.loads(raw) if raw else {"$schema": "https://opencode.ai/config.json"}
 
+# --- MCP -------------------------------------------------------------------
 servers = data.setdefault("mcp", {})
 for name in ("executor", "executor-desktop", "executor-cloud"):
     servers.pop(name, None)
@@ -30,6 +38,52 @@ servers["executor-desktop"] = {
     "command": ["executor", "mcp"],
     "enabled": True,
 }
+
+# --- Model catalog ---------------------------------------------------------
+# OpenAI's catalog changes frequently, so use the catalog supplied by OpenCode
+# and manage only provider-wide defaults here.
+TEXT_IMAGE = {"input": ["text", "image"], "output": ["text"]}
+
+# OpenRouter entries exist to carry routing preferences and to pin dated
+# checkpoints that a stale local models.dev cache may not list yet.
+NO_COLLECT = {"provider": {"data_collection": "deny"}}
+
+openrouter_models = {
+    "moonshotai/kimi-k3": {
+        "name": "Kimi K3 (OpenRouter)",
+        "limit": {"context": 1048576, "output": 943718},
+        "modalities": {"input": ["text", "image", "video"], "output": ["text"]},
+        "options": dict(NO_COLLECT),
+    },
+    "deepseek/deepseek-v4.1-flash": {
+        "name": "DeepSeek V4.1 Flash (OpenRouter)",
+        "limit": {"context": 1048576, "output": 384000},
+        "modalities": dict(TEXT_IMAGE),
+        "options": dict(NO_COLLECT),
+    },
+}
+
+providers = data.setdefault("provider", {})
+
+# Credentials come from `opencode providers` (~/.local/share/opencode/auth.json),
+# never from this repository. Drop any legacy inline apiKey scaffolding.
+providers.pop("fireworks-ai", None)
+
+openai = providers.setdefault("openai", {})
+# Remove the static catalog written by earlier versions of this template.
+openai.pop("models", None)
+openai["options"] = {
+    "reasoningEffort": "medium",
+    "reasoningSummary": "auto",
+    "textVerbosity": "medium",
+    "include": ["reasoning.encrypted_content"],
+    "store": False,
+}
+
+openrouter = providers.setdefault("openrouter", {})
+for stale in ("npm", "name", "options"):
+    openrouter.pop(stale, None)
+openrouter["models"] = openrouter_models
 
 print(json.dumps(data, indent=2))
 print()

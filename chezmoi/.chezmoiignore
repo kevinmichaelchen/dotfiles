@@ -2,12 +2,14 @@
 scripts/
 .git/
 README.md
-PLAN.md
 
 # OpenCode runtime files (managed by opencode/bun)
 .config/opencode/node_modules
 .config/opencode/bun.lock
+.config/opencode/package-lock.json
 .config/opencode/.gitignore
+.config/opencode/*.bak*
+.config/opencode/skills
 
 {{ if ne .chezmoi.os "darwin" }}
 Library/
