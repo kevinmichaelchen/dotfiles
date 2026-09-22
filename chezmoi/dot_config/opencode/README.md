@@ -19,11 +19,13 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 | -------------------------- | -------------- |
 | `mcp.executor{,-desktop}`  | Chezmoi        |
 | `provider.*`               | Chezmoi        |
-| `model`, `small_model`     | Machine-local  |
+| `small_model`              | Chezmoi        |
+| `model`                    | Machine-local  |
 | `plugin`, everything else  | Machine-local  |
 
-`model` and `small_model` are deliberately unmanaged so switching models in the
-TUI is not reverted on the next `chezmoi apply`.
+`model` is deliberately unmanaged so switching the primary model in the TUI is
+not reverted on the next `chezmoi apply`. `small_model` is kept on DeepSeek
+V4.1 Flash so lightweight background work does not fall back to a stale model.
 
 ### Authentication
 
