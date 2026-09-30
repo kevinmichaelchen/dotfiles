@@ -1,0 +1,6 @@
+theme = "rose-pine"
+default_scope = "branch"
+toggle_placement = "split"
+toggle_direction = "right"
+# Open explicitly: avoid panes appearing for every worker worktree.
+auto_open = false

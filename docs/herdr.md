@@ -12,9 +12,11 @@ After the parent Mise migration PR is applied:
 ```sh
 export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/mise/config.toml"
 mise install github:herdrdev/herdr
+mise bootstrap repos apply
 mise dotfiles apply --dry-run
 mise dotfiles apply --yes
 mise run herdr:setup
+mise run herdr:plugins
 herdr
 ```
 
@@ -30,7 +32,17 @@ OpenCode v2 also needs its shared service restarted (`opencode service stop`).
 If OpenCode defers registration while migrating an old TUI config, complete
 that native migration and rerun setup.
 
-Dotfiles owns only Herdr's `config.toml` and our small local plugin manifest.
+Dotfiles owns Herdr's config, the local launcher manifest, Projects profiles/policy,
+and Reviewr settings. Mise owns three pinned plugin source checkouts and four
+checksum-locked runtimes. `herdr:plugins` installs the locked runtimes and links
+them at the paths
+expected by the upstream manifests, registers all three plugins, and runs
+Projects' native `configure --clients claude,codex --hooks-only`. It never runs
+the upstream download/build scripts or rewrites shared configuration. The
+bundled `autoproject` skill is linked through Mise into the shared skills directory.
+Edit shared Projects profiles/policy in this repository; avoid popup settings
+that rewrite those declarations. Restart existing Claude/Codex processes after
+hook registration. Rerun the task after upgrading runtimes so its links and native hook paths follow the new version.
 Herdr owns plugin registration, named sessions, machines, logs, worktrees and
 runtime state. Settings in Herdr's UI may write through the config symlink;
 review the resulting Git diff. Use Mise for upgrades, not `herdr update`.
@@ -48,6 +60,10 @@ disable that shell's software flow control with `stty -ixon` before launching.
 | Alt+C | Codex tab, using the `dotfiles` profile |
 | Alt+A | Claude Code tab, using the declared MCP file |
 | Alt+O | OpenCode v2 tab, using its declared config layer |
+| Alt+P | Projects coordinator/worker popup |
+| Alt+R | Toggle Reviewr code/PR review |
+| Alt+N | Annotate the terminal selection |
+| Alt+D | Annotate documents in the current folder |
 | ] / [ | Next / previous agent |
 | Alt+1…9 | Focus an agent by its sidebar index |
 | Shift+G | Create a Git worktree and open its workspace |
@@ -111,22 +127,34 @@ reboot are not continuous execution. SSH machines remain opt-in.
 Herdr's binary is Mise-managed. Agent detection manifest updates remain enabled
 so upstream can fix screen recognition independently of a binary upgrade.
 
-## Plugins considered
+## Adopted plugins
 
-The marketplace is automatically indexed GitHub content, not a reviewed
-extension collection. We use core worktrees and a local manifest initially.
+The PR declares **four plugins total**: our local `kevin.agents` launcher plus
+three third-party plugins. Registration happens through `mise run herdr:plugins`.
 
-- [Herdr Projects](https://github.com/eliasstravik/herdr-projects) is the most
-  relevant next step for autonomous coordinator/worker threads and shared
-  memory. Its setup also modifies harness hooks and skills; its ticker nudges
-  agents, follows PRs, and cleans resolved worktrees. Keep it a deliberate
-  separate adoption rather than silently enabling that policy here.
-- [Reviewr](https://github.com/persiyanov/herdr-reviewr) adds a diff/PR review UI
-  and sends review comments to agents. Useful if terminal review becomes a
-  bottleneck; it is not required to run mixed agents.
-- Remote-machine and live-handoff features are useful later. The handoff blog
-  describes same-machine Unix process transfer, not reboot recovery. This
-  configuration does not invoke Herdr's self-updater to perform it.
+| Plugin | Source / runtime pin | Purpose |
+| --- | --- | --- |
+| [Projects](https://github.com/eliasstravik/herdr-projects) | `4e4548c3…` / `0.2.34` | Persistent Claude coordinator and Codex workers, shared memory and task worktrees |
+| [Reviewr](https://github.com/persiyanov/herdr-reviewr) | `cd618b48…` / `0.39.0` | Human code/PR review and deliberate comment delivery |
+| [Annotate](https://github.com/plannotator/herdr-annotate) | `663b45a4…` / plugin `0.7.0`, Lite runtime `0.1.0`, document runtime `0.9.4` | Terminal selections, plans and Markdown feedback |
+
+Projects uses native Claude/Codex config layers and normal approval prompts.
+New threads are proposed, screen prompts require user trust, and routine shell
+commands are disabled. OpenCode v2 remains available through the local launcher;
+it is not a Projects worker until its native v2 argument behavior is validated.
+Create your first project from Alt+P; project goals, task records and memory stay
+local under `~/.herdr-projects`. Projects starts its ticker when projects exist.
+Its normal lifecycle can resolve clean completed worktrees/merged branches;
+review project policy before delegating long-running work.
+
+Reviewr uses the dark Rose Pine theme and opens only when requested; it does
+not automatically create panes for each worktree. Annotate's copy/paste actions
+let you inspect feedback before sending it. Sending feedback or creating agent
+threads is a deliberate action, never part of setup.
+
+Upgrade source pins and matching runtime pins together through this repository;
+do not use `herdr plugin install`, `herdr-projects update` or upstream installers
+for these Mise-owned checkouts. Sessionizer remains a future layout addition.
 
 ## Sources and validation
 
@@ -147,6 +175,14 @@ links the plugin, launches each manifest command with fake agent executables,
 and tests native hook installation/idempotence in an isolated temporary home.
 No account login, paid model call or live workstation change is needed.
 
+Adoption was also exercised in a disposable home using the five locked release
+runtimes and pinned plugin sources: all three registered enabled; Projects
+resolved the declared Claude/Codex arguments; two setup runs left native hooks
+unchanged and preserved an existing Claude setting; all shared config symlinks
+were untouched. Reviewr resolved Rose Pine and manual opening. Setup refused to
+overwrite a foreign binary. These checks do not establish logged-in agent
+collaboration, interactive review UI behavior or OpenCode v2 integration.
+
 ## Comprehensive marketplace and model research
 
 The [Herdr research report](herdr-research.md) evaluates the **100 most-starred
@@ -158,7 +194,6 @@ controls. Three Eraser WebP diagrams are hosted as PR attachments, outside Git.
 
 Use the two existing $200/month subscriptions first. The proposed open-model
 fallback is GLM 5.3 Flash on Fireworks Standard, with DeepSeek V4.1 Flash as a
-second family. Sessionizer and Reviewr are the strongest next plugin additions;
-Projects is the optional persistent coordinator. These remain recommendations:
-the PR configures the local native launcher, not third-party plugins, paid model
-failover or account authentication.
+second family. The PR adopts Projects, Reviewr and Annotate; Sessionizer is a
+future layout addition. The open-model choices remain recommendations; paid model
+failover and account authentication remain native, explicit operations.

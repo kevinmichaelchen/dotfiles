@@ -52,6 +52,21 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
         require(path.startswith("~/"), f"Expected home-relative path: {path}")
         return home / path[2:]
 
+    # Bootstrap repos precedes dotfiles on a real workstation. Seed the external
+    # skill source without cloning upstream code in this offline convergence test.
+    bundled_skill = home / ".local/share/herdr-plugin-sources/projects/skill/autoproject"
+    bundled_skill.mkdir(parents=True)
+    (bundled_skill / "SKILL.md").write_text("# Fixture bundled skill\n")
+    plugin_checkout = home / ".local/share/herdr-plugin-sources/projects"
+    run("git", "init", "--quiet", str(plugin_checkout))
+    upstream = tomllib.loads(config.read_text())["bootstrap"]["repos"][
+        "~/.local/share/herdr-plugin-sources/projects"]["url"]
+    run("git", "-C", str(plugin_checkout), "remote", "add", "origin", upstream)
+    run("git", "-C", str(plugin_checkout), "add", "skill")
+    run("git", "-C", str(plugin_checkout), "-c", "user.name=Fixture",
+        "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false",
+        "commit", "--quiet", "-F", str(bundled_skill / "SKILL.md"))
+
     # Fresh bootstrap prepares the shared directory before linking the projection.
     run(MISE, "bootstrap", "--only", "dotfiles", "--yes")
     for target in entries:

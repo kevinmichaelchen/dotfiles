@@ -43,9 +43,12 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 "brew:zsh-syntax-highlighting" = "latest"
 "brew-cask:ghostty" = "latest"
 
-# Follow upstream branches; Mise refuses dirty or conflicting checkouts.
+# Mise refuses dirty or conflicting checkouts; plugin sources stay at reviewed commits.
 [bootstrap.repos]
 "~/.tmux/plugins/tpm" = { url = "https://github.com/tmux-plugins/tpm.git", ref = "master" }
+"~/.local/share/herdr-plugin-sources/projects" = { url = "https://github.com/eliasstravik/herdr-projects.git", ref = "4e4548c3c43888e6be1c96906215998f07dc63f0" }
+"~/.local/share/herdr-plugin-sources/reviewr" = { url = "https://github.com/persiyanov/herdr-reviewr.git", ref = "cd618b48dc1f4d2cc092f3f26827ac72fb44773e" }
+"~/.local/share/herdr-plugin-sources/annotate" = { url = "https://github.com/plannotator/herdr-annotate.git", ref = "663b45a420f00882f7196bf893b341cddd37a530" }
 
 # Prepare the source directory for the Claude skills projection.
 [bootstrap.hooks]
@@ -76,6 +79,9 @@ AppleKeyboardUIMode = 3
 
 # Plain files are owned only by Mise. Per-file links leave runtime state alone.
 [dotfiles]
+"~/.config/herdr-projects/config.toml" = { source = "~/dotfiles/dotfiles/.config/herdr-projects/config.toml", mode = "symlink" }
+"~/.config/herdr/plugins/config/persiyanov.reviewr/config.toml" = { source = "~/dotfiles/dotfiles/.config/herdr/plugins/config/persiyanov.reviewr/config.toml", mode = "symlink" }
+"~/.agents/skills/autoproject" = { source = "~/.local/share/herdr-plugin-sources/projects/skill/autoproject", mode = "symlink" }
 "~/.config/herdr/config.toml" = { source = "~/dotfiles/dotfiles/.config/herdr/config.toml", mode = "symlink" }
 "~/.config/herdr/plugins/agents/herdr-plugin.toml" = { source = "~/dotfiles/dotfiles/.config/herdr/plugins/agents/herdr-plugin.toml", mode = "symlink" }
 "~/.config/mise/config.toml" = { source = "~/dotfiles/mise/config.toml", mode = "symlink" }
@@ -123,6 +129,13 @@ run = [
   'herdr integration install claude',
   'herdr integration install opencode',
   'herdr integration status',
+]
+
+[tasks."herdr:plugins"]
+description = "Register Projects, Reviewr and Annotate from Mise-owned pinned sources"
+run = [
+  'mise install github:eliasstravik/herdr-projects github:persiyanov/herdr-reviewr github:plannotator/herdr-annotate github:plannotator/plannotator-tui',
+  'bash "$HOME/dotfiles/scripts/setup-herdr-plugins.sh"',
 ]
 
 [tasks.bootstrap]
@@ -179,6 +192,11 @@ bun = "1.4.2"
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
 "github:herdrdev/herdr" = { version = "0.9.3", exe = "herdr" } # Native multi-agent terminal
+# Plugin runtimes: Mise owns downloads/checksums; Herdr link skips upstream builds.
+"github:eliasstravik/herdr-projects" = { version = "0.2.34", bin = "herdr-projects", asset_pattern = "herdr-projects-aarch64-apple-darwin" }
+"github:persiyanov/herdr-reviewr" = { version = "0.39.0", asset_pattern = "herdr-reviewr-aarch64-apple-darwin.tar.gz" }
+"github:plannotator/herdr-annotate" = { version = "0.1.0", version_prefix = "rust-lite-v", bin = "herdr-annotate", asset_pattern = "herdr-annotate-aarch64-apple-darwin" }
+"github:plannotator/plannotator-tui" = { version = "0.9.4", bin = "plannotator-tui", asset_pattern = "plannotator-tui-aarch64-apple-darwin" }
 "github:rtk-ai/rtk" = "0.47.0"                                 # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
 "github:cli/cli" = "2.100.0"

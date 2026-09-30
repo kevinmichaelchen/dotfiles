@@ -21,6 +21,12 @@ agent_panel_sort = "priority"
 status_indicators = "symbols"
 show_agent_labels_on_pane_borders = true
 
+[ui.sidebar.agents]
+rows = [["state_icon", "agent", "state_text"], [{ token = "$hp_sub", dim = true }]]
+
+[ui.sidebar.spaces]
+rows = [["state_icon", "workspace"], ["branch", "git_status"]]
+
 [ui.toast]
 # Visible without requesting macOS notification permissions.
 delivery = "herdr"
@@ -53,6 +59,30 @@ key = "prefix+alt+o"
 type = "shell"
 command = '"$HERDR_BIN_PATH" plugin pane open --plugin kevin.agents --entrypoint opencode --workspace "$HERDR_ACTIVE_WORKSPACE_ID" --cwd "$HERDR_ACTIVE_PANE_CWD" --focus'
 description = "OpenCode v2: new tab in this checkout"
+
+[[keys.command]]
+key = "prefix+alt+p"
+type = "plugin_action"
+command = "herdr-projects.open-popup"
+description = "Projects coordinator and worker threads"
+
+[[keys.command]]
+key = "prefix+alt+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"
+description = "Review code and PR diffs"
+
+[[keys.command]]
+key = "prefix+alt+n"
+type = "plugin_action"
+command = "annotate.capture"
+description = "Annotate the terminal selection"
+
+[[keys.command]]
+key = "prefix+alt+d"
+type = "plugin_action"
+command = "annotate.open"
+description = "Review documents in the current folder"
 
 [session]
 resume_agents_on_restore = true
