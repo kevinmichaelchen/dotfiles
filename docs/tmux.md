@@ -102,7 +102,7 @@ system clipboard.
 ### Plugins (via TPM)
 
 We use [TPM (Tmux Plugin Manager)][tpm] to manage plugins. It's installed
-automatically via chezmoi's `.chezmoiexternal.toml`.
+automatically via `[bootstrap.repos]` in `mise/config.toml`.
 
 ```bash
 set -g @plugin 'tmux-plugins/tpm'

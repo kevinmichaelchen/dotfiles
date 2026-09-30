@@ -10,9 +10,8 @@ import tomllib
 
 REPO = Path(__file__).resolve().parent.parent
 MISE = shutil.which("mise")
-CHEZMOI = shutil.which("chezmoi")
-if not MISE or not CHEZMOI:
-    raise SystemExit("Validation requires mise and chezmoi on PATH")
+if not MISE:
+    raise SystemExit("Validation requires mise on PATH")
 
 
 def require(condition, message):
@@ -23,7 +22,7 @@ def require(condition, message):
 with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
     home = Path(temporary)
     checkout = home / "dotfiles"
-    for directory in ("mise", "dotfiles", "chezmoi"):
+    for directory in ("mise", "dotfiles"):
         shutil.copytree(REPO / directory, checkout / directory)
     config = checkout / "mise/config.toml"
     entries = tomllib.loads(config.read_text())["dotfiles"]
@@ -83,13 +82,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
     require((checkout / "mise/mise.lock").read_bytes() == (REPO / "mise/mise.lock").read_bytes(),
             "Validation changed lockfile contents")
 
-    # Chezmoi retains its modify/create entries but owns no Mise target.
-    managed = run(CHEZMOI, "--source", str(checkout / "chezmoi"),
-                  "--destination", str(home), "managed", "--include=files").stdout.splitlines()
-    overlap = {target[2:] for target in entries}.intersection(managed)
-    require(not overlap, f"Targets have two owners: {sorted(overlap)}")
-    for retained in (".codex/config.toml", ".claude.json", ".config/crush/crush.json",
-                     ".config/opencode/opencode.json", ".config/opencode/package.json"):
-        require(retained in managed, f"Chezmoi no longer manages {retained}")
+    # Repository declarations parse and preview without network or checkout writes.
+    run(MISE, "bootstrap", "repos", "apply", "--dry-run")
+    require(not (home / ".tmux/plugins/tpm").exists(), "Repo dry run created a checkout")
+    run(MISE, "bootstrap", "--only", "task", "--dry-run")
     print(f"Verified {len(entries)} links: migration conflicts, dry run, repeated apply, "
-          "installed-config loading, unmanaged files, lockfile, and separate ownership")
+          "installed-config loading, unmanaged files, lockfile, and repository preview")

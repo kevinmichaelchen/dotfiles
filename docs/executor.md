@@ -16,7 +16,7 @@ Executor's MCP OAuth discovery and keep their own refreshable sessions. Desktop
 clients run `executor mcp` over stdio instead of authenticating to the local
 HTTP endpoint.
 
-After applying Chezmoi on a new laptop, authenticate the Cloud endpoint:
+After running `mise bootstrap` on a new laptop, authenticate the Cloud endpoint:
 
 ```bash
 codex mcp login executor
@@ -50,12 +50,12 @@ a second control plane and fights Executor's own runtime model.
 There is intentionally no steady-state source sync script. Add or edit sources,
 secrets, OAuth connections, and policies through Executor Cloud.
 
-## Chezmoi Boundary
+## Dotfiles Boundary
 
-Chezmoi manages stable endpoint and command wiring, not Executor credentials or
+The app-config scripts manage stable endpoint and command wiring, not Executor credentials or
 client OAuth sessions.
 
-Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
+Dotfiles should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
 configuration belongs to Executor's control plane.
 
 If `doctor.sh` reports a lingering `sources` key in `executor.jsonc`, treat it

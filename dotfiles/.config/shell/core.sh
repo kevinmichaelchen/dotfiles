@@ -16,14 +16,8 @@ alias rg='rg --sort path'
 alias dot='cd ~/dotfiles'
 alias dot-update='cd ~/dotfiles && ./scripts/update.sh'
 
-# Plain files are linked by Mise; Chezmoi handles modification templates/hooks.
+# Mise links plain files; its bootstrap task maintains app settings and skills.
 alias mda='mise dotfiles apply'
 alias mdp='mise dotfiles apply --dry-run'
 alias mds='mise dotfiles status'
 alias mde='mise dotfiles edit'
-
-alias cm='chezmoi --source=$HOME/dotfiles/chezmoi'
-alias cma='chezmoi apply --source=$HOME/dotfiles/chezmoi'
-alias cmd='chezmoi diff --source=$HOME/dotfiles/chezmoi'
-alias cme='chezmoi edit --source=$HOME/dotfiles/chezmoi'
-alias cmu='chezmoi update --source=$HOME/dotfiles/chezmoi'

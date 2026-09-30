@@ -48,7 +48,7 @@ by default.
 ## Claude Code projection
 
 `~/.agents/skills` is the canonical global skill directory shared by Codex,
-Claude Code, Crush, and OpenCode. Chezmoi links `~/.claude/skills` to it.
+Claude Code, Crush, and OpenCode. The app-config script links `~/.claude/skills` to it.
 Mise links the still-vendored skill files individually; the sync script owns
 lock-managed skill directories and leaves vendored files alone.
 

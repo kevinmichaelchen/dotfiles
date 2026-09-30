@@ -1,33 +1,31 @@
 # Dotfiles
 
-Workstation configuration built around mise for machine convergence and plain
-dotfiles, with Chezmoi for modification templates, create-only files, external
-repositories, and hooks.
+Workstation configuration managed by Mise, with focused scripts for settings
+that need to preserve app-managed local preferences.
 
 ## Architecture
 
-The active configuration has two owners:
-
-- **mise** manages machine-global packages, macOS defaults, language runtimes,
-  development CLI versions, and plain configuration files through `[dotfiles]`.
-- **Chezmoi** modifies selected JSON/TOML settings while preserving local keys,
-  seeds create-only files, fetches external repositories, and runs the existing
-  apply hooks. Authentication belongs to each tool or connected app.
+- **Mise** manages packages, macOS defaults, developer tools, external Git
+  checkouts, and plain dotfiles.
+- **App-config scripts** maintain selected Codex, Claude, OpenCode, and Crush
+  settings without replacing unrelated preferences.
+- **Skill scripts** install and scan the pinned skills in `skills-lock.json`.
 
 ```text
 ~/dotfiles/
 ├── mise/
-│   ├── config.toml                  # workstation, tool, and dotfile declarations
+│   ├── config.toml                  # workstation, tools, repos, dotfiles, tasks
 │   └── mise.lock                    # locked tool artifacts
-├── dotfiles/                        # plain files, with their real target names
+├── dotfiles/                        # plain files with their real target names
 │   ├── .config/shell/               # shared shell environment and aliases
 │   ├── .config/zsh/custom.zsh       # interactive Zsh behavior
 │   └── .zshrc                       # Zsh entry point
-├── chezmoi/                         # modification templates and apply hooks
 └── scripts/
-    ├── bootstrap.sh                 # install mise and preview convergence
-    ├── update.sh                    # apply and upgrade managed state
-    └── check-dotfiles.py            # isolated migration and convergence checks
+    ├── app-config/                  # selected app settings and first-run seed
+    ├── agent-skills/                # pinned skill installation and scanning
+    ├── bootstrap-workstation.sh     # app config and skill sync after tool install
+    ├── bootstrap.sh                 # install Mise and preview convergence
+    └── update.sh                    # apply and upgrade managed state
 ```
 
 ## Bootstrap
@@ -52,9 +50,10 @@ export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/mise/config.toml"
 ```
 
 `mise bootstrap` installs missing Homebrew formulae and casks, applies macOS
-defaults, links plain dotfiles, installs versioned tools, and finally runs
-Chezmoi. Mise links the shell startup files, including activation and
-login-shell shims. The declarative phases are idempotent and skip state that already matches the
+defaults, follows the declared external Git branches, links plain dotfiles, and
+installs versioned tools. Its final bootstrap task updates selected app settings
+and synchronizes pinned agent skills. Mise links the shell startup files,
+including activation and login-shell shims. The declarative phases are idempotent and skip state that already matches the
 configuration.
 
 ## Migrating Existing Chezmoi Files
@@ -83,7 +82,7 @@ mise dotfiles status
 
 Subsequent applies need no force flag. Each plain file has its own link, so
 runtime files alongside OpenCode configuration and installed upstream agent
-skills stay in place. Chezmoi no longer declares any of these 29 targets.
+skills stay in place. Chezmoi is no longer used or installed by this repository.
 The config and lockfile link back to `mise/`, so tool updates use the repository
 sources. No watcher or automatic history synchronization is enabled.
 
@@ -134,9 +133,10 @@ Add macOS preferences to the friendly `[bootstrap.macos.*]` sections or to
 `[bootstrap.macos.defaults]` for raw scalar defaults.
 
 Keep plain personal files and shell behavior under `dotfiles/`, and declare each
-target and source in `[dotfiles]`. Keep modification templates and hooks under
-`chezmoi/`. Keep API keys and bearer tokens out of this repository and its templates. Authenticate with each
-provider's browser/OAuth flow, CLI credential store, or connected app instead.
+target and source in `[dotfiles]`. Keep selective app updates under
+`scripts/app-config/`. Keep API keys and bearer tokens out of this repository.
+Authenticate with each provider's browser/OAuth flow, CLI credential store, or
+connected app instead.
 
 Executor does not require a dotfiles-managed bearer token. Cloud uses each MCP
 client's OAuth flow, while Desktop runs locally over `executor mcp` stdio.
@@ -163,22 +163,46 @@ mds               # inspect plain-file status
 These aliases use `mise dotfiles`, the descriptive spelling supported by the
 installed Mise release. Editing through a target symlink also edits the source.
 
-## Chezmoi Commands
+## App Settings
 
 ```bash
-cme ~/.codex/config.toml   # edit a Chezmoi-managed template
-cmd                       # preview template/hook changes
-cma                       # apply templates, externals, and hooks
-cmu                       # update from the Chezmoi source
+python3 ~/dotfiles/scripts/app-config/apply.py --dry-run
+mise run app-config
 ```
 
-Chezmoi aliases always use `~/dotfiles/chezmoi` as the explicit source directory.
+The dry run lists pending paths without printing configuration contents. The
+script validates all four app configurations before writing and replaces changed
+files atomically with private permissions. Local OpenCode model/plugin choices,
+unrelated MCP servers, Codex project settings, and other local preferences remain.
+Malformed inputs, configuration symlinks, or a conflicting Claude skills directory
+stop the script rather than overwriting them.
+
+OpenCode's `package.json` is seeded only when absent; existing dependency manifests
+remain local. Edit `scripts/app-config/opencode-package.json` to change the seed
+for new machines. Claude's skills directory links to the canonical
+`~/.agents/skills` directory.
+
+The former one-time credential/binary cleanup migrations and nested Mise install
+hook have been removed. This PR does not rerun those migrations or uninstall an
+existing Chezmoi executable.
+
+## External Repositories
+
+`[bootstrap.repos]` follows TPM's `master` branch and the Hugging Face MCP server's
+`main` branch. Mise clones missing checkouts and updates declared branches during
+bootstrap, replacing the former weekly Chezmoi refresh. Dirty checkouts or
+conflicting origins fail instead of discarding local work.
+
+```bash
+mise bootstrap repos apply --dry-run
+mise bootstrap repos apply --yes
+```
 
 ## Agent Skills
 
-Agent skills are declared in `skills-lock.json`. Chezmoi runs
-`run_after_02_sync-agent-skills.sh`, which installs and verifies pinned skills
-under `~/.agents/skills`.
+Agent skills are declared in `skills-lock.json`. The final bootstrap task runs
+the existing security-tool installer and `sync.sh --prune`, installing and
+verifying pinned skills under `~/.agents/skills`.
 
 ```bash
 ~/dotfiles/scripts/agent-skills/sync.sh --prune
@@ -192,9 +216,11 @@ under `~/.agents/skills`.
 Repository-only checks that do not apply workstation state:
 
 ```bash
-shellcheck scripts/bootstrap.sh scripts/update.sh
+shellcheck scripts/bootstrap.sh scripts/update.sh scripts/bootstrap-workstation.sh
 zsh -n dotfiles/.zshrc dotfiles/.config/zsh/custom.zsh
 python3 scripts/check-dotfiles.py
+python3 scripts/check-repos.py
+python3 scripts/app-config/check.py
 mkdir -p /tmp/dotfiles-mise-check
 cp mise/config.toml /tmp/dotfiles-mise-check/mise.toml
 (cd /tmp/dotfiles-mise-check && mise fmt --check)
@@ -210,4 +236,4 @@ older executable fails with update guidance instead of misinterpreting it.
 - [mise bootstrap](https://mise.jdx.dev/cli/bootstrap.html)
 - [mise bootstrap packages](https://mise.jdx.dev/bootstrap/packages/)
 - [mise macOS defaults](https://mise.jdx.dev/bootstrap/macos-defaults.html)
-- [Chezmoi user guide](https://www.chezmoi.io/user-guide/command-overview/)
+- [Mise Git repositories](https://mise.jdx.dev/bootstrap/repos.html)

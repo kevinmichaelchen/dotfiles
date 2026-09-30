@@ -6,25 +6,25 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 
 | File                                   | Purpose                                             |
 | -------------------------------------- | --------------------------------------------------- |
-| `modify_private_opencode.json.tmpl`    | Merges Executor MCP entries and the model catalog   |
-| `create_package.json`                  | Source manifest for bun-managed plugin dependencies |
+| `scripts/app-config/opencode.py`    | Merges Executor MCP entries and the model catalog   |
+| `scripts/app-config/opencode-package.json`                  | Source manifest for bun-managed plugin dependencies |
 | `command/tokenscope.md`                | `/tokenscope` command prompt for TokenScope reports |
 
-### What Chezmoi owns
+### What the app-config script owns
 
-`modify_private_opencode.json.tmpl` rewrites only part of
+`scripts/app-config/opencode.py` rewrites only part of
 `~/.config/opencode/opencode.json` and passes the rest through untouched.
 
 | Key                        | Owner          |
 | -------------------------- | -------------- |
-| `mcp.executor{,-desktop}`  | Chezmoi        |
-| `provider.*`               | Chezmoi        |
-| `small_model`              | Chezmoi        |
+| `mcp.executor{,-desktop}`  | App-config script |
+| `provider.openai.options`, `provider.openrouter.models` | App-config script |
+| `small_model`              | App-config script |
 | `model`                    | Machine-local  |
 | `plugin`, everything else  | Machine-local  |
 
 `model` is deliberately unmanaged so switching the primary model in the TUI is
-not reverted on the next `chezmoi apply`. `small_model` is kept on DeepSeek
+not reverted on the next `mise bootstrap`. `small_model` is kept on DeepSeek
 V4.1 Flash so lightweight background work does not fall back to a stale model.
 
 ### Authentication
@@ -59,8 +59,9 @@ Everything else resolves from the built-in models.dev catalog.
 | [opencode-openai-codex-auth][codex-auth]     | OpenAI OAuth authentication  |
 | [@ramtinj95/opencode-tokenscope][tokenscope] | Token usage and cost reports |
 
-`create_package.json` uses Chezmoi's `create_` prefix: the target is written
-only when it does not already exist, so `bun install` may rewrite it freely.
+`scripts/app-config/apply.py` seeds `package.json` from
+`scripts/app-config/opencode-package.json` only when the target is absent, so
+`bun install` may rewrite it freely.
 The trade-off is that bumping a version here reaches new machines only. Update
 an existing machine by hand:
 
@@ -70,7 +71,7 @@ cd ~/.config/opencode && bun install
 
 ## Runtime Files (Not Managed)
 
-Generated at runtime and excluded from Chezmoi via `.chezmoiignore`:
+Generated at runtime and left unmanaged by Mise:
 
 - `node_modules/` - Plugin dependencies
 - `bun.lock` - Lockfile

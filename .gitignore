@@ -16,6 +16,10 @@ mise.toml
 *.tmp
 .tmp/
 
+# Python runtime artifacts
+__pycache__/
+*.pyc
+
 # Skill runtime artifacts
 .agents/skills/**/.venv/
 .agents/skills/**/__pycache__/

@@ -27,7 +27,6 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 # mise's built-in Homebrew support can install these without a pre-existing
 # Homebrew installation.
 [bootstrap.packages]
-"brew:chezmoi" = "latest"
 "brew:cloudflared" = "latest"
 "brew:git" = "latest"
 "brew:git-town" = "latest"
@@ -43,6 +42,11 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 "brew:zsh-autosuggestions" = "latest"
 "brew:zsh-syntax-highlighting" = "latest"
 "brew-cask:ghostty" = "latest"
+
+# Follow upstream branches; Mise refuses dirty or conflicting checkouts.
+[bootstrap.repos]
+"~/.tmux/plugins/tpm" = { url = "https://github.com/tmux-plugins/tpm.git", ref = "master" }
+"~/dev/github.com/kevinmichaelchen/huggingface-mcp-server" = { url = "https://github.com/kevinmichaelchen/huggingface-mcp-server.git", ref = "main" }
 
 [bootstrap.user]
 login_shell = "/bin/zsh"
@@ -100,8 +104,12 @@ AppleKeyboardUIMode = 3
 "~/.zshrc" = { source = "~/dotfiles/dotfiles/.zshrc", mode = "symlink" }
 
 [tasks.bootstrap]
-description = "Apply Chezmoi modification templates, external repos, and hooks"
-run = "MISE_BOOTSTRAP_ACTIVE=1 chezmoi apply --source=\"$HOME/dotfiles/chezmoi\""
+description = "Maintain app settings and synchronize pinned agent skills"
+run = 'bash "$HOME/dotfiles/scripts/bootstrap-workstation.sh"'
+
+[tasks.app-config]
+description = "Maintain selected app settings while preserving local preferences"
+run = 'python3 "$HOME/dotfiles/scripts/app-config/apply.py"'
 
 [tools]
 
@@ -149,7 +157,6 @@ bun = "1.4.2"
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
-# Chezmoi is installed during the package phase before the bootstrap task.
 "github:anomalyco/opencode" = "1.18.30"
 "github:rtk-ai/rtk" = "0.47.0"                # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
@@ -192,5 +199,5 @@ bun = "1.4.2"
 # ============================================================================
 #   - mise bootstrap: system packages, macOS defaults, login shell, and tools
 #   - mise dotfiles: plain files and shell behavior
-#   - Chezmoi: modification templates, create-only files, external repos, and hooks
+#   - bootstrap task: selected app settings, first-run seeds, and agent skills
 #   - mise.run: installs mise itself before this configuration is available
