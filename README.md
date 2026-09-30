@@ -256,3 +256,9 @@ older executable fails with update guidance instead of misinterpreting it.
 - [mise bootstrap packages](https://mise.jdx.dev/bootstrap/packages/)
 - [mise macOS defaults](https://mise.jdx.dev/bootstrap/macos-defaults.html)
 - [Mise Git repositories](https://mise.jdx.dev/bootstrap/repos.html)
+
+## Mixed-agent workstation
+
+[Herdr setup and workflow](docs/herdr.md) runs Codex, Claude Code and OpenCode v2
+in persistent tabs, with native subscription auth and separate Git worktrees
+for writing agents. After bootstrap, opt in with `mise run herdr:setup`.

@@ -228,6 +228,16 @@ url = "https://github.com/cli/cli/releases/download/v2.100.0/gh_2.100.0_macOS_ar
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/542974295"
 provenance = "github-attestations"
 
+[[tools."github:herdrdev/herdr"]]
+version = "0.9.3"
+backend = "github:herdrdev/herdr"
+
+[tools."github:herdrdev/herdr"."platforms.macos-arm64"]
+checksum = "sha256:5173a3e0ae42d5d1ab7ebfa5d5e6329f7c3d23f8e1a3677c7ce3231da2884157"
+url = "https://github.com/herdrdev/herdr/releases/download/v0.9.3/herdr-macos-aarch64"
+url_api = "https://api.github.com/repos/herdrdev/herdr/releases/assets/599036381"
+provenance = "github-attestations"
+
 [[tools."github:libkrun/krunkit"]]
 version = "1.3.2"
 backend = "github:libkrun/krunkit"

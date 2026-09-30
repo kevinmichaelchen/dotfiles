@@ -1,0 +1,26 @@
+id = "kevin.agents"
+name = "Subscription and API agents"
+version = "1.0.0"
+min_herdr_version = "0.9.3"
+description = "Native agent tabs with the dotfiles config layers"
+platforms = ["macos"]
+
+# Native argv launches bypass interactive shell functions. Pass the layers
+# explicitly; use sh only where HOME expansion is needed. No bypass flags.
+[[panes]]
+id = "codex"
+title = "Codex"
+placement = "tab"
+command = ["codex", "--profile", "dotfiles"]
+
+[[panes]]
+id = "claude"
+title = "Claude"
+placement = "tab"
+command = ["sh", "-c", 'exec claude --mcp-config "$HOME/.config/claude/mcp.json"']
+
+[[panes]]
+id = "opencode"
+title = "OpenCode"
+placement = "tab"
+command = ["sh", "-c", 'export OPENCODE_CONFIG="${OPENCODE_CONFIG:-$HOME/.config/opencode/dotfiles.json}"; exec opencode']
