@@ -10,11 +10,11 @@ url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.
 url_api = "https://api.github.com/repos/ajeetdsouza/zoxide/releases/assets/466316174"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.37.5"
+version = "2.37.7"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.37.5.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.37.7.pkg"
 
 [[tools."aqua:charmbracelet/crush"]]
 version = "0.96.1"
@@ -24,6 +24,16 @@ backend = "aqua:charmbracelet/crush"
 checksum = "sha256:6302f9072ec0f502bae1c0a0454da80d23907ffb653c10ab3668b7e7515b0867"
 url = "https://github.com/charmbracelet/crush/releases/download/v0.96.1/crush_0.96.1_Darwin_arm64.tar.gz"
 url_api = "https://api.github.com/repos/charmbracelet/crush/releases/assets/579403036"
+provenance = "cosign"
+
+[[tools."aqua:charmbracelet/vhs"]]
+version = "0.12.0"
+backend = "aqua:charmbracelet/vhs"
+
+[tools."aqua:charmbracelet/vhs"."platforms.macos-arm64"]
+checksum = "sha256:8fe52ea2bfe829c1c733d66b82683346795b0f36baa7dbc52961da8f3b82eaca"
+url = "https://github.com/charmbracelet/vhs/releases/download/v0.12.0/vhs_0.12.0_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/vhs/releases/assets/552473032"
 provenance = "cosign"
 
 [[tools."aqua:chmln/sd"]]
@@ -52,6 +62,7 @@ backend = "aqua:dprint/dprint"
 checksum = "sha256:f9e752812791f258e89ff88a7affd05c793b0db3d929718651eae7df5f19eb2e"
 url = "https://github.com/dprint/dprint/releases/download/0.57.4/dprint-aarch64-apple-darwin.zip"
 url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/546351171"
+provenance = "github-attestations"
 
 [[tools."aqua:golangci/golangci-lint"]]
 version = "2.13.2"
@@ -139,13 +150,13 @@ url = "https://github.com/starship/starship/releases/download/v1.26.0/starship-a
 url_api = "https://api.github.com/repos/starship/starship/releases/assets/460374577"
 
 [[tools."aqua:terrastruct/d2"]]
-version = "0.8.2"
+version = "0.9.0"
 backend = "aqua:terrastruct/d2"
 
 [tools."aqua:terrastruct/d2"."platforms.macos-arm64"]
-checksum = "sha256:73ddb07c636bd5c5723e4bf8569a90b7329ea35dc32af2155650e1f572e823b2"
-url = "https://github.com/d2lang/d2/releases/download/v0.8.2/d2-v0.8.2-macos-arm64.tar.gz"
-url_api = "https://api.github.com/repos/d2lang/d2/releases/assets/527960107"
+checksum = "sha256:eaf6c0c143e56dd9fa97bfb6df25ea9c1ebce40245f056a0768cf1a6c15d3064"
+url = "https://github.com/d2lang/d2/releases/download/v0.9.0/d2-v0.9.0-macos-arm64.tar.gz"
+url_api = "https://api.github.com/repos/d2lang/d2/releases/assets/549449061"
 
 [[tools."aqua:typst/typst"]]
 version = "0.15.1"
@@ -173,31 +184,22 @@ version = "15.0.0"
 backend = "cargo:tokei"
 
 [[tools."github:RhysSullivan/executor"]]
-version = "1.6.7"
+version = "1.6.10"
 backend = "github:RhysSullivan/executor"
 
 [tools."github:RhysSullivan/executor"."platforms.macos-arm64"]
-checksum = "sha256:b4185886c58ccc8bd9b5fefb88b6f7a07f06fb2052c5a4eda88f4f6b405dbd8d"
-url = "https://github.com/UsefulSoftwareCo/executor/releases/download/v1.6.7/executor-darwin-arm64.zip"
-url_api = "https://api.github.com/repos/UsefulSoftwareCo/executor/releases/assets/536216472"
-
-[[tools."github:abhinav/git-spice"]]
-version = "0.31.2"
-backend = "github:abhinav/git-spice"
-
-[tools."github:abhinav/git-spice"."platforms.macos-arm64"]
-checksum = "sha256:a2c362d19a818ed1745e7308a40e7eedc57e462eba839fae752e287dbd4057c7"
-url = "https://github.com/abhinav/git-spice/releases/download/v0.31.2/git-spice.Darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/abhinav/git-spice/releases/assets/484895560"
+checksum = "sha256:66de5cebcbc17c53d7fc2c2a256a95e6c9c707dd1290aeaa34b93aac46538b15"
+url = "https://github.com/RhysSullivan/executor/releases/download/v1.6.10/executor-darwin-arm64.zip"
+url_api = "https://api.github.com/repos/RhysSullivan/executor/releases/assets/573095900"
 
 [[tools."github:astral-sh/uv"]]
-version = "0.12.9"
+version = "0.12.18"
 backend = "github:astral-sh/uv"
 
 [tools."github:astral-sh/uv"."platforms.macos-arm64"]
-checksum = "sha256:301f72afaf54060f92da7016cb0115bd077f43a9c8e39c1d8170a0bac80fd398"
-url = "https://github.com/astral-sh/uv/releases/download/0.12.9/uv-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/540200930"
+checksum = "sha256:cf40e0c6a202190ccd9e0406dcfdd5b2d6668a9a5c779b17948963df32aafe5b"
+url = "https://github.com/astral-sh/uv/releases/download/0.12.18/uv-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/582430554"
 provenance = "github-attestations"
 
 [[tools."github:charmbracelet/glow"]]
@@ -210,22 +212,22 @@ url = "https://github.com/charmbracelet/glow/releases/download/v3.0.0/glow_3.0.0
 url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/510466964"
 
 [[tools."github:charmbracelet/gum"]]
-version = "2.0.0"
+version = "2.0.1"
 backend = "github:charmbracelet/gum"
 
 [tools."github:charmbracelet/gum"."platforms.macos-arm64"]
-checksum = "sha256:20224bcddeda5b9146373862ca77be7b1592c46c271435e00a2d3ab3f7750bb0"
-url = "https://github.com/charmbracelet/gum/releases/download/v2.0.0/gum_2.0.0_Darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/521957955"
+checksum = "sha256:994662daab6fcfe9dcfc57d87ca42bcae2948d86fa864f9010a3848fa9bb7d6e"
+url = "https://github.com/charmbracelet/gum/releases/download/v2.0.1/gum_2.0.1_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/556563007"
 
 [[tools."github:cli/cli"]]
-version = "2.100.0"
+version = "2.101.0"
 backend = "github:cli/cli"
 
 [tools."github:cli/cli"."platforms.macos-arm64"]
-checksum = "sha256:45f9a62da2f6e641a7fad57e2ce39656dfd7ef331372d80a2a2aed65abb01642"
-url = "https://github.com/cli/cli/releases/download/v2.100.0/gh_2.100.0_macOS_arm64.zip"
-url_api = "https://api.github.com/repos/cli/cli/releases/assets/542974295"
+checksum = "sha256:e4303e39d8f07141c4bad4b99b01079f05029c59b27076e8fbc825c985ecdd8b"
+url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_macOS_arm64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857200"
 provenance = "github-attestations"
 
 [[tools."github:eliasstravik/herdr-projects"]]
@@ -298,13 +300,13 @@ url = "https://github.com/plannotator/plannotator-tui/releases/download/v0.9.4/p
 url_api = "https://api.github.com/repos/plannotator/plannotator-tui/releases/assets/587174935"
 
 [[tools."github:rtk-ai/rtk"]]
-version = "0.47.0"
+version = "0.49.0"
 backend = "github:rtk-ai/rtk"
 
 [tools."github:rtk-ai/rtk"."platforms.macos-arm64"]
-checksum = "sha256:3617f9a95d536e0b6bb9e2c6d121d81c3d8fd8ef04c5b2a605f5e7b0309a47d2"
-url = "https://github.com/rtk-ai/rtk/releases/download/v0.47.0/rtk-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/rtk-ai/rtk/releases/assets/540806263"
+checksum = "sha256:bbbfebabb22686993a80da731aa4d5d35116fb8ae24abb00608efa028e13ae01"
+url = "https://github.com/rtk-ai/rtk/releases/download/v0.49.0/rtk-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/rtk-ai/rtk/releases/assets/556881349"
 
 [[tools."github:sigoden/projclean"]]
 version = "0.9.0"
@@ -316,13 +318,13 @@ url = "https://github.com/sigoden/projclean/releases/download/v0.9.0/projclean-v
 url_api = "https://api.github.com/repos/sigoden/projclean/releases/assets/414034562"
 
 [[tools."github:vercel-labs/agent-browser"]]
-version = "0.36.0"
+version = "0.38.1"
 backend = "github:vercel-labs/agent-browser"
 
 [tools."github:vercel-labs/agent-browser"."platforms.macos-arm64"]
-checksum = "sha256:b2106ab39db0838e7b1772f7f26f760518de56d09053150c56f9dddf15af997d"
-url = "https://github.com/vercel-labs/agent-browser/releases/download/v0.36.0/agent-browser-darwin-arm64"
-url_api = "https://api.github.com/repos/vercel-labs/agent-browser/releases/assets/538978835"
+checksum = "sha256:2e61287259053ea964d39e77002c6a34af0e589e55ccff25e659efae7e892e0d"
+url = "https://github.com/vercel-labs/agent-browser/releases/download/v0.38.1/agent-browser-darwin-arm64"
+url_api = "https://api.github.com/repos/vercel-labs/agent-browser/releases/assets/568699596"
 
 [[tools."github:x-motemen/ghq"]]
 version = "1.10.1"
@@ -372,8 +374,15 @@ backend = "npm:@opencode/cli"
 [tools."npm:@opencode/cli".options]
 npm_args = "--ignore-scripts=false"
 
+[[tools."npm:@opencode/cli"]]
+version = "2.0.20"
+backend = "npm:@opencode/cli"
+
+[tools."npm:@opencode/cli".options]
+allow_builds = '["@opencode/cli"]'
+
 [[tools."npm:firecrawl-cli"]]
-version = "1.24.3"
+version = "1.24.4"
 backend = "npm:firecrawl-cli"
 
 [[tools."npm:markit-ai"]]
@@ -385,7 +394,7 @@ version = "2.0.6"
 backend = "npm:sfw"
 
 [[tools."npm:wrangler"]]
-version = "4.136.2"
+version = "4.137.0"
 backend = "npm:wrangler"
 
 [[tools."pipx:huggingface_hub"]]
@@ -400,13 +409,13 @@ backend = "pipx:parallel-web-tools"
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.5.1"
+version = "12.6.0"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:776b26182ea825d5846dc236d29773cf4b7568b7f0abe145c328a342284c8b75"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.5.1/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573486213"
+checksum = "sha256:1030f38e14fa2e6c87fe6ab0313a3bf3b794a961504f4439bad2ca2110d3583e"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.6.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/581813250"
 provenance = "github-attestations"
 
 [[tools.python]]

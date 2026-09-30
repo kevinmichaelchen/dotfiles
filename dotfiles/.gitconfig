@@ -11,8 +11,6 @@
     path = ~/.config/git/kevinmichaelchen
 [pager]
 	branch = false
-[git-town]
-	sync-feature-strategy = merge
 [init]
 	defaultBranch = main
 [interactive]
