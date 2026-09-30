@@ -52,15 +52,37 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
         require(path.startswith("~/"), f"Expected home-relative path: {path}")
         return home / path[2:]
 
+    # Fresh bootstrap prepares the shared directory before linking the projection.
+    run(MISE, "bootstrap", "--only", "dotfiles", "--yes")
+    for target in entries:
+        destination = expand(target)
+        require(destination.is_symlink(), f"Fresh bootstrap did not link {target}")
+        destination.unlink()
+
     # Seed real files as an existing Chezmoi workstation would have them.
     for target, entry in entries.items():
         source = expand(entry["source"])
-        require(source.is_file(), f"Missing source: {source}")
+        require(source.exists(), f"Missing source: {source}")
         destination = expand(target)
         destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, destination)
+        if source.is_dir():
+            destination.symlink_to(source)
+        else:
+            shutil.copy2(source, destination)
     neighbor = home / ".config/opencode/runtime-local.json"
     neighbor.write_text('{"keep": true}\n')
+    # App-owned configuration is not a Mise target and must survive every apply.
+    app_state = {
+        ".claude.json": '{"preferences":{"theme":"local"}}\n',
+        ".codex/config.toml": 'sandbox_mode = "workspace-write"\n',
+        ".config/opencode/opencode.json": '{"model":"local/model","plugin":["local-plugin"]}\n',
+        ".config/opencode/package.json": '{"dependencies":{"local":"1"}}\n',
+        ".config/crush/crush.json": '{"options":{"tui":{"compact_mode":true}}}\n',
+    }
+    for relative, content in app_state.items():
+        path = home / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
     # A locally changed real file must require explicit replacement.
     expand("~/.zshrc").write_text("# machine-local change\n")
     conflict = run(MISE, "dotfiles", "apply", success=False)
@@ -78,6 +100,8 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
     env["MISE_GLOBAL_CONFIG_FILE"] = str(home / ".config/mise/config.toml")
     run(MISE, "dotfiles", "apply", "--yes")
     run(MISE, "dotfiles", "status")
+    for relative, content in app_state.items():
+        require((home / relative).read_text() == content, f"Local app state changed: {relative}")
     require(neighbor.read_text() == '{"keep": true}\n', "Unmanaged neighbor changed")
     require((checkout / "mise/mise.lock").read_bytes() == (REPO / "mise/mise.lock").read_bytes(),
             "Validation changed lockfile contents")

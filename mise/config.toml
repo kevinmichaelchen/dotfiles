@@ -46,7 +46,10 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 # Follow upstream branches; Mise refuses dirty or conflicting checkouts.
 [bootstrap.repos]
 "~/.tmux/plugins/tpm" = { url = "https://github.com/tmux-plugins/tpm.git", ref = "master" }
-"~/dev/github.com/kevinmichaelchen/huggingface-mcp-server" = { url = "https://github.com/kevinmichaelchen/huggingface-mcp-server.git", ref = "main" }
+
+# Prepare the source directory for the Claude skills projection.
+[bootstrap.hooks]
+pre-dotfiles = 'mkdir -p "$HOME/.agents/skills"'
 
 [bootstrap.user]
 login_shell = "/bin/zsh"
@@ -84,12 +87,12 @@ AppleKeyboardUIMode = 3
 "~/.config/dprint/dprint.jsonc" = { source = "~/dotfiles/dotfiles/.config/dprint/dprint.jsonc", mode = "symlink" }
 "~/.config/ghostty/config" = { source = "~/dotfiles/dotfiles/.config/ghostty/config", mode = "symlink" }
 "~/.config/git/kevinmichaelchen" = { source = "~/dotfiles/dotfiles/.config/git/kevinmichaelchen", mode = "symlink" }
-"~/.config/hunk/config.toml" = { source = "~/dotfiles/dotfiles/.config/hunk/config.toml", mode = "symlink" }
 "~/.config/opencode/README.md" = { source = "~/dotfiles/dotfiles/.config/opencode/README.md", mode = "symlink" }
 "~/.config/opencode/command/tokenscope.md" = { source = "~/dotfiles/dotfiles/.config/opencode/command/tokenscope.md", mode = "symlink" }
 "~/.config/shell/bat.sh" = { source = "~/dotfiles/dotfiles/.config/shell/bat.sh", mode = "symlink" }
 "~/.config/shell/core.sh" = { source = "~/dotfiles/dotfiles/.config/shell/core.sh", mode = "symlink" }
 "~/.config/shell/git.sh" = { source = "~/dotfiles/dotfiles/.config/shell/git.sh", mode = "symlink" }
+"~/.config/shell/agents.sh" = { source = "~/dotfiles/dotfiles/.config/shell/agents.sh", mode = "symlink" }
 "~/.config/shell/github.sh" = { source = "~/dotfiles/dotfiles/.config/shell/github.sh", mode = "symlink" }
 "~/.config/shell/pnpm.sh" = { source = "~/dotfiles/dotfiles/.config/shell/pnpm.sh", mode = "symlink" }
 "~/.config/shell/python.sh" = { source = "~/dotfiles/dotfiles/.config/shell/python.sh", mode = "symlink" }
@@ -103,13 +106,18 @@ AppleKeyboardUIMode = 3
 "~/.zprofile" = { source = "~/dotfiles/dotfiles/.zprofile", mode = "symlink" }
 "~/.zshrc" = { source = "~/dotfiles/dotfiles/.zshrc", mode = "symlink" }
 
-[tasks.bootstrap]
-description = "Maintain app settings and synchronize pinned agent skills"
-run = 'bash "$HOME/dotfiles/scripts/bootstrap-workstation.sh"'
+"~/.codex/dotfiles.config.toml" = { source = "~/dotfiles/dotfiles/.codex/dotfiles.config.toml", mode = "symlink" }
+"~/.config/claude/mcp.json" = { source = "~/dotfiles/dotfiles/.config/claude/mcp.json", mode = "symlink" }
+"~/.config/opencode/dotfiles.json" = { source = "~/dotfiles/dotfiles/.config/opencode/dotfiles.json", mode = "symlink" }
+"~/.config/crush/crushrc" = { source = "~/dotfiles/dotfiles/.config/crush/crushrc", mode = "symlink" }
+"~/.claude/skills" = { source = "~/.agents/skills", mode = "symlink" }
 
-[tasks.app-config]
-description = "Maintain selected app settings while preserving local preferences"
-run = 'python3 "$HOME/dotfiles/scripts/app-config/apply.py"'
+[tasks.bootstrap]
+description = "Install security tooling and synchronize pinned agent skills"
+run = [
+  'bash "$HOME/dotfiles/scripts/agent-skills/install-security-tools.sh"',
+  'bash "$HOME/dotfiles/scripts/agent-skills/sync.sh" --prune',
+]
 
 [tools]
 
@@ -199,5 +207,6 @@ bun = "1.4.2"
 # ============================================================================
 #   - mise bootstrap: system packages, macOS defaults, login shell, and tools
 #   - mise dotfiles: plain files and shell behavior
-#   - bootstrap task: selected app settings, first-run seeds, and agent skills
+#   - native app config layers: shared defaults without rewriting local state
+#   - bootstrap task: agent-skill tooling and pinned skill synchronization
 #   - mise.run: installs mise itself before this configuration is available

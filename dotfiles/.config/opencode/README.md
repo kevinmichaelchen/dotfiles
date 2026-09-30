@@ -6,20 +6,20 @@ Configuration for [OpenCode][opencode], an AI-powered coding assistant.
 
 | File                                   | Purpose                                             |
 | -------------------------------------- | --------------------------------------------------- |
-| `scripts/app-config/opencode.py`    | Merges Executor MCP entries and the model catalog   |
-| `scripts/app-config/opencode-package.json`                  | Source manifest for bun-managed plugin dependencies |
+| `dotfiles/.config/opencode/dotfiles.json`    | Merges Executor MCP entries and the model catalog   |
+| `plugin` declarations | Native plugin package declarations |
 | `command/tokenscope.md`                | `/tokenscope` command prompt for TokenScope reports |
 
-### What the app-config script owns
+### Native config layers
 
-`scripts/app-config/opencode.py` rewrites only part of
-`~/.config/opencode/opencode.json` and passes the rest through untouched.
+`dotfiles/.config/opencode/dotfiles.json` is loaded through `OPENCODE_CONFIG` after the machine-local
+`~/.config/opencode/opencode.json`. OpenCode merges the layers itself.
 
 | Key                        | Owner          |
 | -------------------------- | -------------- |
-| `mcp.executor{,-desktop}`  | App-config script |
-| `provider.openai.options`, `provider.openrouter.models` | App-config script |
-| `small_model`              | App-config script |
+| `mcp.executor{,-desktop}`  | Managed layer |
+| `provider.openai.options`, `provider.openrouter.models` | Managed layer |
+| `small_model`              | Managed layer |
 | `model`                    | Machine-local  |
 | `plugin`, everything else  | Machine-local  |
 
@@ -59,15 +59,10 @@ Everything else resolves from the built-in models.dev catalog.
 | [opencode-openai-codex-auth][codex-auth]     | OpenAI OAuth authentication  |
 | [@ramtinj95/opencode-tokenscope][tokenscope] | Token usage and cost reports |
 
-`scripts/app-config/apply.py` seeds `package.json` from
-`scripts/app-config/opencode-package.json` only when the target is absent, so
-`bun install` may rewrite it freely.
-The trade-off is that bumping a version here reaches new machines only. Update
-an existing machine by hand:
-
-```bash
-cd ~/.config/opencode && bun install
-```
+The managed config declares plugin package names and versions in `plugin`;
+OpenCode merges plugin declarations by identity and handles installation. The
+existing `package.json` and plugin choices remain local, and no dependency seed
+is written during bootstrap.
 
 ## Runtime Files (Not Managed)
 

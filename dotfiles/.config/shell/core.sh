@@ -16,7 +16,7 @@ alias rg='rg --sort path'
 alias dot='cd ~/dotfiles'
 alias dot-update='cd ~/dotfiles && ./scripts/update.sh'
 
-# Mise links plain files; its bootstrap task maintains app settings and skills.
+# Mise links configuration files; its bootstrap task synchronizes agent skills.
 alias mda='mise dotfiles apply'
 alias mdp='mise dotfiles apply --dry-run'
 alias mds='mise dotfiles status'

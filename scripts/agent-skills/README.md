@@ -4,7 +4,7 @@ These scripts keep upstream agent skills out of the dotfiles repo while still
 installing reproducible, scanned copies into `~/.agents/skills`.
 
 `~/.agents/skills` is the canonical runtime directory for shared global skills.
-The app-config script links `~/.claude/skills` to this canonical directory so
+Mise links `~/.claude/skills` to this canonical directory so
 Claude Code sees the same installed skills.
 
 ## Commands
@@ -29,5 +29,5 @@ downloaded skill, and records the computed directory hash. `sync.sh` then
 downloads to a temporary work directory, verifies the hash, scans again, and
 installs the reviewed copy into `~/.agents/skills`.
 
-Claude Code uses the app-config-managed `~/.claude/skills` link to the canonical
+Claude Code uses the Mise-managed `~/.claude/skills` link to the canonical
 `~/.agents/skills` directory. New lock-managed skills appear there after sync.

@@ -73,6 +73,7 @@ export PATH="${(j/:/)path}"
 [[ -f ~/.config/shell/testcontainers.sh ]] && source ~/.config/shell/testcontainers.sh
 [[ -f ~/.config/shell/zed.sh ]] && source ~/.config/shell/zed.sh
 [[ -f ~/.config/shell/github.sh ]] && source ~/.config/shell/github.sh
+[[ -f ~/.config/shell/agents.sh ]] && source ~/.config/shell/agents.sh
 
 # Build a stable machine label once, then reuse it across every future shell.
 if [[ -d /Applications/Cisco ]]; then

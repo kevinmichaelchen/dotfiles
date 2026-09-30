@@ -1,14 +1,14 @@
 # Dotfiles
 
-Workstation configuration managed by Mise, with focused scripts for settings
-that need to preserve app-managed local preferences.
+Workstation configuration managed by Mise. App settings are declared in native
+config layers that preserve machine-local preferences and runtime state.
 
 ## Architecture
 
 - **Mise** manages packages, macOS defaults, developer tools, external Git
   checkouts, and plain dotfiles.
-- **App-config scripts** maintain selected Codex, Claude, OpenCode, and Crush
-  settings without replacing unrelated preferences.
+- **Native app config layers** declare shared Codex, Claude, OpenCode, and Crush
+  settings; the apps merge those with their own local state.
 - **Skill scripts** install and scan the pinned skills in `skills-lock.json`.
 
 ```text
@@ -21,9 +21,7 @@ that need to preserve app-managed local preferences.
 │   ├── .config/zsh/custom.zsh       # interactive Zsh behavior
 │   └── .zshrc                       # Zsh entry point
 └── scripts/
-    ├── app-config/                  # selected app settings and first-run seed
     ├── agent-skills/                # pinned skill installation and scanning
-    ├── bootstrap-workstation.sh     # app config and skill sync after tool install
     ├── bootstrap.sh                 # install Mise and preview convergence
     └── update.sh                    # apply and upgrade managed state
 ```
@@ -51,7 +49,7 @@ export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/mise/config.toml"
 
 `mise bootstrap` installs missing Homebrew formulae and casks, applies macOS
 defaults, follows the declared external Git branches, links plain dotfiles, and
-installs versioned tools. Its final bootstrap task updates selected app settings
+installs versioned tools. Its final bootstrap task installs skill security tooling
 and synchronizes pinned agent skills. Mise links the shell startup files,
 including activation and login-shell shims. The declarative phases are idempotent and skip state that already matches the
 configuration.
@@ -69,6 +67,7 @@ those targets. Preview replacement without changing the machine:
 ```bash
 export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/mise/config.toml"
 mise trust "$MISE_GLOBAL_CONFIG_FILE"
+mkdir -p "$HOME/.agents/skills"  # source for the Claude skills projection
 mise dotfiles apply --force --dry-run
 ```
 
@@ -133,8 +132,8 @@ Add macOS preferences to the friendly `[bootstrap.macos.*]` sections or to
 `[bootstrap.macos.defaults]` for raw scalar defaults.
 
 Keep plain personal files and shell behavior under `dotfiles/`, and declare each
-target and source in `[dotfiles]`. Keep selective app updates under
-`scripts/app-config/`. Keep API keys and bearer tokens out of this repository.
+target and source in `[dotfiles]`. Use the apps' native config layers for shared
+settings. Keep API keys and bearer tokens out of this repository.
 Authenticate with each provider's browser/OAuth flow, CLI credential store, or
 connected app instead.
 
@@ -145,11 +144,12 @@ clients that expose an explicit login command:
 
 ```bash
 codex mcp login executor
-claude mcp login executor
 opencode mcp auth executor
 ```
 
-Crush connects through `mcp-remote`, which starts its OAuth flow when needed.
+For Claude Code, launch `claude` from a new configured shell and authenticate
+Executor through `/mcp`; its MCP file is loaded for the session. Crush connects
+through `mcp-remote`, which starts its OAuth flow when needed.
 
 ## Dotfile Commands
 
@@ -165,32 +165,46 @@ installed Mise release. Editing through a target symlink also edits the source.
 
 ## App Settings
 
-```bash
-python3 ~/dotfiles/scripts/app-config/apply.py --dry-run
-mise run app-config
-```
+Desired settings live in ordinary config files, linked by Mise:
 
-The dry run lists pending paths without printing configuration contents. The
-script validates all four app configurations before writing and replaces changed
-files atomically with private permissions. Local OpenCode model/plugin choices,
-unrelated MCP servers, Codex project settings, and other local preferences remain.
-Malformed inputs, configuration symlinks, or a conflicting Claude skills directory
-stop the script rather than overwriting them.
+| App | Managed source | Native loading mechanism |
+| --- | --- | --- |
+| Codex | `dotfiles/.codex/dotfiles.config.toml` | `--profile dotfiles` layers over local `~/.codex/config.toml` |
+| Claude Code | `dotfiles/.config/claude/mcp.json` | `--mcp-config` adds the declared servers for the session |
+| OpenCode | `dotfiles/.config/opencode/dotfiles.json` | `OPENCODE_CONFIG` adds an override layer after local global config |
+| Crush | `dotfiles/.config/crush/crushrc` | Native declarations load alongside local `crush.json` and app data |
 
-OpenCode's `package.json` is seeded only when absent; existing dependency manifests
-remain local. Edit `scripts/app-config/opencode-package.json` to change the seed
-for new machines. Claude's skills directory links to the canonical
-`~/.agents/skills` directory.
+The shared shell module selects the Codex profile and Claude MCP file for CLI
+sessions and exports the OpenCode override path. Explicit profile/MCP/config
+choices take precedence over these shell defaults. Start a new shell after
+applying dotfiles. For clients launched outside that shell, select the Codex
+profile or pass the Claude MCP file explicitly; these defaults are not forced
+into their base configs.
+
+The app-owned `~/.claude.json`, `~/.codex/config.toml`, OpenCode's local global
+config and dependency manifest, and Crush's local JSON/data remain unmanaged.
+Shared settings override matching keys through native loading; local choices
+outside those keys remain intact. Crush uses its supported Bash config DSL to
+declare MCP servers in memory, and optionally sources `crushrc.local` for local
+overrides. No configuration mutation script runs during bootstrap.
+
+OpenCode's managed `plugin` declarations let the app resolve and install plugins,
+replacing the create-only dependency seed. Its existing dependency manifest
+remains local. Mise links Claude's skills directory to `~/.agents/skills`.
 
 The former one-time credential/binary cleanup migrations and nested Mise install
-hook have been removed. This PR does not rerun those migrations or uninstall an
-existing Chezmoi executable.
+hook have been removed. Existing Chezmoi installations are not uninstalled.
+
+Native loading references: [Codex profiles](https://developers.openai.com/codex/config-basic/),
+[Claude MCP config](https://code.claude.com/docs/en/cli-reference),
+[OpenCode config](https://opencode.ai/docs/config/), and
+[Crush config](https://github.com/charmbracelet/crush/blob/v0.96.1/docs/config/README.md).
 
 ## External Repositories
 
-`[bootstrap.repos]` follows TPM's `master` branch and the Hugging Face MCP server's
-`main` branch. Mise clones missing checkouts and updates declared branches during
-bootstrap, replacing the former weekly Chezmoi refresh. Dirty checkouts or
+`[bootstrap.repos]` follows TPM's `master` branch because the tmux config loads
+TPM and the Rose Pine plugin through it. Mise clones or updates TPM during
+bootstrap. The unrelated Hugging Face project is no longer cloned by dotfiles. Dirty checkouts or
 conflicting origins fail instead of discarding local work.
 
 ```bash
@@ -216,11 +230,11 @@ verifying pinned skills under `~/.agents/skills`.
 Repository-only checks that do not apply workstation state:
 
 ```bash
-shellcheck scripts/bootstrap.sh scripts/update.sh scripts/bootstrap-workstation.sh
+shellcheck scripts/bootstrap.sh scripts/update.sh dotfiles/.config/shell/agents.sh
 zsh -n dotfiles/.zshrc dotfiles/.config/zsh/custom.zsh
 python3 scripts/check-dotfiles.py
 python3 scripts/check-repos.py
-python3 scripts/app-config/check.py
+python3 scripts/check-native-config.py
 mkdir -p /tmp/dotfiles-mise-check
 cp mise/config.toml /tmp/dotfiles-mise-check/mise.toml
 (cd /tmp/dotfiles-mise-check && mise fmt --check)

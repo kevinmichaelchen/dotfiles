@@ -14,6 +14,9 @@ echo "Installing the current mise release to $MISE_BIN..."
 curl --fail --location --show-error https://mise.run |
   MISE_INSTALL_PATH="$MISE_BIN" sh
 
+# Ensure the skill projection source exists before even a dry-run preview.
+mkdir -p "$HOME/.agents/skills"
+
 export MISE_GLOBAL_CONFIG_FILE="$DOTFILES_DIR/mise/config.toml"
 
 echo

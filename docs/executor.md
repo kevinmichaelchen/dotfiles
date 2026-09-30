@@ -20,9 +20,12 @@ After running `mise bootstrap` on a new laptop, authenticate the Cloud endpoint:
 
 ```bash
 codex mcp login executor
-claude mcp login executor
 opencode mcp auth executor
 ```
+
+For Claude Code, launch `claude` from the configured shell and authenticate the
+Executor server through `/mcp`. The declarative MCP file is session-scoped and
+does not add a persisted user-scope server.
 
 Crush uses `mcp-remote`, which starts its OAuth flow when the endpoint first
 connects. `executor login` is separate: it authenticates the Executor CLI to a
@@ -52,7 +55,7 @@ secrets, OAuth connections, and policies through Executor Cloud.
 
 ## Dotfiles Boundary
 
-The app-config scripts manage stable endpoint and command wiring, not Executor credentials or
+Native app config layers declare stable endpoint and command wiring, not Executor credentials or
 client OAuth sessions.
 
 Dotfiles should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud

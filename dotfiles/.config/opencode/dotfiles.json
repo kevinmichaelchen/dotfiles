@@ -1,0 +1,83 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "executor": {
+      "type": "remote",
+      "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+      "enabled": true
+    },
+    "executor-desktop": {
+      "type": "local",
+      "command": [
+        "executor",
+        "mcp"
+      ],
+      "enabled": true
+    }
+  },
+  "provider": {
+    "openai": {
+      "options": {
+        "reasoningEffort": "medium",
+        "reasoningSummary": "auto",
+        "textVerbosity": "medium",
+        "include": [
+          "reasoning.encrypted_content"
+        ],
+        "store": false
+      }
+    },
+    "openrouter": {
+      "models": {
+        "moonshotai/kimi-k3": {
+          "name": "Kimi K3 (OpenRouter)",
+          "limit": {
+            "context": 1048576,
+            "output": 943718
+          },
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "options": {
+            "provider": {
+              "data_collection": "deny"
+            }
+          }
+        },
+        "deepseek/deepseek-v4.1-flash": {
+          "name": "DeepSeek V4.1 Flash (OpenRouter)",
+          "limit": {
+            "context": 1048576,
+            "output": 384000
+          },
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "options": {
+            "provider": {
+              "data_collection": "deny"
+            }
+          }
+        }
+      }
+    }
+  },
+  "small_model": "openrouter/deepseek/deepseek-v4.1-flash",
+  "plugin": [
+    "@ramtinj95/opencode-tokenscope@1.8.1",
+    "opencode-openai-codex-auth@4.4.0"
+  ]
+}
