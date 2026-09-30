@@ -228,6 +228,28 @@ url = "https://github.com/cli/cli/releases/download/v2.100.0/gh_2.100.0_macOS_ar
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/542974295"
 provenance = "github-attestations"
 
+[[tools."github:eliasstravik/herdr-projects"]]
+version = "0.2.34"
+backend = "github:eliasstravik/herdr-projects"
+
+[tools."github:eliasstravik/herdr-projects".options]
+asset_pattern = "herdr-projects-aarch64-apple-darwin"
+
+[tools."github:eliasstravik/herdr-projects"."platforms.macos-arm64"]
+checksum = "sha256:f4bb8cd7bcfe90ae3f269790ebadce2925589f4bac3bcaf507a1500281ba79b5"
+url = "https://github.com/eliasstravik/herdr-projects/releases/download/v0.2.34/herdr-projects-aarch64-apple-darwin"
+url_api = "https://api.github.com/repos/eliasstravik/herdr-projects/releases/assets/596422377"
+
+[[tools."github:herdrdev/herdr"]]
+version = "0.9.3"
+backend = "github:herdrdev/herdr"
+
+[tools."github:herdrdev/herdr"."platforms.macos-arm64"]
+checksum = "sha256:5173a3e0ae42d5d1ab7ebfa5d5e6329f7c3d23f8e1a3677c7ce3231da2884157"
+url = "https://github.com/herdrdev/herdr/releases/download/v0.9.3/herdr-macos-aarch64"
+url_api = "https://api.github.com/repos/herdrdev/herdr/releases/assets/599036381"
+provenance = "github-attestations"
+
 [[tools."github:libkrun/krunkit"]]
 version = "1.3.2"
 backend = "github:libkrun/krunkit"
@@ -236,6 +258,44 @@ backend = "github:libkrun/krunkit"
 checksum = "sha256:de9ab62dd90461cd1df1e37b78e780690d75490f4bab1674cbb4a1f75b90c227"
 url = "https://github.com/libkrun/krunkit/releases/download/v1.3.2/krunkit-podman-unsigned-1.3.2.tgz"
 url_api = "https://api.github.com/repos/libkrun/krunkit/releases/assets/465341860"
+
+[[tools."github:persiyanov/herdr-reviewr"]]
+version = "0.39.0"
+backend = "github:persiyanov/herdr-reviewr"
+
+[tools."github:persiyanov/herdr-reviewr".options]
+asset_pattern = "herdr-reviewr-aarch64-apple-darwin.tar.gz"
+
+[tools."github:persiyanov/herdr-reviewr"."platforms.macos-arm64"]
+checksum = "sha256:965f36e59c4253e0daa87aaeb3875c2aae756c20cce976d792178f12096d4c0e"
+url = "https://github.com/persiyanov/herdr-reviewr/releases/download/v0.39.0/herdr-reviewr-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/persiyanov/herdr-reviewr/releases/assets/583688555"
+provenance = "github-attestations"
+
+[[tools."github:plannotator/herdr-annotate"]]
+version = "0.1.0"
+backend = "github:plannotator/herdr-annotate"
+
+[tools."github:plannotator/herdr-annotate".options]
+asset_pattern = "herdr-annotate-aarch64-apple-darwin"
+version_prefix = "rust-lite-v"
+
+[tools."github:plannotator/herdr-annotate"."platforms.macos-arm64"]
+checksum = "sha256:2234392a1cedf4b0b0561b4ca54da75aa5139df296dbd4e59371cf7fa201fab7"
+url = "https://github.com/plannotator/herdr-annotate/releases/download/rust-lite-v0.1.0/herdr-annotate-aarch64-apple-darwin"
+url_api = "https://api.github.com/repos/plannotator/herdr-annotate/releases/assets/554303156"
+
+[[tools."github:plannotator/plannotator-tui"]]
+version = "0.9.4"
+backend = "github:plannotator/plannotator-tui"
+
+[tools."github:plannotator/plannotator-tui".options]
+asset_pattern = "plannotator-tui-aarch64-apple-darwin"
+
+[tools."github:plannotator/plannotator-tui"."platforms.macos-arm64"]
+checksum = "sha256:a9da49dd6a44d3494fed0e8366ca32996ecdf40e0271fced410cec3c8839175d"
+url = "https://github.com/plannotator/plannotator-tui/releases/download/v0.9.4/plannotator-tui-aarch64-apple-darwin"
+url_api = "https://api.github.com/repos/plannotator/plannotator-tui/releases/assets/587174935"
 
 [[tools."github:rtk-ai/rtk"]]
 version = "0.47.0"

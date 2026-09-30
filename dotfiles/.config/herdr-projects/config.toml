@@ -1,0 +1,24 @@
+# Shared launch profiles and coordination policy; project records remain local.
+[defaults]
+coordinator_profile = "claude"
+thread_profile = "codex"
+
+[profiles.claude]
+agent = "claude"
+args = ["--mcp-config", "~/.config/claude/mcp.json"]
+description = "Claude subscription with the shared MCP layer"
+
+[profiles.codex]
+agent = "codex"
+args = ["--profile", "dotfiles"]
+description = "OpenAI subscription with the dotfiles profile"
+
+[safety.default]
+yolo = false
+start_threads = "propose"
+trust_screens = "user"
+routine_commands = false
+coordinator_profiles = ["claude", "codex"]
+thread_profiles = ["claude", "codex"]
+# OpenCode stays available through kevin.agents. Add a Projects profile only
+# after verifying native v2 launch arguments and selecting a paid model explicitly.
