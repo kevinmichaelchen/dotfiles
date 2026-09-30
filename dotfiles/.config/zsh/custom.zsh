@@ -1,4 +1,4 @@
-# ZSH configuration managed by Chezmoi
+# ZSH configuration managed by Mise
 
 # ZSH Options
 setopt AUTO_CD              # cd by typing directory name

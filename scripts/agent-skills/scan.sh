@@ -6,7 +6,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 TARGET_DIR="${AGENTS_SKILLS_DIR:-${HOME}/.agents/skills}"
-SOURCE_DIR="${REPO_DIR}/chezmoi/dot_agents/skills"
+SOURCE_DIR="${REPO_DIR}/dotfiles/.agents/skills"
 REPORT_DIR=""
 SCOPE="all"
 
@@ -20,7 +20,7 @@ SKILL_DIR arguments are provided, only those directories are scanned.
 Scopes:
   --all        Scan installed lock-managed skills and still-vendored skills.
   --installed Scan only ~/.agents/skills.
-  --source    Scan only chezmoi/dot_agents/skills.
+  --source    Scan only dotfiles/.agents/skills.
 
 Options:
   --report-dir DIR  Write one JSON SkillSpector report per skill.

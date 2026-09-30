@@ -1,4 +1,4 @@
-# Starship prompt configuration managed by Chezmoi
+# Starship prompt configuration managed by Mise
 # Theme: Rose Pine (matches Ghostty)
 
 add_newline = true

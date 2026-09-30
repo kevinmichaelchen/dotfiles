@@ -1,10 +1,11 @@
 # Mise global configuration
-# Managed by Chezmoi - edit via `cme ~/.config/mise/config.toml`
+# Authoritative repository config; Mise links it into ~/.config/mise/config.toml
 # Apply workstation state with `mise bootstrap` after changes
 
-min_version = "2026.6.7"
+min_version = "2026.7.7"
 
 [settings]
+dotfiles.root = "~/dotfiles/dotfiles"
 # Save exact versions by default when adding tools with `mise use`.
 pin = true
 # Keep the generated lockfile active, limit future auto-locking to this Mac's
@@ -66,8 +67,40 @@ press_and_hold = false
 [bootstrap.macos.defaults.NSGlobalDomain]
 AppleKeyboardUIMode = 3
 
+# Plain files are owned only by Mise. Per-file links leave runtime state alone.
+[dotfiles]
+"~/.config/mise/config.toml" = { source = "~/dotfiles/mise/config.toml", mode = "symlink" }
+"~/.config/mise/mise.lock" = { source = "~/dotfiles/mise/mise.lock", mode = "symlink" }
+"~/.agents/skills/README.md" = { source = "~/dotfiles/dotfiles/.agents/skills/README.md", mode = "symlink" }
+"~/.agents/skills/find-skills/SKILL.md" = { source = "~/dotfiles/dotfiles/.agents/skills/find-skills/SKILL.md", mode = "symlink" }
+"~/.agents/skills/firecrawl-monitor/SKILL.md" = { source = "~/dotfiles/dotfiles/.agents/skills/firecrawl-monitor/SKILL.md", mode = "symlink" }
+"~/.cargo/config.toml" = { source = "~/dotfiles/dotfiles/.cargo/config.toml", mode = "symlink" }
+"~/.codex/AGENTS.md" = { source = "~/dotfiles/dotfiles/.codex/AGENTS.md", mode = "symlink" }
+"~/.config/bat/config" = { source = "~/dotfiles/dotfiles/.config/bat/config", mode = "symlink" }
+"~/.config/dprint/dprint.jsonc" = { source = "~/dotfiles/dotfiles/.config/dprint/dprint.jsonc", mode = "symlink" }
+"~/.config/ghostty/config" = { source = "~/dotfiles/dotfiles/.config/ghostty/config", mode = "symlink" }
+"~/.config/git/kevinmichaelchen" = { source = "~/dotfiles/dotfiles/.config/git/kevinmichaelchen", mode = "symlink" }
+"~/.config/hunk/config.toml" = { source = "~/dotfiles/dotfiles/.config/hunk/config.toml", mode = "symlink" }
+"~/.config/opencode/README.md" = { source = "~/dotfiles/dotfiles/.config/opencode/README.md", mode = "symlink" }
+"~/.config/opencode/command/tokenscope.md" = { source = "~/dotfiles/dotfiles/.config/opencode/command/tokenscope.md", mode = "symlink" }
+"~/.config/shell/bat.sh" = { source = "~/dotfiles/dotfiles/.config/shell/bat.sh", mode = "symlink" }
+"~/.config/shell/core.sh" = { source = "~/dotfiles/dotfiles/.config/shell/core.sh", mode = "symlink" }
+"~/.config/shell/git.sh" = { source = "~/dotfiles/dotfiles/.config/shell/git.sh", mode = "symlink" }
+"~/.config/shell/github.sh" = { source = "~/dotfiles/dotfiles/.config/shell/github.sh", mode = "symlink" }
+"~/.config/shell/pnpm.sh" = { source = "~/dotfiles/dotfiles/.config/shell/pnpm.sh", mode = "symlink" }
+"~/.config/shell/python.sh" = { source = "~/dotfiles/dotfiles/.config/shell/python.sh", mode = "symlink" }
+"~/.config/shell/testcontainers.sh" = { source = "~/dotfiles/dotfiles/.config/shell/testcontainers.sh", mode = "symlink" }
+"~/.config/shell/zed.sh" = { source = "~/dotfiles/dotfiles/.config/shell/zed.sh", mode = "symlink" }
+"~/.config/starship.toml" = { source = "~/dotfiles/dotfiles/.config/starship.toml", mode = "symlink" }
+"~/.config/tmux/tmux.conf" = { source = "~/dotfiles/dotfiles/.config/tmux/tmux.conf", mode = "symlink" }
+"~/.config/zsh/custom.zsh" = { source = "~/dotfiles/dotfiles/.config/zsh/custom.zsh", mode = "symlink" }
+"~/.gitconfig" = { source = "~/dotfiles/dotfiles/.gitconfig", mode = "symlink" }
+"~/.vimrc" = { source = "~/dotfiles/dotfiles/.vimrc", mode = "symlink" }
+"~/.zprofile" = { source = "~/dotfiles/dotfiles/.zprofile", mode = "symlink" }
+"~/.zshrc" = { source = "~/dotfiles/dotfiles/.zshrc", mode = "symlink" }
+
 [tasks.bootstrap]
-description = "Apply Chezmoi-managed workstation configuration"
+description = "Apply Chezmoi modification templates, external repos, and hooks"
 run = "MISE_BOOTSTRAP_ACTIVE=1 chezmoi apply --source=\"$HOME/dotfiles/chezmoi\""
 
 [tools]
@@ -89,8 +122,8 @@ bun = "1.4.2"
 # npm global packages
 "npm:markit-ai" = "0.6.1"
 "npm:@openai/codex" = "0.159.2"
-"npm:@nozomioai/nia" = "0.5.2" # Nia CLI only
-"npm:sfw" = "2.0.6"            # Socket Firewall wrapper for package manager network filtering
+"npm:@nozomioai/nia" = "0.5.2"           # Nia CLI only
+"npm:sfw" = "2.0.6"                      # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.24.3"
 "npm:@eraserlabs/diagrams-cli" = "0.2.0"
 
@@ -98,7 +131,7 @@ bun = "1.4.2"
 # Python CLI Tools from PyPI
 # ============================================================================
 "pipx:parallel-web-tools" = { version = "0.9.3", extras = "cli" }
-"pipx:huggingface_hub" = "1.32.0" # hf CLI
+"pipx:huggingface_hub" = "1.32.0"                                 # hf CLI
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
@@ -118,7 +151,7 @@ bun = "1.4.2"
 # ============================================================================
 # Chezmoi is installed during the package phase before the bootstrap task.
 "github:anomalyco/opencode" = "1.18.30"
-"github:rtk-ai/rtk" = "0.47.0"                 # Token-efficient CLI for coding agents
+"github:rtk-ai/rtk" = "0.47.0"                # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
 "github:cli/cli" = "2.100.0"
 "github:abhinav/git-spice" = "0.31.2"
@@ -134,7 +167,7 @@ bun = "1.4.2"
 "aqua:charmbracelet/crush" = "0.96.1"
 "aqua:sharkdp/bat" = "0.26.1"            # cat replacement with syntax highlighting
 "aqua:dandavison/delta" = "0.19.2"       # git diff viewer
-"aqua:sharkdp/fd" = "10.5.0"          # find replacement
+"aqua:sharkdp/fd" = "10.5.0"             # find replacement
 "aqua:junegunn/fzf" = "0.74.4"
 "aqua:ajeetdsouza/zoxide" = "0.10.0"
 "aqua:dprint/dprint" = "0.57.4"
@@ -158,5 +191,6 @@ bun = "1.4.2"
 # Notes on Workstation Ownership
 # ============================================================================
 #   - mise bootstrap: system packages, macOS defaults, login shell, and tools
-#   - Chezmoi: dotfiles, shell behavior, templates, and secret-backed config
+#   - mise dotfiles: plain files and shell behavior
+#   - Chezmoi: modification templates, create-only files, external repos, and hooks
 #   - mise.run: installs mise itself before this configuration is available

@@ -48,14 +48,9 @@ by default.
 ## Claude Code projection
 
 `~/.agents/skills` is the canonical global skill directory shared by Codex,
-Claude Code, Crush, and OpenCode. Claude Code also reads personal skills from
-`~/.claude/skills`, so Chezmoi declares a curated set of symlinks in
-`~/dotfiles/chezmoi/dot_claude/skills/`.
-
-The Claude projection is intended to stay in parity with portable global skills
-except for explicit, reviewable exceptions. Do not link Codex-specific,
-private, or known-broken skills into `~/.claude/skills`; otherwise prefer adding
-the matching `symlink_...` source file when a global skill is added.
+Claude Code, Crush, and OpenCode. Chezmoi links `~/.claude/skills` to it.
+Mise links the still-vendored skill files individually; the sync script owns
+lock-managed skill directories and leaves vendored files alone.
 
 ## Still-vendored skills
 
@@ -66,4 +61,3 @@ given explicit lock entries:
 
 - `find-skills`
 - `firecrawl-monitor`
-- `git-commit-convention`

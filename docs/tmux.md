@@ -67,7 +67,7 @@ path = "~/dev"
 
 ## Our Configuration
 
-Located at `~/.config/tmux/tmux.conf` (managed via chezmoi).
+Located at `~/.config/tmux/tmux.conf` (linked by Mise from `dotfiles/.config/tmux/tmux.conf`).
 
 ### Base Settings
 

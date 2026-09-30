@@ -14,13 +14,16 @@ echo "Installing the current mise release to $MISE_BIN..."
 curl --fail --location --show-error https://mise.run |
   MISE_INSTALL_PATH="$MISE_BIN" sh
 
-export MISE_GLOBAL_CONFIG_FILE="$DOTFILES_DIR/chezmoi/dot_config/mise/config.toml"
+export MISE_GLOBAL_CONFIG_FILE="$DOTFILES_DIR/mise/config.toml"
 
 echo
-echo "Previewing workstation changes..."
-"$MISE_BIN" bootstrap --dry-run
+"$MISE_BIN" trust "$MISE_GLOBAL_CONFIG_FILE"
+
+echo "Previewing workstation changes (including dotfile replacements)..."
+"$MISE_BIN" bootstrap --force-dotfiles --dry-run
 
 echo
-echo "Bootstrap preparation complete. Review the preview, then run:"
-echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap --yes --update"
+echo "Bootstrap preparation complete. Keep any local dotfile edits before replacing targets."
+echo "After reviewing the preview, run:"
+echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap --force-dotfiles --yes --update"
 echo "  MISE_GLOBAL_CONFIG_FILE=$MISE_GLOBAL_CONFIG_FILE $MISE_BIN bootstrap status --missing"

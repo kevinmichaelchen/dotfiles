@@ -18,7 +18,7 @@ if [[ -z "$MISE_BIN" ]]; then
   exit 1
 fi
 
-export MISE_GLOBAL_CONFIG_FILE="$REPO_DIR/chezmoi/dot_config/mise/config.toml"
+export MISE_GLOBAL_CONFIG_FILE="$REPO_DIR/mise/config.toml"
 
 echo "Updating dotfiles repository..."
 git -C "$REPO_DIR" pull

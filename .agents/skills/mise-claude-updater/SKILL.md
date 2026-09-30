@@ -23,7 +23,7 @@ Primary entrypoint: `scripts/update-tools.sh`.
 4. Summarize any fallback used (for example `MISE_GITHUB_ATTESTATIONS=false` for `github:cli/cli`).
 
 ## Guardrails
-- Do not edit `chezmoi/dot_config/mise/config.toml` for update-only requests.
+- Do not edit `mise/config.toml` for update-only requests.
 - Do not run the full workstation convergence workflow unless requested (`scripts/update.sh`).
 - Keep changes idempotent and safe to rerun.
 

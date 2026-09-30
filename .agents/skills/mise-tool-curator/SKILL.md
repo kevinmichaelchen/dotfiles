@@ -1,12 +1,12 @@
 ---
 name: mise-tool-curator
-description: Curate and maintain `chezmoi/dot_config/mise/config.toml` for developer runtimes and CLI tools. Use when adding, removing, pinning, or migrating tools in Mise; selecting the correct source type (`npm`, `cargo`, `go`, `github`, `aqua`); or resolving duplicate package ownership.
+description: Curate and maintain `mise/config.toml` for developer runtimes and CLI tools. Use when adding, removing, pinning, or migrating tools in Mise; selecting the correct source type (`npm`, `cargo`, `go`, `github`, `aqua`); or resolving duplicate package ownership.
 ---
 
 # Mise Tool Curator
 
 ## Overview
-Manage tool declarations in `chezmoi/dot_config/mise/config.toml` so runtime ownership stays consistent and installs remain reproducible.
+Manage tool declarations in `mise/config.toml` so runtime ownership stays consistent and installs remain reproducible.
 
 ## Workflow
 1. Classify requested tool change: add, remove, pin, or migrate source.
@@ -32,10 +32,10 @@ Manage tool declarations in `chezmoi/dot_config/mise/config.toml` so runtime own
 - Do not leak secret tokens into this file.
 
 ## Completion Checklist
-1. Summarize changed keys in `chezmoi/dot_config/mise/config.toml`.
+1. Summarize changed keys in `mise/config.toml`.
 2. Call out any ownership conflicts discovered and how they were resolved.
 3. Provide commands:
-   - `cma`
+   - `mise bootstrap`
    - `mise install`
    - `mise upgrade`
    - `mise prune --yes`

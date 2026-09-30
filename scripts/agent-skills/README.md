@@ -18,7 +18,7 @@ for Claude Code.
   each downloaded skill, compute its directory hash, and print a proposed
   `skills-lock.json` diff. Rerun with `--apply` after reviewing the diff.
 - `scan.sh --all`: scan installed lock-managed skills and still-vendored
-  Chezmoi skills.
+  repository skills.
 
 `scan.sh`, `sync.sh`, and `update-lock.sh` require NVIDIA SkillSpector for
 per-skill filesystem scanning.
@@ -31,5 +31,5 @@ downloaded skill, and records the computed directory hash. `sync.sh` then
 downloads to a temporary work directory, verifies the hash, scans again, and
 installs the reviewed copy into `~/.agents/skills`.
 
-After the skill is reproducible from the lock, add a Chezmoi symlink source in
-`chezmoi/dot_claude/skills/` unless it is a documented exception.
+Claude Code uses the Chezmoi-managed `~/.claude/skills` link to the canonical
+`~/.agents/skills` directory. New lock-managed skills appear there after sync.

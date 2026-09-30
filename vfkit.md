@@ -191,7 +191,7 @@ configuration.
 ### Current Configuration
 
 Machine packages and developer tools are declared in
-`chezmoi/dot_config/mise/config.toml`:
+`mise/config.toml`:
 
 ```toml
 [bootstrap.packages]
