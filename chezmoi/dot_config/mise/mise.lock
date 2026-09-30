@@ -10,21 +10,20 @@ url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.
 url_api = "https://api.github.com/repos/ajeetdsouza/zoxide/releases/assets/466316174"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.36.42"
+version = "2.37.5"
 backend = "aqua:aws/aws-cli"
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-checksum = "blake3:8ae56d50f81aa505ac7157ba8168d74dd5dea78866ce9dd15e2bf35e87dda0e6"
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.42.pkg"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.37.5.pkg"
 
 [[tools."aqua:charmbracelet/crush"]]
-version = "0.92.0"
+version = "0.96.1"
 backend = "aqua:charmbracelet/crush"
 
 [tools."aqua:charmbracelet/crush"."platforms.macos-arm64"]
-checksum = "sha256:2b052a927801a9ea91698de48228ac3e6e1171498c55617e1f9d79540f19b3ac"
-url = "https://github.com/charmbracelet/crush/releases/download/v0.92.0/crush_0.92.0_Darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/charmbracelet/crush/releases/assets/538515472"
+checksum = "sha256:6302f9072ec0f502bae1c0a0454da80d23907ffb653c10ab3668b7e7515b0867"
+url = "https://github.com/charmbracelet/crush/releases/download/v0.96.1/crush_0.96.1_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/crush/releases/assets/579403036"
 provenance = "cosign"
 
 [[tools."aqua:chmln/sd"]]
@@ -46,13 +45,13 @@ url = "https://github.com/dandavison/delta/releases/download/0.19.2/delta-0.19.2
 url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/383662310"
 
 [[tools."aqua:dprint/dprint"]]
-version = "0.57.0"
+version = "0.57.4"
 backend = "aqua:dprint/dprint"
 
 [tools."aqua:dprint/dprint"."platforms.macos-arm64"]
-checksum = "sha256:14bdbfb9b1e3ebd614d5ec08a068b04b0d0370d70c112723003dd9103a4c0c3a"
-url = "https://github.com/dprint/dprint/releases/download/0.57.0/dprint-aarch64-apple-darwin.zip"
-url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/536956636"
+checksum = "sha256:f9e752812791f258e89ff88a7affd05c793b0db3d929718651eae7df5f19eb2e"
+url = "https://github.com/dprint/dprint/releases/download/0.57.4/dprint-aarch64-apple-darwin.zip"
+url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/546351171"
 
 [[tools."aqua:golangci/golangci-lint"]]
 version = "2.13.2"
@@ -65,13 +64,13 @@ url_api = "https://api.github.com/repos/golangci/golangci-lint/releases/assets/5
 provenance = "github-attestations"
 
 [[tools."aqua:j178/prek"]]
-version = "0.5.2"
+version = "0.5.3"
 backend = "aqua:j178/prek"
 
 [tools."aqua:j178/prek"."platforms.macos-arm64"]
-checksum = "sha256:f3ef7692f8873c36d9437c77389833d3165fbe705ea66e53e169d83a89055f9b"
-url = "https://github.com/j178/prek/releases/download/v0.5.2/prek-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/j178/prek/releases/assets/541547294"
+checksum = "sha256:6006cc4e69cfc86d55f4e407ca60ba960a521befa54fece94038639b1f4de381"
+url = "https://github.com/j178/prek/releases/download/v0.5.3/prek-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/j178/prek/releases/assets/560889174"
 provenance = "github-attestations"
 
 [[tools."aqua:jqlang/jq"]]
@@ -85,13 +84,13 @@ url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012783"
 provenance = "github-attestations"
 
 [[tools."aqua:junegunn/fzf"]]
-version = "0.74.3"
+version = "0.74.4"
 backend = "aqua:junegunn/fzf"
 
 [tools."aqua:junegunn/fzf"."platforms.macos-arm64"]
-checksum = "sha256:1f8501cea4f9c0c2d6110d0ff75d0ec9451cd9d7524d9a26244a154ea89f3bd5"
-url = "https://github.com/junegunn/fzf/releases/download/v0.74.3/fzf-0.74.3-darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/junegunn/fzf/releases/assets/517537091"
+checksum = "sha256:4f6a113bfc0c7959e0005c78d566a51afc4fcefc956f43735c62a9deb19e92ae"
+url = "https://github.com/junegunn/fzf/releases/download/v0.74.4/fzf-0.74.4-darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/junegunn/fzf/releases/assets/558287774"
 
 [[tools."aqua:koalaman/shellcheck"]]
 version = "0.11.0"
@@ -158,19 +157,19 @@ url = "https://github.com/typst/typst/releases/download/v0.15.1/typst-aarch64-ap
 url_api = "https://api.github.com/repos/typst/typst/releases/assets/480299147"
 
 [[tools.bun]]
-version = "1.4.0"
+version = "1.4.2"
 backend = "core:bun"
 
 [tools.bun."platforms.macos-arm64"]
-checksum = "sha256:c669e97f6164e1c96e0701748db98dfa77492908cbd8394c7557134a735de381"
-url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.0/bun-darwin-aarch64.zip"
+checksum = "sha256:90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-darwin-aarch64.zip"
 
 [[tools."cargo:eza"]]
 version = "0.23.5"
 backend = "cargo:eza"
 
 [[tools."cargo:tokei"]]
-version = "14.0.0"
+version = "15.0.0"
 backend = "cargo:tokei"
 
 [[tools."github:RhysSullivan/executor"]]
@@ -293,27 +292,31 @@ checksum = "sha256:ee215d57e0ec269c60cc9ceca68e6bda321ba9ee5afe24f4b0988703c2d87
 url = "https://dl.google.com/go/go1.27.1.darwin-arm64.tar.gz"
 
 [[tools."go:golang.org/x/vuln/cmd/govulncheck"]]
-version = "1.7.0"
+version = "1.8.0"
 backend = "go:golang.org/x/vuln/cmd/govulncheck"
 
 [[tools.node]]
-version = "26.8.1"
+version = "26.10.0"
 backend = "core:node"
 
 [tools.node."platforms.macos-arm64"]
-checksum = "sha256:6e577fd0d9db776db82306629e441a9dace416702622aebdd171c9dfaa41f4d2"
-url = "https://nodejs.org/dist/v26.8.1/node-v26.8.1-darwin-arm64.tar.gz"
+checksum = "sha256:751fdf7439f115d87ee2a8f3f18c065b6151852068e3e666ac60ac2996f75ac9"
+url = "https://nodejs.org/dist/v26.10.0/node-v26.10.0-darwin-arm64.tar.gz"
+
+[[tools."npm:@eraserlabs/diagrams-cli"]]
+version = "0.2.0"
+backend = "npm:@eraserlabs/diagrams-cli"
 
 [[tools."npm:@nozomioai/nia"]]
 version = "0.5.2"
 backend = "npm:@nozomioai/nia"
 
 [[tools."npm:@openai/codex"]]
-version = "0.154.0"
+version = "0.159.2"
 backend = "npm:@openai/codex"
 
 [[tools."npm:firecrawl-cli"]]
-version = "1.23.3"
+version = "1.24.3"
 backend = "npm:firecrawl-cli"
 
 [[tools."npm:markit-ai"]]
@@ -325,11 +328,11 @@ version = "2.0.6"
 backend = "npm:sfw"
 
 [[tools."npm:wrangler"]]
-version = "4.128.0"
+version = "4.136.2"
 backend = "npm:wrangler"
 
 [[tools."pipx:huggingface_hub"]]
-version = "1.29.0"
+version = "1.32.0"
 backend = "pipx:huggingface_hub"
 
 [[tools."pipx:parallel-web-tools"]]
@@ -340,13 +343,13 @@ backend = "pipx:parallel-web-tools"
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.3.1"
+version = "12.5.1"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:21dc7ea20422e45d430bb98afd89418ec3454084cee86af096580cb4babcc50b"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.3.1/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/541972331"
+checksum = "sha256:776b26182ea825d5846dc236d29773cf4b7568b7f0abe145c328a342284c8b75"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.5.1/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/573486213"
 provenance = "github-attestations"
 
 [[tools.python]]
@@ -354,10 +357,10 @@ version = "3.14.7"
 backend = "core:python"
 
 [tools.python."platforms.macos-arm64"]
-checksum = "sha256:4632cb1a6edad9e73d3c81b6d2e69131637d995173e3e85005df14102b0592ba"
-url = "https://github.com/astral-sh/python-build-standalone/releases/download/20260901/cpython-3.14.7+20260901-aarch64-apple-darwin-install_only_stripped.tar.gz"
+checksum = "sha256:44b4716f4e63bc85e1c07ea2aca730d13a0ec3557d06526d84a13b1d111cf4f9"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20260929/cpython-3.14.7+20260929-aarch64-apple-darwin-install_only_stripped.tar.gz"
 provenance = "github-attestations"
 
 [[tools.rust]]
-version = "1.98.0"
+version = "1.98.1"
 backend = "core:rust"

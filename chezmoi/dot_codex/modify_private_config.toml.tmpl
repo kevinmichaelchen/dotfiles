@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Manage only the Executor MCP stanzas in ~/.codex/config.toml.
+# Manage Codex model defaults and Executor MCP stanzas in ~/.codex/config.toml.
 
 set -euo pipefail
 
@@ -15,7 +15,25 @@ import sys
 path = Path(sys.argv[1])
 text = path.read_text()
 
-block = '''[mcp_servers.executor]
+section_match = re.search(r"(?m)^\[", text)
+preamble = text[: section_match.start()] if section_match else text
+sections = text[section_match.start() :] if section_match else ""
+
+preamble = re.sub(
+    r"(?m)^(?:model|model_reasoning_effort|service_tier)\s*=.*\n?",
+    "",
+    preamble,
+).strip()
+sections = re.sub(
+    r'(?ms)^\[mcp_servers\.(?:executor|executor-desktop|executor-cloud)(?:\.[^\]]+)?\]\n.*?(?=^\[|\Z)',
+    "",
+    sections,
+).strip()
+
+model_defaults = '''model = "gpt-6.1-sol"
+model_reasoning_effort = "high"'''
+
+mcp_servers = '''[mcp_servers.executor]
 type = "http"
 url = "https://executor.sh/kevin-chen-s-organization/mcp"
 
@@ -24,10 +42,12 @@ command = "executor"
 args = ["mcp"]
 '''
 
-pattern = re.compile(
-    r'(?ms)^\[mcp_servers\.(?:executor|executor-desktop|executor-cloud)(?:\.[^\]]+)?\]\n.*?(?=^\[|\Z)'
-)
-text = pattern.sub("", text).rstrip()
-text = text + "\n\n" + block if text else block
+parts = [model_defaults]
+if preamble:
+    parts.append(preamble)
+if sections:
+    parts.append(sections)
+parts.append(mcp_servers)
+text = "\n\n".join(parts)
 print(text.rstrip() + "\n", end="")
 PY
