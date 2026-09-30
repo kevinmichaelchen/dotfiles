@@ -2,7 +2,40 @@
 
 **Use native Codex and Claude Code first, with GLM 5.3 Flash on Fireworks as the proposed economical open-model fallback.** Your $200/month OpenAI and $200/month Anthropic subscriptions already fund the primary lanes; API usage is separate. The marketplace evaluation covers **100 individually reviewed repositories**, ranked by GitHub stars, with pinned README and executable-manifest evidence for every entry. Sessionizer and Reviewr are the strongest next additions; Projects is the optional persistent coordinator. The shipped configuration currently includes only our declarative local launcher and native integrations, not these third-party plugins or an automatic paid fallback. No provider account authentication, paid inference or third-party plugin execution was performed for this report.
 
+<a id="table-of-contents"></a>
+
+## Table of contents
+
+- [Native CLIs preserve subscription access and local state](#native-clis-preserve-subscription-access-and-local-state)
+- [The 100 reviews favor small, declarative additions](#the-100-reviews-favor-small-declarative-additions)
+- [⭐ Winners for this workstation](#winners-for-this-workstation)
+- [Find plugins by category](#find-plugins-by-category)
+- [Plugin stars by category](#plugin-stars-by-category)
+  - [Orchestration and task pipelines](#orchestration-and-task-pipelines)
+  - [Agent conversation and handoffs](#agent-conversation-and-handoffs)
+  - [Worktree lifecycle and preparation](#worktree-lifecycle-and-preparation)
+  - [Workspace layouts and session navigation](#workspace-layouts-and-session-navigation)
+  - [Slack, Discord, email and Telegram](#slack-discord-email-and-telegram)
+  - [Mobile and remote control surfaces](#mobile-and-remote-control-surfaces)
+  - [Code, plan and document review](#code-plan-and-document-review)
+  - [Quotas, activity and status visibility](#quotas-activity-and-status-visibility)
+  - [Session memory, search and prompts](#session-memory-search-and-prompts)
+  - [Files, browsers, editors and Git panes](#files-browsers-editors-and-git-panes)
+  - [Execution, credentials and transport](#execution-credentials-and-transport)
+  - [Plugin actions and GitHub discovery](#plugin-actions-and-github-discovery)
+  - [Terminal naming, keys and shell ergonomics](#terminal-naming-keys-and-shell-ergonomics)
+- [Ranked top 100 evaluations](#ranked-top-100-evaluations)
+  - [Ranks 1–50: individual evaluation and pinned evidence](#ranks-150-individual-evaluation-and-pinned-evidence)
+  - [Ranks 51–100: individual evaluation and pinned evidence](#ranks-51100-individual-evaluation-and-pinned-evidence)
+- [GLM Flash is the baseline; successful patches decide value](#glm-flash-is-the-baseline-successful-patches-decide-value)
+- [Existing Fireworks and OpenRouter accounts cover the third tier](#existing-fireworks-and-openrouter-accounts-cover-the-third-tier)
+- [Research provenance and remaining validation](#research-provenance-and-remaining-validation)
+
+<a id="native-clis-preserve-subscription-access-and-local-state"></a>
+
 ## Native CLIs preserve subscription access and local state
+
+[↑ Back to TOC](#table-of-contents)
 
 Herdr is a terminal control plane: it organizes persistent tabs, agent status and workspaces while Codex, Claude Code and OpenCode retain their own authentication, permissions and model selection. It does not combine account quotas or turn subscription logins into API credits. The repository pins **Herdr 0.9.3** through Mise, launches Codex with the `dotfiles` profile, launches Claude with the declared MCP file, and passes the declared config layer to OpenCode v2. See the [setup and daily workflow](herdr.md), [local manifest](../dotfiles/.config/herdr/plugins/agents/herdr-plugin.toml) and [Herdr configuration](../dotfiles/.config/herdr/config.toml). Native integration installation and idempotence, configuration validation and launcher arguments were tested in an isolated temporary home using fake agent executables; those checks do not establish subscription login or model quality. ([Herdr integration docs](https://herdr.dev/docs/integrations/), [pinned release](https://github.com/herdrdev/herdr/tree/v0.9.3))
 
@@ -10,7 +43,11 @@ Herdr is a terminal control plane: it organizes persistent tabs, agent status an
 
 Every writing agent needs a separate worktree and branch; opening another tab in the same checkout creates no Git isolation. Use Codex for implementation, Claude for independent review, and an explicitly selected OpenCode API worker for bounded fallback tasks. Transfer the task, decisions, affected files, test evidence and remaining work in a Markdown artifact. A screen-status change alone does not prove that a new prompt completed. Herdr's native `agent prompt/read/wait` operations provide orchestration primitives; reliable completion still requires inspecting the result. ([Herdr CLI](https://herdr.dev/docs/cli-reference/), [session state](https://herdr.dev/docs/session-state/))
 
+<a id="the-100-reviews-favor-small-declarative-additions"></a>
+
 ## The 100 reviews favor small, declarative additions
+
+[↑ Back to TOC](#table-of-contents)
 
 The official [catalog](https://assets.herdr.dev/plugins/index.json) snapshot was generated **2026-09-30T04:30:31.900Z** and contained **1,428 manifests in 1,387 unique repositories**. “Top 100” means the first 100 unique repositories sorted by GitHub stars descending, with repository name ascending for ties, using that snapshot. This includes standalone applications and personal dotfiles containing a Herdr manifest; stars are a selection rule, not a quality score. All 100 pinned root READMEs and catalog-listed manifests were collected through Nia and individually evaluated below. Repository-tree checks additionally found three variant manifests in the first 50 repositories, for 53 inspected manifests in that slice. Each evidence link preserves the catalog `headCommit`; the live index will change, while these links retain the evaluated revision.
 
@@ -24,7 +61,11 @@ Projects (#9) offers persistent coordinator conversations, native harness profil
 
 Agent Usage (#52) deserves a later native-version test because actual Claude/Codex quota windows are more useful than converting subscription tokens into hypothetical API dollars. Its setup can print declarative row snippets; toast enablement appends configuration and should remain explicit. More consequential findings rule out other defaults: Agent Handoff (#90) hardcodes Claude `--dangerously-skip-permissions` and Codex `--yolo`; Token Dashboard (#78) hardcodes the v1 OpenCode port/message-store paths; Radar (#31) automatically writes Herdr and terminal font settings; llmtrim (#45) intercepts plaintext HTTPS through a local proxy and alters proxy/certificate environment settings. None is needed to enable mixed native agents. ([Agent Usage setup](https://github.com/senna-lang/herdr-agent-usage/blob/b9d3eb1f215e257c2c93f65d1e540760c52d1727/bin/run-setup.sh), [Handoff agent definitions](https://github.com/sanirudh17/herdr-agent-handoff/blob/02ca9602c2912573e73277b8bead634f24a6a0d8/lib/agents.js), [Handoff launcher](https://github.com/sanirudh17/herdr-agent-handoff/blob/02ca9602c2912573e73277b8bead634f24a6a0d8/lib/handoff.js), [Token Dashboard source](https://github.com/Davidcreador/herdr-token-dashboard/blob/fd786877f7a7492ebaa6da0d4d0c50b2e8d536ef/cmd/token-dashboard/main.go), [Radar setup](https://github.com/hhdebb/herdr-radar/blob/2425fa080b7b72f30c1299481282b23003a2ee61/bin/setup.js), [llmtrim bootstrap](https://github.com/fkiene/llmtrim-herdr/blob/88ed6fbeab1cfc1224bece3744b207659bc1123b/bin/bootstrap.sh))
 
+<a id="winners-for-this-workstation"></a>
+
 ## ⭐ Winners for this workstation
+
+[↑ Back to TOC](#table-of-contents)
 
 These are **category recommendations based on the reviewed sources**, not benchmark scores or installed integrations. Prefer the smallest set that solves your actual workflow; overlapping winners are alternatives or later additions, not a bundle to install at once.
 
@@ -57,7 +98,11 @@ These are **category recommendations based on the reviewed sources**, not benchm
 
 **My first pilot is Projects + Reviewr, then Sessionizer for repeatable layouts.** Add Chatter only when workers need peer conversation beyond coordinator handoffs. Choose one external messaging surface: Hail for alerts/replies, Discord for a full remote interface, or Tinysend for email. The detailed category guide and ranked evidence below explain the alternatives and limitations.
 
+<a id="find-plugins-by-category"></a>
+
 ## Find plugins by category
+
+[↑ Back to TOC](#table-of-contents)
 
 This guide groups the most relevant options by job; the ranked top-100 tables below retain the complete individual evaluations. Numbers refer to those tables. **Supplemental** entries come from the broader catalog and earlier targeted research, not the star-ranked 100. Repository links open the project directly; the ranked evaluations preserve pinned README/manifest evidence. Categories can overlap because one plugin can coordinate agents, manage worktrees and deliver notifications.
 
@@ -81,7 +126,161 @@ For the requested Claude/Codex collaboration, prioritize **Projects for delegati
 
 The supplemental Slack/Discord/email capabilities were checked on 2026-09-30 using the local Parallel Extract route from `web-research-router`, with the objective of distinguishing alerts, replies, agent spawning and documented compatibility. Primary READMEs: [Hail](https://github.com/natori-hrj/herdr-hail#readme), [Discord](https://github.com/ralphilius/herdr-discord#readme), [Slack](https://github.com/egemenyildiz/herdr-slack#readme), [Tinysend](https://github.com/tiny-send/tinysend-herdr#readme), [Chatter](https://github.com/marcvermeeren/chatter#readme), [Messenger](https://github.com/aashishd/herdr-agent-messenger#readme). This supplemental pass did not install plugins or audit their complete source. External bridges transmit agent context and accept commands; configure explicit authorized users and keep tokens in native local storage.
 
+<a id="plugin-stars-by-category"></a>
+
+## Plugin stars by category
+
+[↑ Back to TOC](#table-of-contents)
+
+These 13 Flint charts show **all 100 ranked repositories exactly once**, assigned to their primary documented function, plus **eight supplemental repositories** marked †. Categories are editorial groupings derived from the reviewed capabilities, not marketplace tags. A multi-purpose plugin appears in one chart to avoid double-counting; the category guide still cross-lists alternatives where useful.
+
+Star counts come from the same [official catalog snapshot](https://assets.herdr.dev/plugins/index.json) generated 2026-09-30T04:30:31.900Z as the ranked review. Each chart prints the full repository name and count, sorted by stars within its category. **Stars measure repository popularity, not plugin quality, compatibility or our recommendation.** The chart set includes deferred/rejected plugins as well as winners. Axes scale independently by category: compare the printed counts across charts, not bar lengths. † entries fall outside the ranked 100; some stars belong to broader applications or personal dotfiles.
+
+Rendered locally with Flint 0.5.1 using `flint-chart-author`; all 13 specifications validated without warnings. Images were visually inspected, converted to lossless WebP and uploaded as PR attachments. No image binaries, chart dependencies or raw caches are checked into Git.
+
+<a id="orchestration-and-task-pipelines"></a>
+
+### Orchestration and task pipelines
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Orchestration and task pipelines; full repository names and GitHub star counts](https://github.com/user-attachments/assets/3a07c935-3e5b-485b-866c-b9b7418e9119)
+
+Repositories: [eliasstravik/herdr-projects](https://github.com/eliasstravik/herdr-projects) (522 ⭐); [osolmaz/pi-workflows](https://github.com/osolmaz/pi-workflows) (316 ⭐); [nelsonPires5/herdr-board](https://github.com/nelsonPires5/herdr-board) (163 ⭐); [smarzban/tsk](https://github.com/smarzban/tsk) (156 ⭐); [nidhi-singh02/agent-router](https://github.com/nidhi-singh02/agent-router) (98 ⭐); [aigorahub/herdr-lantern](https://github.com/aigorahub/herdr-lantern) (67 ⭐); [miiraheart/herdr-beads](https://github.com/miiraheart/herdr-beads) (34 ⭐); [deimantasnork/captains-deck](https://github.com/deimantasnork/captains-deck) (30 ⭐); [aorumbayev/herdr-workflows](https://github.com/aorumbayev/herdr-workflows) (28 ⭐); [junghan0611/entwurf](https://github.com/junghan0611/entwurf) (28 ⭐); [0xGosu/herdr-auto-pilot](https://github.com/0xGosu/herdr-auto-pilot) (24 ⭐); [caioniehues/herdmates](https://github.com/caioniehues/herdmates) (24 ⭐); [ribbons-digital/pi-herd](https://github.com/ribbons-digital/pi-herd) (22 ⭐); [ivanarama/PromptPilot](https://github.com/ivanarama/PromptPilot) (18 ⭐); [StructuPath/herdr-swarm](https://github.com/StructuPath/herdr-swarm) † (9 ⭐).
+
+<a id="agent-conversation-and-handoffs"></a>
+
+### Agent conversation and handoffs
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Agent conversation and handoffs; full repository names and GitHub star counts](https://github.com/user-attachments/assets/c3c419d1-40f5-4695-a18e-c7ae5529e576)
+
+Repositories: [sanirudh17/herdr-agent-handoff](https://github.com/sanirudh17/herdr-agent-handoff) (19 ⭐); [aashishd/herdr-agent-messenger](https://github.com/aashishd/herdr-agent-messenger) † (8 ⭐); [marcvermeeren/chatter](https://github.com/marcvermeeren/chatter) † (6 ⭐); [agentwireprotocol/awp](https://github.com/agentwireprotocol/awp) † (4 ⭐).
+
+<a id="worktree-lifecycle-and-preparation"></a>
+
+### Worktree lifecycle and preparation
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Worktree lifecycle and preparation; full repository names and GitHub star counts](https://github.com/user-attachments/assets/d8a0eb29-c4b4-42f9-8d75-b4512fcc8c7a)
+
+Repositories: [devashish2203/herdr-worktrunk](https://github.com/devashish2203/herdr-worktrunk) (166 ⭐); [NathanFlurry/herdr-plugin-jj-workspace](https://github.com/NathanFlurry/herdr-plugin-jj-workspace) (48 ⭐); [tdi/herdr-worktree-setup](https://github.com/tdi/herdr-worktree-setup) (27 ⭐); [tdi/herdr-worktree-from-linear](https://github.com/tdi/herdr-worktree-from-linear) (19 ⭐).
+
+<a id="workspace-layouts-and-session-navigation"></a>
+
+### Workspace layouts and session navigation
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Workspace layouts and session navigation; full repository names and GitHub star counts](https://github.com/user-attachments/assets/69322b27-3b6f-4d3d-a746-58d1a6bdd42c)
+
+Repositories: [cloudmanic/herdr-plus](https://github.com/cloudmanic/herdr-plus) (341 ⭐); [thanhdat77/herdr-navigator](https://github.com/thanhdat77/herdr-navigator) (175 ⭐); [yuk1ty/herdr-spreader](https://github.com/yuk1ty/herdr-spreader) (133 ⭐); [lararosekelley/dotfiles](https://github.com/lararosekelley/dotfiles) (52 ⭐); [andrewchng/herdr-sessionizer](https://github.com/andrewchng/herdr-sessionizer) (49 ⭐); [fullerzz/herdr-plugin-sesh](https://github.com/fullerzz/herdr-plugin-sesh) (47 ⭐); [razajamil/herdr-plugin-workspace-manager](https://github.com/razajamil/herdr-plugin-workspace-manager) (46 ⭐); [ntindle/herdr-resurrect](https://github.com/ntindle/herdr-resurrect) (36 ⭐); [Tyru5/herdr-floax](https://github.com/Tyru5/herdr-floax) (27 ⭐); [AVGVSTVS96/herdr-drovr](https://github.com/AVGVSTVS96/herdr-drovr) (20 ⭐); [beyondlex/herdr-recent-navigator](https://github.com/beyondlex/herdr-recent-navigator) (20 ⭐); [lmilojevicc/seshagy](https://github.com/lmilojevicc/seshagy) (20 ⭐); [third774/herdr-last-workspace](https://github.com/third774/herdr-last-workspace) (19 ⭐); [ogulcancelik/herdr-plugin-github-start](https://github.com/ogulcancelik/herdr-plugin-github-start) (17 ⭐).
+
+<a id="slack-discord-email-and-telegram"></a>
+
+### Slack, Discord, email and Telegram
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Slack, Discord, email and Telegram; full repository names and GitHub star counts](https://github.com/user-attachments/assets/ae2a96e6-f0b0-47d9-94a4-9cab7849687a)
+
+Repositories: [permgps/herdr-telegram-agents](https://github.com/permgps/herdr-telegram-agents) (72 ⭐); [natori-hrj/herdr-hail](https://github.com/natori-hrj/herdr-hail) † (7 ⭐); [ralphilius/herdr-discord](https://github.com/ralphilius/herdr-discord) † (1 ⭐); [tiny-send/tinysend-herdr](https://github.com/tiny-send/tinysend-herdr) † (1 ⭐); [egemenyildiz/herdr-slack](https://github.com/egemenyildiz/herdr-slack) † (0 ⭐).
+
+<a id="mobile-and-remote-control-surfaces"></a>
+
+### Mobile and remote control surfaces
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Mobile and remote control surfaces; full repository names and GitHub star counts](https://github.com/user-attachments/assets/93ca1b1e-b448-48d4-96a2-3d5671fb1fde)
+
+Repositories: [AltanS/collie](https://github.com/AltanS/collie) (1,137 ⭐); [ZingerLittleBee/Heeler](https://github.com/ZingerLittleBee/Heeler) (436 ⭐); [dcolinmorgan/herdr-remote](https://github.com/dcolinmorgan/herdr-remote) (395 ⭐); [0cv/herdr-mobile-relay](https://github.com/0cv/herdr-mobile-relay) (265 ⭐); [powerfooI/roamgate](https://github.com/powerfooI/roamgate) (258 ⭐); [nikok6/herdr-mirror](https://github.com/nikok6/herdr-mirror) (245 ⭐); [arronKler/pairfob](https://github.com/arronKler/pairfob) (106 ⭐); [devswha/herdr-web-ui](https://github.com/devswha/herdr-web-ui) (69 ⭐); [Unayung/herdr-watch](https://github.com/Unayung/herdr-watch) (29 ⭐); [Tomyail/herdr-connect](https://github.com/Tomyail/herdr-connect) (19 ⭐); [IvoryHeart/herdr-world](https://github.com/IvoryHeart/herdr-world) (17 ⭐).
+
+<a id="code-plan-and-document-review"></a>
+
+### Code, plan and document review
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Code, plan and document review; full repository names and GitHub star counts](https://github.com/user-attachments/assets/1d529e31-216e-4d24-91a6-951a115c28dc)
+
+Repositories: [persiyanov/herdr-reviewr](https://github.com/persiyanov/herdr-reviewr) (794 ⭐); [plannotator/herdr-annotate](https://github.com/plannotator/herdr-annotate) (586 ⭐); [jhochenbaum/herdr-hunk-diff](https://github.com/jhochenbaum/herdr-hunk-diff) (134 ⭐); [JonasBaeumer/herdr-file-annotator](https://github.com/JonasBaeumer/herdr-file-annotator) (61 ⭐); [plannotator/herdr-plannotator](https://github.com/plannotator/herdr-plannotator) (26 ⭐); [tomasvarga/herdr-pickr](https://github.com/tomasvarga/herdr-pickr) (20 ⭐); [edmundmiller/herdr-plugin-hunk](https://github.com/edmundmiller/herdr-plugin-hunk) (15 ⭐).
+
+<a id="quotas-activity-and-status-visibility"></a>
+
+### Quotas, activity and status visibility
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Quotas, activity and status visibility; full repository names and GitHub star counts](https://github.com/user-attachments/assets/9f24c8de-479e-4dfc-a70c-76bd9e486a52)
+
+Repositories: [furkankly/zoetrope](https://github.com/furkankly/zoetrope) (963 ⭐); [levi-qiao/herdr-agent-usage](https://github.com/levi-qiao/herdr-agent-usage) (145 ⭐); [hhdebb/herdr-radar](https://github.com/hhdebb/herdr-radar) (110 ⭐); [aemrebarut/herdr-dagr](https://github.com/aemrebarut/herdr-dagr) (88 ⭐); [iurysza/termscope](https://github.com/iurysza/termscope) (60 ⭐); [jeffarese/herdr-bar](https://github.com/jeffarese/herdr-bar) (47 ⭐); [senna-lang/herdr-agent-usage](https://github.com/senna-lang/herdr-agent-usage) (45 ⭐); [ragamo/herdr-flock](https://github.com/ragamo/herdr-flock) (38 ⭐); [eliasstravik/herdr-agent-progress](https://github.com/eliasstravik/herdr-agent-progress) (31 ⭐); [yankewei/herdr-focus-notify](https://github.com/yankewei/herdr-focus-notify) (28 ⭐); [Davidcreador/herdr-token-dashboard](https://github.com/Davidcreador/herdr-token-dashboard) (23 ⭐); [ezcorp-org/herdr-pc-ram-and-cpu-usage-overlay](https://github.com/ezcorp-org/herdr-pc-ram-and-cpu-usage-overlay) (20 ⭐); [hmu332233/herdr-f1](https://github.com/hmu332233/herdr-f1) (16 ⭐).
+
+<a id="session-memory-search-and-prompts"></a>
+
+### Session memory, search and prompts
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Session memory, search and prompts; full repository names and GitHub star counts](https://github.com/user-attachments/assets/c630ef97-0d81-4eb0-b89d-10477ddac82c)
+
+Repositories: [nicosuave/memex](https://github.com/nicosuave/memex) (236 ⭐); [oborchers/proqi](https://github.com/oborchers/proqi) (42 ⭐); [taxueseek/session-digger](https://github.com/taxueseek/session-digger) (29 ⭐); [alexarthurs/herdr-notes](https://github.com/alexarthurs/herdr-notes) (19 ⭐).
+
+<a id="files-browsers-editors-and-git-panes"></a>
+
+### Files, browsers, editors and Git panes
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Files, browsers, editors and Git panes; full repository names and GitHub star counts](https://github.com/user-attachments/assets/c022ba64-5851-4271-8898-04dd820c6c68)
+
+Repositories: [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (3,522 ⭐); [zenbu-labs/terminal-code](https://github.com/zenbu-labs/terminal-code) (2,100 ⭐); [smarzban/herdr-file-viewer](https://github.com/smarzban/herdr-file-viewer) (612 ⭐); [alexarthurs/herdr-sidebar](https://github.com/alexarthurs/herdr-sidebar) (408 ⭐); [eugenioenko/ttt](https://github.com/eugenioenko/ttt) (355 ⭐); [ChmaraX/herdr-nvim](https://github.com/ChmaraX/herdr-nvim) (222 ⭐); [lmilojevicc/herdr-splits.nvim](https://github.com/lmilojevicc/herdr-splits.nvim) (65 ⭐); [Crokily/herdr-lazygit](https://github.com/Crokily/herdr-lazygit) (36 ⭐); [ImArtisann/zed-herdr](https://github.com/ImArtisann/zed-herdr) (30 ⭐); [speardragon/herdr-yazi](https://github.com/speardragon/herdr-yazi) (29 ⭐); [StructuPath/herdr-browser](https://github.com/StructuPath/herdr-browser) (22 ⭐).
+
+<a id="execution-credentials-and-transport"></a>
+
+### Execution, credentials and transport
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Execution, credentials and transport; full repository names and GitHub star counts](https://github.com/user-attachments/assets/fad2b35d-c876-49bd-bb99-e01855bb0b12)
+
+Repositories: [openclaw/crabbox](https://github.com/openclaw/crabbox) (1,439 ⭐); [uwuclxdy/clauth](https://github.com/uwuclxdy/clauth) (244 ⭐); [fkiene/llmtrim-herdr](https://github.com/fkiene/llmtrim-herdr) (52 ⭐); [madarco/agentbox-herdr-plugin](https://github.com/madarco/agentbox-herdr-plugin) (33 ⭐); [termaxa/termaxa](https://github.com/termaxa/termaxa) (23 ⭐).
+
+<a id="plugin-actions-and-github-discovery"></a>
+
+### Plugin actions and GitHub discovery
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Plugin actions and GitHub discovery; full repository names and GitHub star counts](https://github.com/user-attachments/assets/ac7bee87-f94d-4de8-9737-029934ca5803)
+
+Repositories: [osolmaz/ghzinga](https://github.com/osolmaz/ghzinga) (87 ⭐); [speardragon/herdr-plugin-manager](https://github.com/speardragon/herdr-plugin-manager) (45 ⭐); [JanTvrdik/herdr-command-palette](https://github.com/JanTvrdik/herdr-command-palette) (39 ⭐); [natori-hrj/herdr-lazy](https://github.com/natori-hrj/herdr-lazy) (25 ⭐); [wyattjoh/herdr-plugin-gh-pr](https://github.com/wyattjoh/herdr-plugin-gh-pr) (22 ⭐).
+
+<a id="terminal-naming-keys-and-shell-ergonomics"></a>
+
+### Terminal naming, keys and shell ergonomics
+
+[↑ Back to TOC](#table-of-contents)
+
+![Flint chart: Terminal naming, keys and shell ergonomics; full repository names and GitHub star counts](https://github.com/user-attachments/assets/06255b2d-cadc-4f78-b564-90b8dda7aac3)
+
+Repositories: [kryptamine/herdr-auto-title](https://github.com/kryptamine/herdr-auto-title) (217 ⭐); [qu8n/herdr-automatic-rename](https://github.com/qu8n/herdr-automatic-rename) (188 ⭐); [paulbkim-dev/vim-herdr-navigation](https://github.com/paulbkim-dev/vim-herdr-navigation) (109 ⭐); [robbyrussell/herdr-ohmyzsh](https://github.com/robbyrussell/herdr-ohmyzsh) (81 ⭐); [iurysza/herdr-tab-smart-rename](https://github.com/iurysza/herdr-tab-smart-rename) (77 ⭐); [rjyo/herdr-window-title-sync](https://github.com/rjyo/herdr-window-title-sync) (36 ⭐); [rmarganti/herdr-pluck](https://github.com/rmarganti/herdr-pluck) (25 ⭐); [aimdevlee/herdr-nvim-nav](https://github.com/aimdevlee/herdr-nvim-nav) (20 ⭐); [wyattjoh/herdr-plugin-renamer](https://github.com/wyattjoh/herdr-plugin-renamer) (17 ⭐); [hotchpotch/herdr-tiny-fingers](https://github.com/hotchpotch/herdr-tiny-fingers) (15 ⭐).
+
+<a id="ranked-top-100-evaluations"></a>
+
+## Ranked top 100 evaluations
+
+[↑ Back to TOC](#table-of-contents)
+
+The original ranked assessments and pinned evidence follow unchanged.
+
+<a id="ranks-150-individual-evaluation-and-pinned-evidence"></a>
+
 ### Ranks 1–50: individual evaluation and pinned evidence
+
+[↑ Back to TOC](#table-of-contents)
 
 | Rank / repository (stars) | Capability actually documented | Native CLI / subscription fit | macOS / Herdr 0.9.3 declaration | Dependencies / manifest execution surface | Evaluation and concrete reason | Pinned evidence |
 |---|---|---|---|---|---|---|
@@ -136,7 +335,11 @@ The supplemental Slack/Discord/email capabilities were checked on 2026-09-30 usi
 | 49. [fullerzz/herdr-plugin-sesh](https://github.com/fullerzz/herdr-plugin-sesh) (47) | Go Sesh-style picker combines native workspaces, configured sessions and zoxide history with TOML layouts. | Arbitrary startup commands preserve any CLI login. | Manifest macOS; minimum 0.8.2; runtime untested. | Build: go build -ldflags=-X=github.com/fullerzz/herdr-plugin-sesh/internal/app.Version=0.14.0 -o bin/ ./cmd/herdr-sesh. Hooks: startup, workspace.focused, workspace.closed | **Optional** — Strong Sessionizer alternative with config validation and editor, but Go1.26.4 source build/history watcher are extra; choose one picker. | [README](https://github.com/fullerzz/herdr-plugin-sesh/blob/ca0dae184a0c6c4f30851018e0d92b95d580d327/README.md); [manifest](https://github.com/fullerzz/herdr-plugin-sesh/blob/ca0dae184a0c6c4f30851018e0d92b95d580d327/herdr-plugin.toml) |
 | 50. [jeffarese/herdr-bar](https://github.com/jeffarese/herdr-bar) (47) | Python command bar fuzzy jumps to agents/tabs/workspaces and follows Claude/Codex task titles. | Native subscribed transcripts work; other vendor icons generic, OpenCode v2 titles unknown. | Manifest macOS; minimum 0.9.0; runtime untested. | Build: none. Hooks: startup, pane.agent_detected | **Optional** — Low-dependency no-inference alternative to smart naming, but background watcher and key/terminal mapping still add overlapping navigation. | [README](https://github.com/jeffarese/herdr-bar/blob/5dbc33404218f23e16c724a5675534c96fb67882/README.md); [manifest](https://github.com/jeffarese/herdr-bar/blob/5dbc33404218f23e16c724a5675534c96fb67882/herdr-plugin.toml) |
 
+<a id="ranks-51100-individual-evaluation-and-pinned-evidence"></a>
+
 ### Ranks 51–100: individual evaluation and pinned evidence
+
+[↑ Back to TOC](#table-of-contents)
 
 | Rank / repository | Capability from docs | Declared macOS / Herdr 0.9.3 compatibility | Build, runtime hooks and config effects | Codex + native Claude + OpenCode v2 fit | Decision and reason | Pinned evidence |
 |---|---|---|---|---|---|---|
@@ -191,7 +394,11 @@ The supplemental Slack/Discord/email capabilities were checked on 2026-09-30 usi
 | 99. **[edmundmiller/herdr-plugin-hunk](https://github.com/edmundmiller/herdr-plugin-hunk)** (15 stars) | Hunk worktree/staged/branch diff in split or tab. | macOS declared, min 0.7.0, eligible for 0.9.3 by declared minimum | Python3 launcher with Hunk or bunx hunkdiff; no build/hooks; on-demand package runner may resolve unpinned Hunk. | Harness-neutral human diff inspection, no agent messaging. | Optional if Hunk selected/pinned as review tool; overlaps Reviewr/Pickr and avoid on-demand latest runner. | [README](https://github.com/edmundmiller/herdr-plugin-hunk/blob/11ba5dcca4358203ca68f160becf6870cf016c18/README.md); [manifest](https://github.com/edmundmiller/herdr-plugin-hunk/blob/11ba5dcca4358203ca68f160becf6870cf016c18/herdr-plugin.toml) |
 | 100. **[hotchpotch/herdr-tiny-fingers](https://github.com/hotchpotch/herdr-tiny-fingers)** (15 stars) | Visible-screen keyboard copy hints for paths/SHAs/URLs/IPs/etc with multi-select/custom regex and optional direct paste. | macOS declared, min 0.7.0, eligible for 0.9.3 by declared minimum | Cargo --locked build; overlay/action; plugin TOML; local clipboard or direct pane input; no events/startup. | Harness-neutral convenience; direct paste goes into focused agent terminal, so clipboard-only safest default. | Optional: lightweight ergonomic enhancement; choose versus Pluck, keep direct paste disabled unless explicitly wanted. | [README](https://github.com/hotchpotch/herdr-tiny-fingers/blob/2927dcf2bc95fe53a7143c040bbdcbcf804d65ed/README.md); [manifest](https://github.com/hotchpotch/herdr-tiny-fingers/blob/2927dcf2bc95fe53a7143c040bbdcbcf804d65ed/herdr-plugin.toml) |
 
+<a id="glm-flash-is-the-baseline-successful-patches-decide-value"></a>
+
 ## GLM Flash is the baseline; successful patches decide value
+
+[↑ Back to TOC](#table-of-contents)
 
 Prices below were checked **2026-09-30** and are USD per **million tokens**, for Fireworks interactive global **Standard** service. US residency and Priority/Fast modes have different prices; batch discounts do not apply automatically to interactive agents. The arithmetic example uses 100K uncached input plus 10K output and measures no real task, retry, reasoning or tool-loop cost. ([Fireworks pricing](https://docs.fireworks.ai/serverless/pricing), [serverless modes](https://docs.fireworks.ai/serverless/serverless-modes))
 
@@ -220,7 +427,11 @@ Start with one or two open workers on the same bounded tests/docs/constrained-re
 
 ![Subscription-first model fallback with bounded provider routes](https://github.com/user-attachments/assets/4e634a28-4e35-4e58-9be1-2720f2262230)
 
+<a id="existing-fireworks-and-openrouter-accounts-cover-the-third-tier"></a>
+
 ## Existing Fireworks and OpenRouter accounts cover the third tier
+
+[↑ Back to TOC](#table-of-contents)
 
 **Fireworks direct is the initial reproducible baseline; OpenRouter adds route redundancy using an account you already have.** This avoids another subscription purchase. Together and DeepInfra provide useful pricing cross-checks or later alternatives; Groq and Cerebras offer speed-oriented routes with narrower catalog/model choices. No account balance, native authentication or effective quota was inspected.
 
@@ -244,10 +455,14 @@ Preserve the shipped OpenRouter `data_collection:"deny"` preference. It is disti
 
 OpenCode v2's native flow is `/connect` followed by `/models`. Preserve its native OpenRouter runtime and declare extra request fields using v2's provider/model/variant `body` merge. Exact documented candidate references are `openrouter/z-ai/glm-5.3-flash`, `openrouter/deepseek/deepseek-v4.1-flash`, `openrouter/deepseek/deepseek-v4-flash-0731` and `openrouter/minimax/minimax-m3`. For Fireworks, the API IDs are `accounts/fireworks/models/glm-5p3-flash`, `accounts/fireworks/models/deepseek-v4p1-flash`, `accounts/fireworks/models/glm-5p3` and `accounts/fireworks/models/minimax-m3`; **these are not asserted as exact OpenCode picker IDs**. Connect Fireworks and choose its actual native catalog entry. The public models.dev catalog returned HTTP403 during research, so its runtime catalog was not confirmed. If a built-in entry is absent, v2 supports a declarative custom provider with `env`, compatible runtime, `settings.baseURL` and per-model metadata; no speculative custom catalog was added. Keep keys in native local storage and role-specific model selection outside the global default. ([OpenCode v2 providers](https://opencode.ai/v2/docs/providers/))
 
+<a id="research-provenance-and-remaining-validation"></a>
+
 ## Research provenance and remaining validation
+
+[↑ Back to TOC](#table-of-contents)
 
 Plugin evidence used Nia pinned GitHub README/manifest retrieval, repository-tree discovery and selective installation/configuration source reads. The model/provider research applied your exact local `web-research-router` at `/Users/kevinchen/dev/github.com/kevinmichaelchen/skills/web-research-router/SKILL.md`. Live Executor discovery returned no TinyFish Fetch tools, so the router-authorized local Parallel Extract fallback and Parallel Search supplied current primary pricing, publisher cards/licenses, retention, regional modes, budget controls and native OpenCode provider documentation. Public catalog metadata additionally used unauthenticated HTTPS JSON, without inference. Raw notes/caches remain outside source control under temporary research directories; a same-name unrelated public router was not used. `skillspec` was unavailable. Missing speculative documentation paths were resolved through official indices where possible; all 100 root README/catalog manifest retrievals succeeded.
 
-The three architecture/workflow diagrams were rendered with [Eraser diagrams](https://github.com/eraserlabs/eraser-diagrams), inspected, converted to lossless WebP and uploaded using [GitHub CLI PR attachments](https://cli.github.com/manual/gh_pr_edit). The additional model-cost chart was rendered with [Flint](https://github.com/microsoft/flint-chart) using the local `flint-chart-author` skill. All four image links point to GitHub user attachments; **no image binaries are checked into the repository**. The architecture diagram describes the implemented launcher, while plugin adoption and provider/model routing describe recommendations.
+The three architecture/workflow diagrams were rendered with [Eraser diagrams](https://github.com/eraserlabs/eraser-diagrams), inspected, converted to lossless WebP and uploaded using [GitHub CLI PR attachments](https://cli.github.com/manual/gh_pr_edit). The additional model-cost chart was rendered with [Flint](https://github.com/microsoft/flint-chart) using the local `flint-chart-author` skill. The 13 plugin-category charts use the same Flint renderer and catalog snapshot. All 17 image links point to GitHub user attachments; **no image binaries are checked into the repository**. The architecture diagram describes the implemented launcher, while plugin adoption and provider/model routing describe recommendations.
 
 The next decision is driven by observed bottlenecks: add Sessionizer when repeatable layouts matter, Reviewr when review delivery slows work, and Projects when repeated coordination deserves persistent memory. Before enabling an API lane, authenticate through the native CLI, verify an eligible private route and explicit spend cap, then compare a small common task set. The unmeasured account headroom, native-v2 plugin behavior, latency and cost per accepted patch remain concrete gaps; collecting 100 reviews does not close them.
