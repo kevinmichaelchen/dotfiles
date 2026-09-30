@@ -1,0 +1,14 @@
+# Native Crush configuration: declarations affect its in-memory config.
+# Existing crush.json and the application data directory remain local.
+mcp add executor --type stdio --command mise \
+  --args=exec --args=-- --args=sfw --args=npx --args=-y \
+  --args=mcp-remote@0.1.38 \
+  --args=https://executor.sh/kevin-chen-s-organization/mcp \
+  --args=--transport --args=http-only \
+  --env SFW_SKIP_UPDATE_CHECK 1 --timeout 120
+mcp add executor-desktop --type stdio --command executor --args=mcp
+
+# Optional machine-specific declarations take precedence.
+if [[ -f "$HOME/.config/crush/crushrc.local" ]]; then
+  source "$HOME/.config/crush/crushrc.local"
+fi

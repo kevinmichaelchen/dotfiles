@@ -16,13 +16,16 @@ Executor's MCP OAuth discovery and keep their own refreshable sessions. Desktop
 clients run `executor mcp` over stdio instead of authenticating to the local
 HTTP endpoint.
 
-After applying Chezmoi on a new laptop, authenticate the Cloud endpoint:
+After running `mise bootstrap` on a new laptop, authenticate the Cloud endpoint:
 
 ```bash
 codex mcp login executor
-claude mcp login executor
 opencode mcp auth executor
 ```
+
+For Claude Code, launch `claude` from the configured shell and authenticate the
+Executor server through `/mcp`. The declarative MCP file is session-scoped and
+does not add a persisted user-scope server.
 
 Crush uses `mcp-remote`, which starts its OAuth flow when the endpoint first
 connects. `executor login` is separate: it authenticates the Executor CLI to a
@@ -50,12 +53,12 @@ a second control plane and fights Executor's own runtime model.
 There is intentionally no steady-state source sync script. Add or edit sources,
 secrets, OAuth connections, and policies through Executor Cloud.
 
-## Chezmoi Boundary
+## Dotfiles Boundary
 
-Chezmoi manages stable endpoint and command wiring, not Executor credentials or
+Native app config layers declare stable endpoint and command wiring, not Executor credentials or
 client OAuth sessions.
 
-Chezmoi should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
+Dotfiles should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
 configuration belongs to Executor's control plane.
 
 If `doctor.sh` reports a lingering `sources` key in `executor.jsonc`, treat it

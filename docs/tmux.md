@@ -67,7 +67,7 @@ path = "~/dev"
 
 ## Our Configuration
 
-Located at `~/.config/tmux/tmux.conf` (managed via chezmoi).
+Located at `~/.config/tmux/tmux.conf` (linked by Mise from `dotfiles/.config/tmux/tmux.conf`).
 
 ### Base Settings
 
@@ -102,7 +102,7 @@ system clipboard.
 ### Plugins (via TPM)
 
 We use [TPM (Tmux Plugin Manager)][tpm] to manage plugins. It's installed
-automatically via chezmoi's `.chezmoiexternal.toml`.
+automatically via `[bootstrap.repos]` in `mise/config.toml`.
 
 ```bash
 set -g @plugin 'tmux-plugins/tpm'

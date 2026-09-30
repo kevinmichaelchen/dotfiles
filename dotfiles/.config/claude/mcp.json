@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "executor": {
+      "type": "http",
+      "url": "https://executor.sh/kevin-chen-s-organization/mcp"
+    },
+    "executor-desktop": {
+      "type": "stdio",
+      "command": "executor",
+      "args": [
+        "mcp"
+      ]
+    }
+  }
+}

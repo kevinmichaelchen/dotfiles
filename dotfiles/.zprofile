@@ -1,0 +1,2 @@
+# Managed by Mise. Keep mise and machine-global packages available to login shells.
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"

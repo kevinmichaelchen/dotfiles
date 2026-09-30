@@ -16,13 +16,17 @@ mise.toml
 *.tmp
 .tmp/
 
+# Python runtime artifacts
+__pycache__/
+*.pyc
+
 # Skill runtime artifacts
 .agents/skills/**/.venv/
 .agents/skills/**/__pycache__/
 .agents/skills/**/*.pyc
-chezmoi/dot_agents/skills/**/.venv/
-chezmoi/dot_agents/skills/**/__pycache__/
-chezmoi/dot_agents/skills/**/*.pyc
+dotfiles/.agents/skills/**/.venv/
+dotfiles/.agents/skills/**/__pycache__/
+dotfiles/.agents/skills/**/*.pyc
 
 # Executor local-first config and artifacts
 .executor/

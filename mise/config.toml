@@ -1,0 +1,213 @@
+# Mise global configuration
+# Authoritative repository config; Mise links it into ~/.config/mise/config.toml
+# Apply workstation state with `mise bootstrap` after changes
+
+min_version = "2026.7.7"
+
+[settings]
+dotfiles.root = "~/dotfiles/dotfiles"
+# Save exact versions by default when adding tools with `mise use`.
+pin = true
+# Keep the generated lockfile active, limit future auto-locking to this Mac's
+# platform, and re-check available provenance during installs.
+lockfile = true
+lockfile_platforms = ["macos-arm64"]
+locked_verify_provenance = true
+# Require lockfile URLs/checksums during installs; the current lockfile covers
+# all active tools on this Mac.
+locked = true
+# Avoid resolving brand-new releases before they have had basic ecosystem soak
+# time. This also applies to supported package-manager backends during install.
+minimum_release_age = "7d"
+# Replace corepack: read the pnpm version from each repo's package.json
+# packageManager field so mise installs and selects it directly.
+idiomatic_version_file_enable_tools = ["pnpm"]
+
+# Machine-global packages remain separate from versioned development tools.
+# mise's built-in Homebrew support can install these without a pre-existing
+# Homebrew installation.
+[bootstrap.packages]
+"brew:cloudflared" = "latest"
+"brew:git" = "latest"
+"brew:git-town" = "latest"
+"brew:jira-cli" = "latest"
+"brew:libpq" = "latest"
+"brew:mosh" = "latest"
+"brew:podman" = "latest"
+"brew:podman-compose" = "latest"
+"brew:ripgrep" = "latest"
+"brew:sesh" = "latest"
+"brew:tmux" = "latest"
+"brew:webp" = "latest"
+"brew:zsh-autosuggestions" = "latest"
+"brew:zsh-syntax-highlighting" = "latest"
+"brew-cask:ghostty" = "latest"
+
+# Follow upstream branches; Mise refuses dirty or conflicting checkouts.
+[bootstrap.repos]
+"~/.tmux/plugins/tpm" = { url = "https://github.com/tmux-plugins/tpm.git", ref = "master" }
+
+# Prepare the source directory for the Claude skills projection.
+[bootstrap.hooks]
+pre-dotfiles = 'mkdir -p "$HOME/.agents/skills"'
+
+[bootstrap.user]
+login_shell = "/bin/zsh"
+
+[bootstrap.macos.dock]
+autohide = true
+orientation = "left"
+show_recents = false
+
+[bootstrap.macos.finder]
+show_pathbar = true
+show_status_bar = true
+
+[bootstrap.macos.defaults."com.apple.finder"]
+AppleShowAllExtensions = true
+
+[bootstrap.macos.keyboard]
+key_repeat = 2
+initial_key_repeat = 15
+press_and_hold = false
+
+[bootstrap.macos.defaults.NSGlobalDomain]
+AppleKeyboardUIMode = 3
+
+# Plain files are owned only by Mise. Per-file links leave runtime state alone.
+[dotfiles]
+"~/.config/mise/config.toml" = { source = "~/dotfiles/mise/config.toml", mode = "symlink" }
+"~/.config/mise/mise.lock" = { source = "~/dotfiles/mise/mise.lock", mode = "symlink" }
+"~/.agents/skills/README.md" = { source = "~/dotfiles/dotfiles/.agents/skills/README.md", mode = "symlink" }
+"~/.agents/skills/find-skills/SKILL.md" = { source = "~/dotfiles/dotfiles/.agents/skills/find-skills/SKILL.md", mode = "symlink" }
+"~/.agents/skills/firecrawl-monitor/SKILL.md" = { source = "~/dotfiles/dotfiles/.agents/skills/firecrawl-monitor/SKILL.md", mode = "symlink" }
+"~/.cargo/config.toml" = { source = "~/dotfiles/dotfiles/.cargo/config.toml", mode = "symlink" }
+"~/.codex/AGENTS.md" = { source = "~/dotfiles/dotfiles/.codex/AGENTS.md", mode = "symlink" }
+"~/.config/bat/config" = { source = "~/dotfiles/dotfiles/.config/bat/config", mode = "symlink" }
+"~/.config/dprint/dprint.jsonc" = { source = "~/dotfiles/dotfiles/.config/dprint/dprint.jsonc", mode = "symlink" }
+"~/.config/ghostty/config" = { source = "~/dotfiles/dotfiles/.config/ghostty/config", mode = "symlink" }
+"~/.config/git/kevinmichaelchen" = { source = "~/dotfiles/dotfiles/.config/git/kevinmichaelchen", mode = "symlink" }
+"~/.config/opencode/README.md" = { source = "~/dotfiles/dotfiles/.config/opencode/README.md", mode = "symlink" }
+"~/.config/shell/bat.sh" = { source = "~/dotfiles/dotfiles/.config/shell/bat.sh", mode = "symlink" }
+"~/.config/shell/core.sh" = { source = "~/dotfiles/dotfiles/.config/shell/core.sh", mode = "symlink" }
+"~/.config/shell/git.sh" = { source = "~/dotfiles/dotfiles/.config/shell/git.sh", mode = "symlink" }
+"~/.config/shell/agents.sh" = { source = "~/dotfiles/dotfiles/.config/shell/agents.sh", mode = "symlink" }
+"~/.config/shell/github.sh" = { source = "~/dotfiles/dotfiles/.config/shell/github.sh", mode = "symlink" }
+"~/.config/shell/pnpm.sh" = { source = "~/dotfiles/dotfiles/.config/shell/pnpm.sh", mode = "symlink" }
+"~/.config/shell/python.sh" = { source = "~/dotfiles/dotfiles/.config/shell/python.sh", mode = "symlink" }
+"~/.config/shell/testcontainers.sh" = { source = "~/dotfiles/dotfiles/.config/shell/testcontainers.sh", mode = "symlink" }
+"~/.config/shell/zed.sh" = { source = "~/dotfiles/dotfiles/.config/shell/zed.sh", mode = "symlink" }
+"~/.config/starship.toml" = { source = "~/dotfiles/dotfiles/.config/starship.toml", mode = "symlink" }
+"~/.config/tmux/tmux.conf" = { source = "~/dotfiles/dotfiles/.config/tmux/tmux.conf", mode = "symlink" }
+"~/.config/zsh/custom.zsh" = { source = "~/dotfiles/dotfiles/.config/zsh/custom.zsh", mode = "symlink" }
+"~/.gitconfig" = { source = "~/dotfiles/dotfiles/.gitconfig", mode = "symlink" }
+"~/.vimrc" = { source = "~/dotfiles/dotfiles/.vimrc", mode = "symlink" }
+"~/.zprofile" = { source = "~/dotfiles/dotfiles/.zprofile", mode = "symlink" }
+"~/.zshrc" = { source = "~/dotfiles/dotfiles/.zshrc", mode = "symlink" }
+
+"~/.codex/dotfiles.config.toml" = { source = "~/dotfiles/dotfiles/.codex/dotfiles.config.toml", mode = "symlink" }
+"~/.config/claude/mcp.json" = { source = "~/dotfiles/dotfiles/.config/claude/mcp.json", mode = "symlink" }
+"~/.config/opencode/dotfiles.json" = { source = "~/dotfiles/dotfiles/.config/opencode/dotfiles.json", mode = "symlink" }
+"~/.config/crush/crushrc" = { source = "~/dotfiles/dotfiles/.config/crush/crushrc", mode = "symlink" }
+"~/.claude/skills" = { source = "~/.agents/skills", mode = "symlink" }
+
+[tasks.bootstrap]
+description = "Install security tooling and synchronize pinned agent skills"
+run = [
+  'bash "$HOME/dotfiles/scripts/agent-skills/install-security-tools.sh"',
+  'bash "$HOME/dotfiles/scripts/agent-skills/sync.sh" --prune',
+]
+
+[tools]
+
+# ============================================================================
+# Core Language Runtimes
+# ============================================================================
+node = "26.10.0"
+python = "3.14.7"
+go = "1.27.1"
+rust = "1.98.1"
+
+# ============================================================================
+# Node.js Tools & Package Managers
+# ============================================================================
+pnpm = "12.5.1"
+bun = "1.4.2"
+
+# npm global packages
+"npm:markit-ai" = "0.6.1"
+"npm:@openai/codex" = "0.159.2"
+"npm:@nozomioai/nia" = "0.5.2"           # Nia CLI only
+"npm:sfw" = "2.0.6"                      # Socket Firewall wrapper for package manager network filtering
+"npm:firecrawl-cli" = "1.24.3"
+"npm:@eraserlabs/diagrams-cli" = "0.2.0"
+
+# ============================================================================
+# Python CLI Tools from PyPI
+# ============================================================================
+"pipx:parallel-web-tools" = { version = "0.9.3", extras = "cli" }
+"pipx:huggingface_hub" = "1.32.0"                                 # hf CLI
+
+# ============================================================================
+# Development Tools from Cargo (Rust tools)
+# ============================================================================
+"cargo:eza" = "0.23.5"   # ls replacement
+"cargo:tokei" = "15.0.0" # code statistics
+
+# ============================================================================
+# Go Tools from GitHub (charmbracelet tools are Go, not Rust)
+# ============================================================================
+"github:charmbracelet/glow" = "3.0.0"
+"github:charmbracelet/gum" = "2.0.0"             # shell prompt tool (Go)
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.8.0"
+
+# ============================================================================
+# Tools from GitHub Releases (Go & other binaries)
+# ============================================================================
+"github:rtk-ai/rtk" = "0.47.0"                # Token-efficient CLI for coding agents
+"github:x-motemen/ghq" = "1.10.1"
+"github:cli/cli" = "2.100.0"
+"github:abhinav/git-spice" = "0.31.2"
+"github:RhysSullivan/executor" = "1.6.7"
+"github:vercel-labs/agent-browser" = "0.36.0"
+"github:sigoden/projclean" = "0.9.0"          # Project build artifact cleaner
+"github:libkrun/krunkit" = "1.3.2"            # Podman libkrun VM provider
+"aqua:jqlang/jq" = "1.8.2"
+
+# ============================================================================
+# Tools from Aqua (GitHub releases with verification)
+# ============================================================================
+"aqua:charmbracelet/crush" = "0.96.1"
+"aqua:sharkdp/bat" = "0.26.1"            # cat replacement with syntax highlighting
+"aqua:dandavison/delta" = "0.19.2"       # git diff viewer
+"aqua:sharkdp/fd" = "10.5.0"             # find replacement
+"aqua:junegunn/fzf" = "0.74.4"
+"aqua:ajeetdsouza/zoxide" = "0.10.0"
+"aqua:dprint/dprint" = "0.57.4"
+"aqua:j178/prek" = "0.5.3"
+"aqua:chmln/sd" = "1.1.0"                # sed replacement (simpler syntax)
+"aqua:koalaman/shellcheck" = "0.11.0"    # Shell script static analyzer
+"aqua:mikefarah/yq" = "4.53.6"
+"aqua:terrastruct/d2" = "0.8.2"          # Diagram language
+"aqua:typst/typst" = "0.15.1"
+"aqua:starship/starship" = "1.26.0"
+"aqua:golangci/golangci-lint" = "2.13.2" # Go linter aggregator
+"github:astral-sh/uv" = "0.12.9"
+"aqua:aws/aws-cli" = "2.37.5"
+
+# ============================================================================
+# Tools from npm (Node.js packages)
+# ============================================================================
+# OpenCode v2. Its reviewed postinstall selects/copies the native binary;
+# scripts remain disabled for every other npm tool.
+"npm:@opencode/cli" = { version = "2.0.20", npm_args = "--ignore-scripts=false" }
+"npm:wrangler" = "4.136.2"
+
+# ============================================================================
+# Notes on Workstation Ownership
+# ============================================================================
+#   - mise bootstrap: system packages, macOS defaults, login shell, and tools
+#   - mise dotfiles: plain files and shell behavior
+#   - native app config layers: shared defaults without rewriting local state
+#   - bootstrap task: agent-skill tooling and pinned skill synchronization
+#   - mise.run: installs mise itself before this configuration is available
