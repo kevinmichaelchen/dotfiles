@@ -27,16 +27,14 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 # mise's built-in Homebrew support can install these without a pre-existing
 # Homebrew installation.
 [bootstrap.packages]
-"brew:cloudflared" = "latest"
 "brew:git" = "latest"
-"brew:git-town" = "latest"
 "brew:jira-cli" = "latest"
 "brew:libpq" = "latest"
 "brew:mosh" = "latest"
 "brew:podman" = "latest"
 "brew:podman-compose" = "latest"
+"brew:replicate/tap/replicate" = "latest"
 "brew:ripgrep" = "latest"
-"brew:sesh" = "latest"
 "brew:tmux" = "latest"
 "brew:webp" = "latest"
 "brew:zsh-autosuggestions" = "latest"
@@ -158,7 +156,7 @@ rust = "1.98.1"
 # ============================================================================
 # Node.js Tools & Package Managers
 # ============================================================================
-pnpm = "12.5.1"
+pnpm = "12.6.0"
 bun = "1.4.2"
 
 # npm global packages
@@ -166,7 +164,7 @@ bun = "1.4.2"
 "npm:@openai/codex" = "0.159.2"
 "npm:@nozomioai/nia" = "0.5.2"           # Nia CLI only
 "npm:sfw" = "2.0.6"                      # Socket Firewall wrapper for package manager network filtering
-"npm:firecrawl-cli" = "1.24.3"
+"npm:firecrawl-cli" = "1.24.4"
 "npm:@eraserlabs/diagrams-cli" = "0.2.0"
 
 # ============================================================================
@@ -185,7 +183,7 @@ bun = "1.4.2"
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
 "github:charmbracelet/glow" = "3.0.0"
-"github:charmbracelet/gum" = "2.0.0"             # shell prompt tool (Go)
+"github:charmbracelet/gum" = "2.0.1"             # shell prompt tool (Go)
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.8.0"
 
 # ============================================================================
@@ -197,14 +195,13 @@ bun = "1.4.2"
 "github:persiyanov/herdr-reviewr" = { version = "0.39.0", asset_pattern = "herdr-reviewr-aarch64-apple-darwin.tar.gz" }
 "github:plannotator/herdr-annotate" = { version = "0.1.0", version_prefix = "rust-lite-v", bin = "herdr-annotate", asset_pattern = "herdr-annotate-aarch64-apple-darwin" }
 "github:plannotator/plannotator-tui" = { version = "0.9.4", bin = "plannotator-tui", asset_pattern = "plannotator-tui-aarch64-apple-darwin" }
-"github:rtk-ai/rtk" = "0.47.0"                                 # Token-efficient CLI for coding agents
+"github:rtk-ai/rtk" = "0.49.0"                                                                                                                                             # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
-"github:cli/cli" = "2.100.0"
-"github:abhinav/git-spice" = "0.31.2"
-"github:RhysSullivan/executor" = "1.6.7"
-"github:vercel-labs/agent-browser" = "0.36.0"
-"github:sigoden/projclean" = "0.9.0"                           # Project build artifact cleaner
-"github:libkrun/krunkit" = "1.3.2"                             # Podman libkrun VM provider
+"github:cli/cli" = "2.101.0"
+"github:RhysSullivan/executor" = "1.6.10"
+"github:vercel-labs/agent-browser" = "0.38.1"
+"github:sigoden/projclean" = "0.9.0"                                                                                                                                       # Project build artifact cleaner
+"github:libkrun/krunkit" = "1.3.2"                                                                                                                                         # Podman libkrun VM provider
 "aqua:jqlang/jq" = "1.8.2"
 
 # ============================================================================
@@ -221,20 +218,21 @@ bun = "1.4.2"
 "aqua:chmln/sd" = "1.1.0"                # sed replacement (simpler syntax)
 "aqua:koalaman/shellcheck" = "0.11.0"    # Shell script static analyzer
 "aqua:mikefarah/yq" = "4.53.6"
-"aqua:terrastruct/d2" = "0.8.2"          # Diagram language
+"aqua:terrastruct/d2" = "0.9.0"          # Diagram language
 "aqua:typst/typst" = "0.15.1"
 "aqua:starship/starship" = "1.26.0"
 "aqua:golangci/golangci-lint" = "2.13.2" # Go linter aggregator
-"github:astral-sh/uv" = "0.12.9"
-"aqua:aws/aws-cli" = "2.37.5"
+"aqua:charmbracelet/vhs" = "0.12.0"
+"github:astral-sh/uv" = "0.12.18"
+"aqua:aws/aws-cli" = "2.37.7"
 
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
 # OpenCode v2. Its reviewed postinstall selects/copies the native binary;
 # scripts remain disabled for every other npm tool.
-"npm:@opencode/cli" = { version = "2.0.20", npm_args = "--ignore-scripts=false" }
-"npm:wrangler" = "4.136.2"
+"npm:@opencode/cli" = { version = "2.0.20", allow_builds = ["@opencode/cli"] }
+"npm:wrangler" = "4.137.0"
 
 # ============================================================================
 # Notes on Workstation Ownership
