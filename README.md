@@ -188,16 +188,21 @@ outside those keys remain intact. Crush uses its supported Bash config DSL to
 declare MCP servers in memory, and optionally sources `crushrc.local` for local
 overrides. No configuration mutation script runs during bootstrap.
 
-OpenCode's managed `plugin` declarations let the app resolve and install plugins,
-replacing the create-only dependency seed. Its existing dependency manifest
-remains local. Mise links Claude's skills directory to `~/.agents/skills`.
+OpenCode v2 uses its native provider login and usage statistics; the v1-only
+Codex-auth and TokenScope plugins and dependency seed are removed. Its primary
+model and dependency manifest remain local; the title agent uses GPT-6 Luna.
+See the [OpenCode v2 guide](dotfiles/.config/opencode/README.md) for subscription
+versus API model choices and migration. For an existing v2 background service,
+set its managed config environment once with
+`opencode service set env OPENCODE_CONFIG "$HOME/.config/opencode/dotfiles.json"`.
+Mise links Claude's skills directory to `~/.agents/skills`.
 
 The former one-time credential/binary cleanup migrations and nested Mise install
 hook have been removed. Existing Chezmoi installations are not uninstalled.
 
 Native loading references: [Codex profiles](https://developers.openai.com/codex/config-basic/),
 [Claude MCP config](https://code.claude.com/docs/en/cli-reference),
-[OpenCode config](https://opencode.ai/docs/config/), and
+[OpenCode config](https://opencode.ai/v2/docs/config/), and
 [Crush config](https://github.com/charmbracelet/crush/blob/v0.96.1/docs/config/README.md).
 
 ## External Repositories

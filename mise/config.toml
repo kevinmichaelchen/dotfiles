@@ -88,7 +88,6 @@ AppleKeyboardUIMode = 3
 "~/.config/ghostty/config" = { source = "~/dotfiles/dotfiles/.config/ghostty/config", mode = "symlink" }
 "~/.config/git/kevinmichaelchen" = { source = "~/dotfiles/dotfiles/.config/git/kevinmichaelchen", mode = "symlink" }
 "~/.config/opencode/README.md" = { source = "~/dotfiles/dotfiles/.config/opencode/README.md", mode = "symlink" }
-"~/.config/opencode/command/tokenscope.md" = { source = "~/dotfiles/dotfiles/.config/opencode/command/tokenscope.md", mode = "symlink" }
 "~/.config/shell/bat.sh" = { source = "~/dotfiles/dotfiles/.config/shell/bat.sh", mode = "symlink" }
 "~/.config/shell/core.sh" = { source = "~/dotfiles/dotfiles/.config/shell/core.sh", mode = "symlink" }
 "~/.config/shell/git.sh" = { source = "~/dotfiles/dotfiles/.config/shell/git.sh", mode = "symlink" }
@@ -165,7 +164,6 @@ bun = "1.4.2"
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
-"github:anomalyco/opencode" = "1.18.30"
 "github:rtk-ai/rtk" = "0.47.0"                # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.10.1"
 "github:cli/cli" = "2.100.0"
@@ -200,6 +198,9 @@ bun = "1.4.2"
 # ============================================================================
 # Tools from npm (Node.js packages)
 # ============================================================================
+# OpenCode v2. Its reviewed postinstall selects/copies the native binary;
+# scripts remain disabled for every other npm tool.
+"npm:@opencode/cli" = { version = "2.0.20", npm_args = "--ignore-scripts=false" }
 "npm:wrangler" = "4.136.2"
 
 # ============================================================================
