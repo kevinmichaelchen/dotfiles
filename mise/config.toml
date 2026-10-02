@@ -225,6 +225,7 @@ bun = "1.4.2"
 "aqua:charmbracelet/vhs" = "0.12.0"
 "github:astral-sh/uv" = "0.12.18"
 "aqua:aws/aws-cli" = "2.37.7"
+"aqua:stripe/stripe-cli" = "1.52.0"
 
 # ============================================================================
 # Tools from npm (Node.js packages)
