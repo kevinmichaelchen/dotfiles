@@ -149,6 +149,15 @@ checksum = "sha256:c40b27b11f580411e068f2fa6c1be7830a387c0bc47a94d1d37f32b054c53
 url = "https://github.com/starship/starship/releases/download/v1.26.0/starship-aarch64-apple-darwin.tar.gz"
 url_api = "https://api.github.com/repos/starship/starship/releases/assets/460374577"
 
+[[tools."aqua:stripe/stripe-cli"]]
+version = "1.52.0"
+backend = "aqua:stripe/stripe-cli"
+
+[tools."aqua:stripe/stripe-cli"."platforms.macos-arm64"]
+checksum = "sha256:5946baab218d43d4d7e3f43ec30a05e0dd3deadbcded5d11b67398e3cfe30830"
+url = "https://github.com/stripe/stripe-cli/releases/download/v1.52.0/stripe_1.52.0_mac-os_arm64.tar.gz"
+url_api = "https://api.github.com/repos/stripe/stripe-cli/releases/assets/586605047"
+
 [[tools."aqua:terrastruct/d2"]]
 version = "0.9.0"
 backend = "aqua:terrastruct/d2"
