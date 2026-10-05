@@ -372,13 +372,6 @@ version = "2.0.20"
 backend = "npm:@opencode/cli"
 
 [tools."npm:@opencode/cli".options]
-npm_args = "--ignore-scripts=false"
-
-[[tools."npm:@opencode/cli"]]
-version = "2.0.20"
-backend = "npm:@opencode/cli"
-
-[tools."npm:@opencode/cli".options]
 allow_builds = '["@opencode/cli"]'
 
 [[tools."npm:firecrawl-cli"]]
@@ -409,13 +402,13 @@ backend = "pipx:parallel-web-tools"
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.6.0"
+version = "11.1.2"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:1030f38e14fa2e6c87fe6ab0313a3bf3b794a961504f4439bad2ca2110d3583e"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.6.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/581813250"
+checksum = "sha256:2f46bcb7ac3c693af72e06e68467b3a9127cbf2a24b778382bc8beaff8463aee"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.1.2/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/420119817"
 provenance = "github-attestations"
 
 [[tools.python]]

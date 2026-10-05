@@ -1,6 +1,6 @@
 # Shared defaults layered over ~/.codex/config.toml by --profile dotfiles.
 model = "gpt-6.1-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 
 [mcp_servers.executor]
 url = "https://executor.sh/kevin-chen-s-organization/mcp"
@@ -8,3 +8,12 @@ url = "https://executor.sh/kevin-chen-s-organization/mcp"
 [mcp_servers.executor-desktop]
 command = "executor"
 args = ["mcp"]
+
+[tui]
+screen_reader_detection_done = true
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 3
+gpt-6-astra = 4
+"gpt-6.1-sol" = 3
