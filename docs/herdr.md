@@ -5,6 +5,28 @@ OpenAI login, Claude Code with your Claude login, and OpenCode v2 for API models
 Herdr does not pool subscription quotas or translate subscription logins into
 API keys. All three can run at once; their normal approval prompts remain.
 
+## Native macOS app
+
+Mise declares the signed Herdr GPUI app as `brew-cask:penso/tap/herdr-gpui`
+in its bootstrap packages. Install it with:
+
+```sh
+mise bootstrap packages apply brew-cask:penso/tap/herdr-gpui --yes
+open -a Herdr
+```
+
+If Mise reports that evaluating the tap requires Ruby 3 or newer, use
+Homebrew's bundled Ruby for the install:
+
+```sh
+PATH="$(dirname "$(brew ruby -e 'puts RbConfig.ruby')"):$PATH" \
+  mise bootstrap packages apply brew-cask:penso/tap/herdr-gpui --yes
+```
+
+The app uses the separately Mise-managed `herdr` daemon. Homebrew owns app
+updates, including upgrades initiated by the app's updater. See the
+[upstream install instructions](https://github.com/penso/herdr-gpui#install).
+
 ## Apply once
 
 After the parent Mise migration PR is applied:

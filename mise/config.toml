@@ -40,6 +40,7 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 "brew:zsh-autosuggestions" = "latest"
 "brew:zsh-syntax-highlighting" = "latest"
 "brew-cask:ghostty" = "latest"
+"brew-cask:penso/tap/herdr-gpui" = "latest"
 
 # Mise refuses dirty or conflicting checkouts; plugin sources stay at reviewed commits.
 [bootstrap.repos]
