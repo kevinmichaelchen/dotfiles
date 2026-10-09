@@ -83,7 +83,8 @@ Subsequent applies need no force flag. Each plain file has its own link, so
 runtime files alongside OpenCode configuration and installed upstream agent
 skills stay in place. Chezmoi is no longer used or installed by this repository.
 The config and lockfile link back to `mise/`, so tool updates use the repository
-sources. No watcher or automatic history synchronization is enabled.
+sources. The tool-update service refreshes opted-in tools in the background;
+no dotfiles watcher or automatic history synchronization is enabled.
 
 ## Daily Usage
 
@@ -100,6 +101,34 @@ and update locked development tools:
 ```bash
 dot-update
 ```
+
+Codex, OpenCode, Crush, and uv follow `latest`; pnpm stays on major 12 and Bun
+on major 1. Each opts into automatic updates every six hours. The built-in
+service wakes hourly and updates tools whose interval is due, including tools
+used directly through shell activation. Project-specific tool versions are
+not changed. Node and Rust remain pinned, so their bundled npm and Cargo do too.
+Herdr and its plugins remain pinned; Claude Code is managed separately.
+
+After upgrading Mise to at least `2026.10.6`, activate or inspect the service:
+
+```bash
+mise bootstrap services apply --dry-run
+mise bootstrap services apply
+mise bootstrap services status
+```
+
+Automatic updates require unlocked resolution. The global lockfile remains
+enabled, and successful updates write new versions into the repository-backed
+`mise/mise.lock`, which can leave the checkout dirty. Review those changes before
+committing. The seven-day minimum release age still applies where backends
+provide release dates. Use `mise install --locked` for a strict install;
+`MISE_LOCKED=1`, offline mode, and CI suppress automatic updates.
+
+To disable background updates, run `mise bootstrap services remove mise-tool-update`
+and remove both the service declaration and the six `auto_update` options;
+otherwise launching a tool through a shim or `mise exec` can still update it.
+To restore the prior policy fully, also restore the exact tool pins and
+`locked = true` from the previous revision.
 
 Inspect drift without changing the machine:
 
@@ -245,8 +274,8 @@ cp mise/config.toml /tmp/dotfiles-mise-check/mise.toml
 (cd /tmp/dotfiles-mise-check && mise fmt --check)
 ```
 
-This configuration requires mise `2026.7.7` or newer, the release used to validate
-the migration. Mise marks the bootstrap features experimental. The config declares that minimum explicitly so an
+This configuration requires mise `2026.10.6` or newer, the release used to validate
+the automatic tool-update service. Mise marks the bootstrap features experimental. The config declares that minimum explicitly so an
 older executable fails with update guidance instead of misinterpreting it.
 
 ## Resources
