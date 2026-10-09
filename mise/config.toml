@@ -2,7 +2,7 @@
 # Authoritative repository config; Mise links it into ~/.config/mise/config.toml
 # Apply workstation state with `mise bootstrap` after changes
 
-min_version = "2026.7.7"
+min_version = "2026.10.6"
 
 [settings]
 dotfiles.root = "~/dotfiles/dotfiles"
@@ -13,15 +13,18 @@ pin = true
 lockfile = true
 lockfile_platforms = ["macos-arm64"]
 locked_verify_provenance = true
-# Require lockfile URLs/checksums during installs; the current lockfile covers
-# all active tools on this Mac.
-locked = true
+# Automatic updates require unlocked resolution; keep the lockfile above for
+# recorded versions and use `mise install --locked` for strict installs.
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
 # Replace corepack: read the pnpm version from each repo's package.json
 # packageManager field so mise installs and selects it directly.
 idiomatic_version_file_enable_tools = ["pnpm"]
+
+# Check opted-in global tools in the background, including direct PATH use.
+[bootstrap.services.mise-tool-update]
+builtin = "tool-update"
 
 # Machine-global packages remain separate from versioned development tools.
 # mise's built-in Homebrew support can install these without a pre-existing
@@ -157,14 +160,14 @@ rust = "1.98.1"
 # ============================================================================
 # Node.js Tools & Package Managers
 # ============================================================================
-pnpm = "12.6.0"
-bun = "1.4.2"
+pnpm = { version = "12", auto_update = "6h" }
+bun = { version = "1", auto_update = "6h" }
 
 # npm global packages
 "npm:markit-ai" = "0.6.1"
-"npm:@openai/codex" = "0.159.2"
-"npm:@nozomioai/nia" = "0.5.2"           # Nia CLI only
-"npm:sfw" = "2.0.6"                      # Socket Firewall wrapper for package manager network filtering
+"npm:@openai/codex" = { version = "latest", auto_update = "6h" }
+"npm:@nozomioai/nia" = "0.5.2"                                   # Nia CLI only
+"npm:sfw" = "2.0.6"                                              # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.24.4"
 "npm:@eraserlabs/diagrams-cli" = "0.2.0"
 
@@ -208,23 +211,23 @@ bun = "1.4.2"
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
-"aqua:charmbracelet/crush" = "0.96.1"
-"aqua:sharkdp/bat" = "0.26.1"            # cat replacement with syntax highlighting
-"aqua:dandavison/delta" = "0.19.2"       # git diff viewer
-"aqua:sharkdp/fd" = "10.5.0"             # find replacement
+"aqua:charmbracelet/crush" = { version = "latest", auto_update = "6h" }
+"aqua:sharkdp/bat" = "0.26.1"                                           # cat replacement with syntax highlighting
+"aqua:dandavison/delta" = "0.19.2"                                      # git diff viewer
+"aqua:sharkdp/fd" = "10.5.0"                                            # find replacement
 "aqua:junegunn/fzf" = "0.74.4"
 "aqua:ajeetdsouza/zoxide" = "0.10.0"
 "aqua:dprint/dprint" = "0.57.4"
 "aqua:j178/prek" = "0.5.3"
-"aqua:chmln/sd" = "1.1.0"                # sed replacement (simpler syntax)
-"aqua:koalaman/shellcheck" = "0.11.0"    # Shell script static analyzer
+"aqua:chmln/sd" = "1.1.0"                                               # sed replacement (simpler syntax)
+"aqua:koalaman/shellcheck" = "0.11.0"                                   # Shell script static analyzer
 "aqua:mikefarah/yq" = "4.53.6"
-"aqua:terrastruct/d2" = "0.9.0"          # Diagram language
+"aqua:terrastruct/d2" = "0.9.0"                                         # Diagram language
 "aqua:typst/typst" = "0.15.1"
 "aqua:starship/starship" = "1.26.0"
-"aqua:golangci/golangci-lint" = "2.13.2" # Go linter aggregator
+"aqua:golangci/golangci-lint" = "2.13.2"                                # Go linter aggregator
 "aqua:charmbracelet/vhs" = "0.12.0"
-"github:astral-sh/uv" = "0.12.18"
+"github:astral-sh/uv" = { version = "latest", auto_update = "6h" }
 "aqua:aws/aws-cli" = "2.37.7"
 
 # ============================================================================
@@ -232,7 +235,9 @@ bun = "1.4.2"
 # ============================================================================
 # OpenCode v2. Its reviewed postinstall selects/copies the native binary;
 # scripts remain disabled for every other npm tool.
-"npm:@opencode/cli" = { version = "2.0.20", allow_builds = ["@opencode/cli"] }
+"npm:@opencode/cli" = { version = "latest", auto_update = "6h", allow_builds = [
+  "@opencode/cli",
+] }
 "npm:wrangler" = "4.137.0"
 
 # ============================================================================
