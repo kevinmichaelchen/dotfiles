@@ -18,6 +18,12 @@ locked_verify_provenance = true
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
+# Agent harnesses track new releases without the general ecosystem soak delay.
+minimum_release_age_excludes = [
+  "npm:@openai/codex",
+  "npm:@opencode/cli",
+  "aqua:charmbracelet/crush",
+]
 # Replace corepack: read the pnpm version from each repo's package.json
 # packageManager field so mise installs and selects it directly.
 idiomatic_version_file_enable_tools = ["pnpm"]
