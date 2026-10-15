@@ -1,174 +1,59 @@
 # Executor
 
-Executor Cloud is the shared tool catalog for agent clients on this machine.
-Dotfiles manage how clients connect to Executor; Executor owns live runtime
-state, hosted sources, credentials, and policies.
+Executor Cloud owns the shared tool catalog, sources, credentials, policies,
+workspaces, and execution history. Dotfiles own the CLI declaration in
+[mise/config.toml](../mise/config.toml) and the client connection wiring.
 
-This repo pins Executor to `1.5.27`. Executor `1.4.28` was the first local
-release where source state is clearly database-owned again. `executor.jsonc` is
-an optional plugin manifest, not the source catalog.
+## Connect clients
 
-## Client Authentication
-
-Dotfiles manage the Executor Cloud and Desktop MCP entries for Codex, Claude,
-OpenCode, and Crush without distributing bearer credentials. Cloud clients use
-Executor's MCP OAuth discovery and keep their own refreshable sessions. Desktop
-clients run `executor mcp` over stdio instead of authenticating to the local
-HTTP endpoint.
-
-After running `mise bootstrap` on a new laptop, authenticate the Cloud endpoint:
+After bootstrap, authenticate the Cloud endpoint in each client:
 
 ```bash
 codex mcp login executor
 opencode mcp auth executor
 ```
 
-For Claude Code, launch `claude` from the configured shell and authenticate the
-Executor server through `/mcp`. The declarative MCP file is session-scoped and
-does not add a persisted user-scope server.
+For Claude Code, launch `claude` from a configured shell and authenticate through
+`/mcp`. Its declared MCP file loads for the session. Crush uses `mcp-remote`,
+which starts its OAuth flow when needed. Each client keeps its own refreshable
+session; dotfiles do not distribute bearer tokens.
 
-Crush uses `mcp-remote`, which starts its OAuth flow when the endpoint first
-connects. `executor login` is separate: it authenticates the Executor CLI to a
-hosted server and does not provide credentials to these MCP clients.
+Desktop connections run `executor mcp` over stdio and need no local HTTP login.
+`executor login` is separate: use it when the Executor CLI itself needs hosted
+API access.
 
-## Ownership
+See [App Settings](../README.md#app-settings) for the managed client files and
+how their native config layers load.
 
-Dotfiles own:
+## Maintain the catalog
 
-- The pinned Executor CLI version in Mise.
-- MCP endpoint wiring for Codex, Claude, OpenCode, and Crush.
+Add or edit sources, secrets, OAuth connections, and policies through Executor's
+own UI or CLI. Do not synchronize them from dotfiles or manage
+`~/.executor/executor.jsonc` wholesale. That file is an optional plugin manifest,
+not the source catalog.
 
-Executor owns:
+Store hosted source credentials in Executor Cloud. Keep API keys out of committed
+environment blocks and source definitions. Local file-based secrets are for
+throwaway development, not durable personal tokens.
 
-- Cloud sources.
-- Secrets and OAuth Connections.
-- Tool policies.
-- Plugins.
-- Execution history.
-- Workspaces / nested-scope state.
+Keep repo-specific tools, authenticated endpoints, and policy exceptions in
+project/workspace scopes rather than global dotfiles.
 
-Do not periodically rewrite Executor sources from dotfiles. That turns bash into
-a second control plane and fights Executor's own runtime model.
+## Policies
 
-There is intentionally no steady-state source sync script. Add or edit sources,
-secrets, OAuth connections, and policies through Executor Cloud.
+Manage approval rules in Executor Cloud, where the live tool catalog lives:
 
-## Dotfiles Boundary
-
-Native app config layers declare stable endpoint and command wiring, not Executor credentials or
-client OAuth sessions.
-
-Dotfiles should not own `~/.executor/executor.jsonc` wholesale. Hosted Cloud
-configuration belongs to Executor's control plane.
-
-If `doctor.sh` reports a lingering `sources` key in `executor.jsonc`, treat it
-as legacy state. Do not port it into dotfiles; verify the live source in
-Executor's UI/CLI and remove the stale config entry only after the database copy
-is healthy.
-
-## Secrets
-
-Executor source credentials should use Executor secret providers, not committed
-env blocks or checked-in source definitions.
-
-| Backend | Use When | Notes |
-| --- | --- | --- |
-| Executor Cloud / WorkOS Vault | Hosted or shared tools | Preferred for Cloud-connected sources |
-| file-secrets | Local throwaway development only | Plain JSON on disk; do not use for durable personal API tokens |
-
-For Cloud sources such as Exa, Parallel, DeepWiki, and Neon, store credentials
-in Executor Cloud. Dotfiles must not provide their API keys.
-
-## Project Scopes
-
-Project repos should keep project-specific tools and policies in
-project/workspace scopes instead of adding authenticated endpoints to global
-dotfiles.
-
-Examples of project-specific sources that should not live in global dotfiles:
-
-- A local Playwright MCP for one app.
-- A design MCP only relevant to one UI repo.
-- A repo-local state-parks or demo MCP.
-- Repo-specific Nia indexes.
-
-## Approval Policy
-
-Executor Cloud's policy model is the right place for tool safety decisions.
-Rules are evaluated top-to-bottom. Use exact tool ids for approvals, trailing
-wildcards for families, and broad blocks only where the whole namespace is risky.
-
-| Action | Use When |
-| --- | --- |
-| `always run` | A read-only or low-risk tool is noisy enough that repeated prompts slow work down |
-| `require_approval` | A tool should always ask first, even if its source metadata says it is safe |
-| `block` | A tool should be hidden from discovery and fail if invoked |
-
-Best practice:
-
-- Keep global Cloud policy permissive only for clearly read-only tools.
-- Require approval or block broad write namespaces globally.
-- Put project-specific exceptions in project scopes once nested scopes are
-  available.
-- Let upstream MCP `destructiveHint` annotations require approval by default.
-
-Suggested personal Cloud baseline:
-
-| Pattern | Action | Why |
-| --- | --- | --- |
-| `executor.coreTools.sources.remove` | `block` | prevents accidental source deletion |
-| `executor.coreTools.connections.remove` | `block` | prevents accidental OAuth connection deletion |
-| `executor.coreTools.secrets.remove` | `block` | prevents accidental secret deletion |
-| `parallel_api.monitor.cancelMonitorV1MonitorsMonitorIdCancelPost` | `block` | irreversible monitor cancellation |
-| `executor.coreTools.policies.*` | `require_approval` | policy edits change the safety boundary |
-| `executor.coreTools.sources.configure` | `require_approval` | source edits can redirect tools or credentials |
-| `executor.coreTools.sources.bindings.*` | `require_approval` | credential binding edits affect auth behavior |
-| `executor.*.addSource` | `require_approval` | adding tools changes the available capability set |
-| `executor.*.configureSource` | `require_approval` | source configuration can change auth and endpoints |
-| `executor.coreTools.secrets.create` | `require_approval` | secret creation should stay intentional |
-| `executor.coreTools.oauth.start` | `require_approval` | OAuth grants should stay intentional |
-| `neon_mcp.run_sql` | `require_approval` | SQL can mutate data depending on the statement |
-| `neon_mcp.run_sql_transaction` | `require_approval` | SQL transactions can mutate data |
-| `neon_mcp.get_connection_string` | `require_approval` | exposes sensitive database connection material |
-| `neon_mcp.get_neon_auth_config` | `require_approval` | exposes auth configuration |
-| `neon_mcp.list_slow_queries` | `require_approval` | can reveal sensitive SQL text |
-| `parallel_api.monitor.createMonitorV1MonitorsPost` | `require_approval` | creates durable monitoring state |
-| `parallel_api.monitor.updateMonitorV1MonitorsMonitorIdUpdatePost` | `require_approval` | changes durable monitoring state |
-| `parallel_api.monitor.triggerMonitorRunV1MonitorsMonitorIdTriggerPost` | `require_approval` | triggers an out-of-band run |
-| `parallel_api.findAll.ingestFindallRunV1betaFindallIngestPost` | `require_approval` | creates ingestion work |
-| `parallel_api.tasks.tasksRunsPostV1TasksRunsPost` | `require_approval` | starts paid/async task execution |
-| `parallel_api.tasks.tasksTaskgroupsPostV1TasksGroupsPost` | `require_approval` | creates task groups |
-| `parallel_api.tasks.tasksTaskgroupsRunsPostV1TasksGroupsTaskgroupIdRunsPost` | `require_approval` | starts task-group runs |
-| `exa_search_api.research.researchTasksCreate` | `require_approval` | creates async research work |
-| `deepwiki_mcp.*` | `always run` | read-only repository documentation lookups |
-| `exa_search_api.search.postOperation` | `always run` | read-only search |
-| `exa_search_api.answer.postOperation` | `always run` | read-only answer/search flow |
-| `exa_search_api.research.researchControllerV0GetResearchTask` | `always run` | read-only task lookup |
-| `exa_search_api.research.researchTasksList` | `always run` | read-only task listing |
-| `parallel_api.search.v1SearchV1SearchPost` | `always run` | read-only web search |
-| `parallel_api.monitor.listMonitorsV1MonitorsGet` | `always run` | read-only monitor listing |
-| `neon_mcp.list_docs_resources` | `always run` | read-only docs index |
-| `neon_mcp.get_doc_resource` | `always run` | read-only docs fetch |
-| `neon_mcp.search` | `always run` | read-only account/project search |
-| `neon_mcp.list_organizations` | `always run` | read-only inventory |
-| `neon_mcp.list_projects` | `always run` | read-only inventory |
-| `neon_mcp.list_shared_projects` | `always run` | read-only inventory |
-| `neon_mcp.describe_project` | `always run` | read-only inspection |
-| `neon_mcp.describe_branch` | `always run` | read-only inspection |
-| `neon_mcp.describe_table_schema` | `always run` | read-only schema inspection |
-| `neon_mcp.get_database_tables` | `always run` | read-only schema inventory |
-| `neon_mcp.list_branch_computes` | `always run` | read-only compute inventory |
-| `neon_mcp.compare_database_schema` | `always run` | read-only schema comparison |
-| `neon_mcp.explain_sql_statement` | `always run` | read-only SQL explanation |
-| `neon_mcp.fetch` | `always run` | read-only fetch by id |
-
-## Manual Operations
-
-Use `executor login` only when the Executor CLI itself needs hosted API access.
-Use the client-specific MCP OAuth commands above for Executor Cloud. Local
-Desktop access needs no login because it runs through `executor mcp` stdio.
+- Allow clearly read-only tools when repeated prompts add no value.
+- Require approval for source configuration, credential binding, OAuth grants,
+  secret creation, SQL execution, and paid or durable background jobs.
+- Block accidental deletion of sources, connections, and secrets.
+- Review policy changes explicitly; use exact tool IDs or narrow families
+  instead of copying an aging list of IDs into this repo.
 
 ## Troubleshooting
 
-- Source auth broken? Fix it in Executor Cloud, not in dotfiles.
-- Project-only MCPs should live in project/workspace scopes.
+- Repair source authentication in Executor, then reconnect the affected client.
+- If an old `executor.jsonc` contains a `sources` key, verify that the live
+  catalog has the source before removing the legacy entry.
+- Inspect the declared CLI version in Mise rather than relying on a version
+  copied into documentation.

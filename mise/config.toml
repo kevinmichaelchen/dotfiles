@@ -50,7 +50,7 @@ builtin = "tool-update"
 "brew:zsh-syntax-highlighting" = "latest"
 "brew-cask:ghostty" = "latest"
 
-# Mise refuses dirty or conflicting checkouts; plugin sources stay at reviewed commits.
+# Mise refuses dirty checkouts or conflicting origins.
 [bootstrap.repos]
 "~/.tmux/plugins/tpm" = { url = "https://github.com/tmux-plugins/tpm.git", ref = "master" }
 
@@ -171,7 +171,7 @@ bun = { version = "1", auto_update = "6h" }
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
-"github:rtk-ai/rtk" = "0.51.0"                                                                                                                                             # Token-efficient CLI for coding agents
+"github:rtk-ai/rtk" = "0.51.0"                # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.11.2"
 "github:cli/cli" = "2.102.0"
 "github:RhysSullivan/executor" = "1.6.10"
