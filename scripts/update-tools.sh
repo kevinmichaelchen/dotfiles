@@ -1,38 +1,38 @@
 #!/usr/bin/env bash
-# Update developer CLI tools managed by Mise.
-
+# Update developer tools; deletion is a manual operator action.
 set -euo pipefail
 
-echo "Updating developer tools (Mise)..."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+export MISE_GLOBAL_CONFIG_FILE="$REPO_DIR/mise/config.toml"
+cd "$REPO_DIR"
 
 if command -v mise >/dev/null 2>&1; then
-  echo "Checking for outdated Mise tools..."
-  mise outdated || true
-
-  echo "Upgrading Mise tools..."
-  if ! mise upgrade --bump; then
-    cat >&2 <<'EOF'
-Mise upgrade failed.
-
-GitHub attestations stay enabled during automatic updates. If the failure is a
-known temporary attestation outage for gh, recover manually after reviewing it:
-
-  MISE_GITHUB_ATTESTATIONS=false mise install github:cli/cli@latest
-  mise upgrade --bump
-EOF
+  if [[ "$(mise settings get locked)" == "true" ]]; then
+    echo "Locked mode prevents updates. Rerun with MISE_LOCKED=false." >&2
     exit 1
   fi
 
-  echo "Refreshing Mise lockfile metadata..."
+  echo "Updating runtimes before dependent tools..."
+  mise upgrade --bump --no-prune node python go rust
+  echo "Updating remaining Mise tools..."
+  mise upgrade --bump --no-prune
+  echo "Refreshing lockfile metadata..."
   mise lock --global --platform macos-arm64
-
-  echo "Pruning unused Mise versions..."
-  mise prune --yes
-
-  echo "Verifying Mise tool state..."
-  mise outdated
+  echo "Verifying available updates..."
+  mise outdated --bump
+  echo "Previewing unused installations (nothing is removed)..."
+  mise prune --dry-run
+  echo "To delete unused versions yourself: mise prune --yes"
 else
-  echo "Warning: mise not found, skipping Mise upgrade/prune"
+  echo "Warning: mise not found; skipping Mise updates" >&2
+fi
+
+if command -v claude >/dev/null 2>&1; then
+  claude update
+  claude --version
+else
+  echo "Warning: claude not found; skipping Claude Code update" >&2
 fi
 
 echo "Developer tool update complete."

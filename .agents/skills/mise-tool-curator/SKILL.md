@@ -31,12 +31,25 @@ Manage tool declarations in `mise/config.toml` so runtime ownership stays consis
 - Prefer minimal edits in existing section layout.
 - Do not leak secret tokens into this file.
 
-## Completion Checklist
-1. Summarize changed keys in `mise/config.toml`.
-2. Call out any ownership conflicts discovered and how they were resolved.
-3. Provide commands:
-   - `mise bootstrap`
-   - `mise install`
-   - `mise upgrade`
-   - `mise prune --yes`
-   - optional verification: `mise ls` or `mise doctor`
+## Apply and verify
+
+Use the narrowest operation: `mise install TOOL` for a declared tool,
+`mise upgrade --bump --no-prune TOOL` for an authorized pin update, and
+`mise dotfiles apply TARGET` for a managed config. Preview conflicting targets
+before applying. Do not run full `mise bootstrap` for a tool-only change.
+
+The global config and lockfile must resolve to `mise/config.toml` and
+`mise/mise.lock` in this repository. Check for stale copies with `ls -l` and
+`mise config ls`; manage the links through declared dotfile entries.
+
+Refresh `mise lock --global --platform macos-arm64`. Review the generated
+`mise/.mise/locks/` dependency sidecars with the config and lockfile; commit
+them together when a commit is requested. Keep release-age and provenance
+settings intact. Use `mise install --locked` for reproducible installs.
+
+Verify tool selection both inside the repository and outside it using
+`mise which TOOL` and `mise -C /private/tmp which TOOL`, then smoke-test versions.
+
+Never execute deletion commands or scripts that delete files internally.
+For tool retirement, edit declarations, preview `mise prune --dry-run`, and
+provide exact uninstall/prune commands for the operator to run manually.

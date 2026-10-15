@@ -107,7 +107,8 @@ on major 1. Each opts into automatic updates every six hours. The built-in
 service wakes hourly and updates tools whose interval is due, including tools
 used directly through shell activation. Project-specific tool versions are
 not changed. Node and Rust remain pinned, so their bundled npm and Cargo do too.
-Herdr and its plugins remain pinned; Claude Code is managed separately.
+Claude Code uses its native updater, invoked by `scripts/update-tools.sh`.
+The script previews unused versions; deletion is a manual operator action.
 
 After upgrading Mise to at least `2026.10.6`, activate or inspect the service:
 
@@ -249,7 +250,7 @@ mise bootstrap repos apply --yes
 ## Agent Skills
 
 Agent skills are declared in `skills-lock.json`. The final bootstrap task runs
-the existing security-tool installer and `sync.sh --prune`, installing and
+the existing security-tool installer and `sync.sh`, installing and
 verifying pinned skills under `~/.agents/skills`.
 
 ```bash
@@ -286,11 +287,15 @@ older executable fails with update guidance instead of misinterpreting it.
 - [mise macOS defaults](https://mise.jdx.dev/bootstrap/macos-defaults.html)
 - [Mise Git repositories](https://mise.jdx.dev/bootstrap/repos.html)
 
-## Mixed-agent workstation
+## Repository maintenance
 
-[Herdr setup and workflow](docs/herdr.md) runs Codex, Claude Code and OpenCode v2
-in persistent tabs, with native subscription auth and separate Git worktrees
-for writing agents. After bootstrap, run `mise run herdr:setup` and
-`mise run herdr:plugins` to register the launcher plus pinned Projects, Reviewr
-and Annotate. Their shared settings are declarative; native hooks and runtime
-state remain app-owned.
+Project skills live in `.agents/skills/`; shared upstream skills are pinned in
+`skills-lock.json`. Agents must never execute deletion commands, including
+uninstall, prune, or scripts that delete files internally. They provide the
+exact cleanup commands for the operator instead. Dry-run previews are allowed.
+
+Commit `mise/config.toml`, `mise/mise.lock`, and generated `mise/.mise/locks/`
+dependency sidecars together. They are reproducibility inputs, not caches.
+
+Herdr and its companion plugins are no longer declared or installed by this
+repository. Legacy source files remain only until the operator removes them.

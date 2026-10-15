@@ -1,34 +1,30 @@
 ---
 name: mise-claude-updater
-description: Upgrade and prune all Mise-managed tools, then update Claude Code. Use when asked to bring developer CLIs to latest versions and verify the result.
+description: Update Mise-managed tools and Claude Code, verify versions, and preview unused installations without deleting them.
 ---
 
 # Mise + Claude Updater
 
-## Overview
-Run the repository standard workflow for developer tool updates:
-- update all outdated Mise tools
-- prune unused Mise versions
-- update Claude Code
-- verify final state
+Run `./scripts/update-tools.sh` from the repo root. It selects the repository's
+authoritative global config, upgrades runtimes before dependent packages,
+refreshes the lockfile, previews pruning, and invokes `claude update`.
 
-Primary entrypoint: `scripts/update-tools.sh`.
+- Authorized updates may change exact pins through `mise upgrade --bump`.
+  Preserve the seven-day release-age policy and its declared exceptions.
+- Inspect effective locked mode first. Updates require unlocked resolution;
+  use `MISE_LOCKED=false` for the update command if needed, leaving strict
+  installs available through `mise install --locked`.
+- Never execute deletion commands, including uninstall or actual pruning.
+  `mise prune --dry-run` is allowed; give the operator exact cleanup commands.
+  Do not run scripts that delete files internally.
+- Do not run full workstation convergence for a tool-update request.
+- Keep provenance verification enabled. Investigate failures rather than
+  automatically disabling attestations.
+- If a lockfile cannot be parsed, stop before pruning. Use supported lockfile
+  migration, then confirm resolution works; do not mistake warnings followed
+  by an empty outdated table for success.
 
-## Workflow
-1. Run `./scripts/update-tools.sh` from repo root.
-2. If it reports `mise not found` or `claude not found`, report that explicitly.
-3. Confirm success with:
-   - `mise outdated` (should report all tools up to date)
-   - `claude --version` (if Claude installed)
-4. Summarize any fallback used (for example `MISE_GITHUB_ATTESTATIONS=false` for `github:cli/cli`).
-
-## Guardrails
-- Do not edit `mise/config.toml` for update-only requests.
-- Do not run the full workstation convergence workflow unless requested (`scripts/update.sh`).
-- Keep changes idempotent and safe to rerun.
-
-## Completion Checklist
-1. Report whether `mise upgrade` succeeded.
-2. Report whether `mise prune --yes` succeeded.
-3. Report Claude update result and final version.
-4. Provide the exact command for next run: `./scripts/update-tools.sh`.
+Verify `mise outdated --bump`, the changed tools' versions, and
+`claude --version`. Report missing CLIs and unresolved release lookups.
+Review config, lockfile, and `.mise/locks/` sidecars together. Report the
+remaining manual cleanup, and provide `./scripts/update-tools.sh` for next time.

@@ -21,14 +21,15 @@ Route each requested change to the smallest correct file set before editing anyt
 | macOS defaults, Homebrew brews/casks | `mise/config.toml` | Use Mise bootstrap declarations for machine state |
 | dev runtimes and CLI toolchain versions | `mise/config.toml` | Prefer Mise for node/python/go/rust and CLIs |
 | shared aliases and environment | `dotfiles/.config/shell/*.sh` | Keep shell-agnostic behavior in focused modules |
-| global agent skills for `~/.agents/skills` | `dotfiles/.agents/skills/` | Use for skills that should be available across repos/tools on this machine |
+| shared upstream agent skills | `skills-lock.json` and `scripts/agent-skills/` | Pin and scan upstream sources; do not vendor them by default |
+| repo-owned global agent skills | `dotfiles/.agents/skills/` | Use for custom skills needed across repositories |
 | repo-local dotfiles skills | top-level `.agents/skills/` | Use only for skills specific to maintaining this dotfiles repo |
 | personal shell behavior and fast iteration aliases | `dotfiles/.config/shell/*.sh` | Use plain `.sh` for non-secret config |
 | shared app settings | `dotfiles/.codex/` and `dotfiles/.config/{claude,opencode,crush}/` | Prefer native config layers; keep runtime state local |
 | tool authentication | provider CLI or connected app | Keep API keys and bearer tokens out of dotfiles; use browser/OAuth login or provider-owned credential storage |
 | zsh load order/path wiring | `dotfiles/.config/zsh/custom.zsh` | Update when adding a new shell module file |
 | automation workflow scripts | `scripts/*.sh` | Keep idempotent and non-destructive defaults |
-| operator guidance for scripts | `scripts/AGENTS.md` | Update when behavior/contracts change |
+| operator guidance for scripts | `scripts/agent-skills/README.md or README.md` | Update when behavior/contracts change |
 | tmux docs/config guidance | `docs/tmux.md` and/or `dotfiles/.config/tmux/tmux.conf` | Keep docs and runtime behavior aligned |
 
 ## Hard Rules
@@ -37,6 +38,12 @@ Route each requested change to the smallest correct file set before editing anyt
 - Do not put secrets or secret-fetching code in dotfiles.
 - Do not edit generated user dotfiles directly; edit plain-file sources in `dotfiles/` or native app config layer sources under `dotfiles/`.
 - Do not add system macOS defaults into shell files.
+
+## Deployment constraints
+- Never execute deletion commands, uninstall, actual pruning, or scripts that delete files internally. Provide exact commands for the operator. Dry-run previews are allowed.
+- Preview targeted dotfiles with `mise dotfiles apply --dry-run TARGET`. Use declared links instead of hand-written `ln` commands. Leave conflicting destinations for operator cleanup when applying would remove them.
+- Do not run `scripts/update.sh` or full bootstrap for a scoped change: they include broad workstation actions and skill installers with deletion steps.
+- Keep repo-local maintenance skills in `.agents/skills/`. Skill references must name files that actually exist.
 
 ## Output Contract
 Provide:
