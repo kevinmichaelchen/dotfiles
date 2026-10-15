@@ -107,7 +107,7 @@ on major 1. Each opts into automatic updates every six hours. The built-in
 service wakes hourly and updates tools whose interval is due, including tools
 used directly through shell activation. Project-specific tool versions are
 not changed. Node and Rust remain pinned, so their bundled npm and Cargo do too.
-Herdr and its plugins remain pinned; Claude Code is managed separately.
+Claude Code is managed separately.
 
 After upgrading Mise to at least `2026.10.6`, activate or inspect the service:
 
@@ -166,19 +166,8 @@ settings. Keep API keys and bearer tokens out of this repository.
 Authenticate with each provider's browser/OAuth flow, CLI credential store, or
 connected app instead.
 
-Executor does not require a dotfiles-managed bearer token. Cloud uses each MCP
-client's OAuth flow, while Desktop runs locally over `executor mcp` stdio.
-After the first apply on a machine, authenticate the Cloud endpoint in the
-clients that expose an explicit login command:
-
-```bash
-codex mcp login executor
-opencode mcp auth executor
-```
-
-For Claude Code, launch `claude` from a new configured shell and authenticate
-Executor through `/mcp`; its MCP file is loaded for the session. Crush connects
-through `mcp-remote`, which starts its OAuth flow when needed.
+See [Executor](docs/executor.md) for client authentication, catalog ownership,
+and policy guidance.
 
 ## Dotfile Commands
 
@@ -196,12 +185,12 @@ installed Mise release. Editing through a target symlink also edits the source.
 
 Desired settings live in ordinary config files, linked by Mise:
 
-| App | Managed source | Native loading mechanism |
-| --- | --- | --- |
-| Codex | `dotfiles/.codex/dotfiles.config.toml` | `--profile dotfiles` layers over local `~/.codex/config.toml` |
-| Claude Code | `dotfiles/.config/claude/mcp.json` | `--mcp-config` adds the declared servers for the session |
-| OpenCode | `dotfiles/.config/opencode/dotfiles.json` | `OPENCODE_CONFIG` adds an override layer after local global config |
-| Crush | `dotfiles/.config/crush/crushrc` | Native declarations load alongside local `crush.json` and app data |
+| App         | Managed source                            | Native loading mechanism                                           |
+| ----------- | ----------------------------------------- | ------------------------------------------------------------------ |
+| Codex       | `dotfiles/.codex/dotfiles.config.toml`    | `--profile dotfiles` layers over local `~/.codex/config.toml`      |
+| Claude Code | `dotfiles/.config/claude/mcp.json`        | `--mcp-config` adds the declared servers for the session           |
+| OpenCode    | `dotfiles/.config/opencode/dotfiles.json` | `OPENCODE_CONFIG` adds an override layer after local global config |
+| Crush       | `dotfiles/.config/crush/crushrc`          | Native declarations load alongside local `crush.json` and app data |
 
 The shared shell module selects the Codex profile and Claude MCP file for CLI
 sessions and exports the OpenCode override path. Explicit profile/MCP/config
@@ -226,9 +215,6 @@ set its managed config environment once with
 `opencode service set env OPENCODE_CONFIG "$HOME/.config/opencode/dotfiles.json"`.
 Mise links Claude's skills directory to `~/.agents/skills`.
 
-The former one-time credential/binary cleanup migrations and nested Mise install
-hook have been removed. Existing Chezmoi installations are not uninstalled.
-
 Native loading references: [Codex profiles](https://developers.openai.com/codex/config-basic/),
 [Claude MCP config](https://code.claude.com/docs/en/cli-reference),
 [OpenCode config](https://opencode.ai/v2/docs/config/), and
@@ -238,8 +224,8 @@ Native loading references: [Codex profiles](https://developers.openai.com/codex/
 
 `[bootstrap.repos]` follows TPM's `master` branch because the tmux config loads
 TPM and the Rose Pine plugin through it. Mise clones or updates TPM during
-bootstrap. The unrelated Hugging Face project is no longer cloned by dotfiles. Dirty checkouts or
-conflicting origins fail instead of discarding local work.
+bootstrap. Dirty checkouts or conflicting origins fail instead of discarding
+local work.
 
 ```bash
 mise bootstrap repos apply --dry-run
@@ -252,12 +238,8 @@ Agent skills are declared in `skills-lock.json`. The final bootstrap task runs
 the existing security-tool installer and `sync.sh --prune`, installing and
 verifying pinned skills under `~/.agents/skills`.
 
-```bash
-~/dotfiles/scripts/agent-skills/sync.sh --prune
-~/dotfiles/scripts/agent-skills/update-lock.sh
-~/dotfiles/scripts/agent-skills/update-lock.sh --apply
-~/dotfiles/scripts/agent-skills/scan.sh --all
-```
+See the [skill script guide](scripts/agent-skills/README.md) for sync, updates,
+scanning, and adding upstream skills.
 
 ## Validation
 
@@ -280,17 +262,12 @@ older executable fails with update guidance instead of misinterpreting it.
 
 ## Resources
 
+- [Executor setup and ownership](docs/executor.md)
+- [Podman VM provider](vfkit.md)
+- [tmux setup](docs/tmux.md)
+
 - [mise dotfiles](https://mise.jdx.dev/dotfiles.html)
 - [mise bootstrap](https://mise.jdx.dev/cli/bootstrap.html)
 - [mise bootstrap packages](https://mise.jdx.dev/bootstrap/packages/)
 - [mise macOS defaults](https://mise.jdx.dev/bootstrap/macos-defaults.html)
 - [Mise Git repositories](https://mise.jdx.dev/bootstrap/repos.html)
-
-## Mixed-agent workstation
-
-[Herdr setup and workflow](docs/herdr.md) runs Codex, Claude Code and OpenCode v2
-in persistent tabs, with native subscription auth and separate Git worktrees
-for writing agents. After bootstrap, run `mise run herdr:setup` and
-`mise run herdr:plugins` to register the launcher plus pinned Projects, Reviewr
-and Annotate. Their shared settings are declarative; native hooks and runtime
-state remain app-owned.
