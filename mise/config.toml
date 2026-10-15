@@ -153,7 +153,6 @@ bun = { version = "1", auto_update = "6h" }
 # Python CLI Tools from PyPI
 # ============================================================================
 "pipx:parallel-web-tools" = { version = "0.9.3", extras = "cli" }
-"pipx:huggingface_hub" = "2.2.0"                                 # hf CLI
 
 # ============================================================================
 # Development Tools from Cargo (Rust tools)
@@ -164,6 +163,7 @@ bun = { version = "1", auto_update = "6h" }
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
+"github:charmbracelet/freeze" = "0.2.2"         # Code and terminal screenshots
 "github:charmbracelet/glow" = "3.0.0"
 "github:charmbracelet/gum" = "2.0.2"             # shell prompt tool (Go)
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.8.0"

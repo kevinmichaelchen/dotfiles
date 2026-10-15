@@ -238,6 +238,16 @@ url = "https://github.com/astral-sh/uv/releases/download/0.12.23/uv-aarch64-appl
 url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/608232483"
 provenance = "github-attestations"
 
+[[tools."github:charmbracelet/freeze"]]
+version = "0.2.2"
+backend = "github:charmbracelet/freeze"
+specifiers = ["0.2.2"]
+
+[tools."github:charmbracelet/freeze"."platforms.macos-arm64"]
+checksum = "sha256:6936ebad96dda73a6c952d7e945106916c4d4345334828109b4db6ddbb9aabee"
+url = "https://github.com/charmbracelet/freeze/releases/download/v0.2.2/freeze_0.2.2_Darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/freeze/releases/assets/242747208"
+
 [[tools."github:charmbracelet/glow"]]
 version = "3.0.0"
 backend = "github:charmbracelet/glow"
@@ -393,12 +403,6 @@ version = "4.148.0"
 aube = { path = ".mise/locks/npm-wrangler/4.148.0", digest = "sha256:e4d08ad540fb64ccf2a150ce5c6c0f0298ba881bc82e01751deb3744a10468c3" }
 backend = "npm:wrangler"
 specifiers = ["4.148.0"]
-
-[[tools."pipx:huggingface_hub"]]
-version = "2.2.0"
-backend = "pipx:huggingface_hub"
-specifiers = ["2.2.0"]
-uv = { path = ".mise/locks/pipx-huggingface-hub/2.2.0", digest = "sha256:bdd9088b38487c745fce48990afc1520c5a183afe55374963d390bf4d1677fae" }
 
 [[tools."pipx:parallel-web-tools"]]
 version = "0.9.3"
