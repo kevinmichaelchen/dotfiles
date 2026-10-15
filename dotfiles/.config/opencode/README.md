@@ -1,9 +1,9 @@
 # OpenCode v2
 
-Mise owns the official `npm:@opencode/cli` package, pinned to `2.0.20`. The old
-`github:anomalyco/opencode` declaration and v1-only plugins are removed. The
-package's reviewed postinstall selects its platform binary; this package alone
-opts into npm install scripts. `update: "disable"` leaves upgrades to Mise.
+Mise owns the official `npm:@opencode/cli` package, tracking `latest` through
+Mise. The old `github:anomalyco/opencode` declaration and v1-only plugins are
+removed. The package's reviewed postinstall selects its platform binary; this
+package alone opts into npm install scripts. `update: "disable"` leaves upgrades to Mise.
 
 ## Configuration and state
 
