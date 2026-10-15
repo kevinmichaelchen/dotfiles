@@ -150,13 +150,13 @@ url = "https://github.com/starship/starship/releases/download/v1.26.0/starship-a
 url_api = "https://api.github.com/repos/starship/starship/releases/assets/460374577"
 
 [[tools."aqua:stripe/stripe-cli"]]
-version = "1.52.0"
+version = "1.53.0"
 backend = "aqua:stripe/stripe-cli"
 
 [tools."aqua:stripe/stripe-cli"."platforms.macos-arm64"]
-checksum = "sha256:5946baab218d43d4d7e3f43ec30a05e0dd3deadbcded5d11b67398e3cfe30830"
-url = "https://github.com/stripe/stripe-cli/releases/download/v1.52.0/stripe_1.52.0_mac-os_arm64.tar.gz"
-url_api = "https://api.github.com/repos/stripe/stripe-cli/releases/assets/586605047"
+checksum = "sha256:9396973e5ff9d3e9ea74a8cb5497cb653434880ed9b67d59f4efa1a6b6f8774e"
+url = "https://github.com/stripe/stripe-cli/releases/download/v1.53.0/stripe_1.53.0_mac-os_arm64.tar.gz"
+url_api = "https://api.github.com/repos/stripe/stripe-cli/releases/assets/601963694"
 
 [[tools."aqua:terrastruct/d2"]]
 version = "0.9.0"
@@ -381,13 +381,6 @@ version = "2.0.20"
 backend = "npm:@opencode/cli"
 
 [tools."npm:@opencode/cli".options]
-npm_args = "--ignore-scripts=false"
-
-[[tools."npm:@opencode/cli"]]
-version = "2.0.20"
-backend = "npm:@opencode/cli"
-
-[tools."npm:@opencode/cli".options]
 allow_builds = '["@opencode/cli"]'
 
 [[tools."npm:firecrawl-cli"]]
@@ -418,13 +411,13 @@ backend = "pipx:parallel-web-tools"
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.6.0"
+version = "12.8.2"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:1030f38e14fa2e6c87fe6ab0313a3bf3b794a961504f4439bad2ca2110d3583e"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.6.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/581813250"
+checksum = "sha256:abdace06607e8bcdcd72517a6b4bf01f711627e5979a65c828eccd69e71e9e6f"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.8.2/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/599659862"
 provenance = "github-attestations"
 
 [[tools.python]]
