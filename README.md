@@ -268,6 +268,7 @@ older executable fails with update guidance instead of misinterpreting it.
 - [Executor setup and ownership](docs/executor.md)
 - [Podman VM provider](vfkit.md)
 - [tmux setup](docs/tmux.md)
+- [Local speech recognition and synthesis](docs/speech.md)
 
 - [mise dotfiles](https://mise.jdx.dev/dotfiles.html)
 - [mise bootstrap](https://mise.jdx.dev/cli/bootstrap.html)
