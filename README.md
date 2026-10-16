@@ -266,6 +266,7 @@ older executable fails with update guidance instead of misinterpreting it.
 ## Resources
 
 - [Executor setup and ownership](docs/executor.md)
+- [Local household agent on the 16 GB M4 Mac mini](docs/local-household-agent.md)
 - [Podman VM provider](vfkit.md)
 - [tmux setup](docs/tmux.md)
 
