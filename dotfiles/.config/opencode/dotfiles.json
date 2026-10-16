@@ -31,10 +31,28 @@
       }
     },
     "openrouter": {
+      "models": {
+        "xiaomi/mimo-v2.6-pro": { "disabled": false },
+        "xiaomi/mimo-v2.6-flash": { "disabled": false },
+        "z-ai/glm-5.3": { "disabled": false },
+        "z-ai/glm-5.3-flash": { "disabled": false },
+        "deepseek/deepseek-v4.1-flash": { "disabled": false },
+        "minimax/minimax-m3": { "disabled": false },
+        "moonshotai/kimi-k3": { "disabled": false }
+      },
       "body": {
         "provider": {
           "data_collection": "deny"
         }
+      }
+    },
+    "fireworks-ai": {
+      "models": {
+        "accounts/fireworks/models/glm-5p3": { "disabled": false },
+        "accounts/fireworks/models/glm-5p3-flash": { "disabled": false },
+        "accounts/fireworks/models/deepseek-v4p1-flash": { "disabled": false },
+        "accounts/fireworks/models/minimax-m3": { "disabled": false },
+        "accounts/fireworks/models/kimi-k3": { "disabled": false }
       }
     }
   },
