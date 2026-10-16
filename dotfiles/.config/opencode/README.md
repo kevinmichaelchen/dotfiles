@@ -68,15 +68,15 @@ provider policies, credentials, and upstream availability still apply.
 Because this override layer loads after local global config, its explicit
 enables override local disables for these entries; unrelated disables remain.
 
-| Model | OpenRouter ID (prefix with `openrouter/`) | Fireworks ID (prefix with `fireworks-ai/`) |
-| --- | --- | --- |
-| MiMo V2.6 Pro | `xiaomi/mimo-v2.6-pro` | — |
-| MiMo V2.6 Flash | `xiaomi/mimo-v2.6-flash` | — |
-| GLM 5.3 | `z-ai/glm-5.3` | `accounts/fireworks/models/glm-5p3` |
-| GLM 5.3 Flash | `z-ai/glm-5.3-flash` | `accounts/fireworks/models/glm-5p3-flash` |
-| DeepSeek V4.1 Flash | `deepseek/deepseek-v4.1-flash` | `accounts/fireworks/models/deepseek-v4p1-flash` |
-| MiniMax M3 | `minimax/minimax-m3` | `accounts/fireworks/models/minimax-m3` |
-| Kimi K3 | `moonshotai/kimi-k3` | `accounts/fireworks/models/kimi-k3` |
+| Model               | OpenRouter ID (prefix with `openrouter/`) | Fireworks ID (prefix with `fireworks-ai/`)      |
+| ------------------- | ----------------------------------------- | ----------------------------------------------- |
+| MiMo V2.6 Pro       | `xiaomi/mimo-v2.6-pro`                    | —                                               |
+| MiMo V2.6 Flash     | `xiaomi/mimo-v2.6-flash`                  | —                                               |
+| GLM 5.3             | `z-ai/glm-5.3`                            | `accounts/fireworks/models/glm-5p3`             |
+| GLM 5.3 Flash       | `z-ai/glm-5.3-flash`                      | `accounts/fireworks/models/glm-5p3-flash`       |
+| DeepSeek V4.1 Flash | `deepseek/deepseek-v4.1-flash`            | `accounts/fireworks/models/deepseek-v4p1-flash` |
+| MiniMax M3          | `minimax/minimax-m3`                      | `accounts/fireworks/models/minimax-m3`          |
+| Kimi K3             | `moonshotai/kimi-k3`                      | `accounts/fireworks/models/kimi-k3`             |
 
 IDs were checked against the installed v2 catalog on **2026-10-16**. MiMo's
 Fireworks Pro-RL listing is an on-demand deployment, so it is not included as
@@ -92,15 +92,15 @@ Use this snapshot to choose experiments, and refresh it before changing the
 shortlist. Prices are USD per million tokens at the **named endpoint**, not the
 cheapest price across OpenRouter routes. Cached input is a separate rate.
 
-| Model | Price source | Input | Cached input | Output |
-| --- | --- | ---: | ---: | ---: |
-| MiMo V2.6 Flash | Xiaomi via OpenRouter | $0.14 | $0.0028 | $0.28 |
-| MiMo V2.6 Pro | Xiaomi via OpenRouter | $0.435 | $0.0036 | $0.87 |
-| GLM 5.3 Flash | Fireworks | $0.15 | $0.03 | $0.50 |
-| DeepSeek V4.1 Flash | Fireworks | $0.30 | $0.006 | $1.20 |
-| MiniMax M3 | MiniMax via OpenRouter | $0.30 | $0.06 | $1.20 |
-| GLM 5.3 | Fireworks | $1.40 | $0.26 | $4.40 |
-| Kimi K3 | Fireworks | $3.00 | $0.30 | $15.00 |
+| Model               | Price source           |  Input | Cached input | Output |
+| ------------------- | ---------------------- | -----: | -----------: | -----: |
+| MiMo V2.6 Flash     | Xiaomi via OpenRouter  |  $0.14 |      $0.0028 |  $0.28 |
+| MiMo V2.6 Pro       | Xiaomi via OpenRouter  | $0.435 |      $0.0036 |  $0.87 |
+| GLM 5.3 Flash       | Fireworks              |  $0.15 |        $0.03 |  $0.50 |
+| DeepSeek V4.1 Flash | Fireworks              |  $0.30 |       $0.006 |  $1.20 |
+| MiniMax M3          | MiniMax via OpenRouter |  $0.30 |        $0.06 |  $1.20 |
+| GLM 5.3             | Fireworks              |  $1.40 |        $0.26 |  $4.40 |
+| Kimi K3             | Fireworks              |  $3.00 |        $0.30 | $15.00 |
 
 Source: [OpenRouter's per-model endpoint API](https://openrouter.ai/api/v1/models/xiaomi/mimo-v2.6-pro/endpoints)
 (`/api/v1/models/{author}/{slug}/endpoints`), cross-checked with Fireworks model
@@ -112,15 +112,15 @@ Artificial Analysis (AA) supplies a common independent evaluation: Intelligence
 Index **v4.3.2**, Terminal-Bench **4.0**, and SciCode. Scores and speed are copied
 from its linked comparison pages, not combined from vendor launch benchmarks.
 
-| Model | AA index | Terminal-Bench 4.0 | SciCode | Output tokens/s | First token (s) |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| [MiMo V2.6 Pro][aa-mimo-glm] | 46 | 35% | 61% | ~44–47 | ~4.1 |
-| [GLM 5.3 (Max)][aa-glm-kimi] | 45 | 42% | 59% | 67 | 3.32 |
-| [Kimi K3 (Max)][aa-glm-kimi] | 44 | 13% | 59% | 44 | 3.18 |
-| [GLM 5.3 Flash][aa-mimo-glm] | 42 | 33% | 52% | 60 | 2.81 |
-| [DeepSeek V4.1 Flash (Max)][aa-flash] | 39 | 27% | 52% | 179 | 1.12 |
-| [MiMo V2.6 Flash][aa-flash] | 38 | 23% | 51% | 60 | 3.22 |
-| [MiniMax M3][aa-minimax] | 29 | 2% | 47% | 95 | 1.24 |
+| Model                                 | AA index | Terminal-Bench 4.0 | SciCode | Output tokens/s | First token (s) |
+| ------------------------------------- | -------: | -----------------: | ------: | --------------: | --------------: |
+| [MiMo V2.6 Pro][aa-mimo-glm]          |       46 |                35% |     61% |          ~44–47 |            ~4.1 |
+| [GLM 5.3 (Max)][aa-glm-kimi]          |       45 |                42% |     59% |              67 |            3.32 |
+| [Kimi K3 (Max)][aa-glm-kimi]          |       44 |                13% |     59% |              44 |            3.18 |
+| [GLM 5.3 Flash][aa-mimo-glm]          |       42 |                33% |     52% |              60 |            2.81 |
+| [DeepSeek V4.1 Flash (Max)][aa-flash] |       39 |                27% |     52% |             179 |            1.12 |
+| [MiMo V2.6 Flash][aa-flash]           |       38 |                23% |     51% |              60 |            3.22 |
+| [MiniMax M3][aa-minimax]              |       29 |                 2% |     47% |              95 |            1.24 |
 
 Higher benchmark scores and output speed are better; lower latency is better.
 The AA index is not a percentage. AA marks SciCode under review. AA speed is
