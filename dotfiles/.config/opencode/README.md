@@ -61,6 +61,15 @@ not a benchmark ranking or a promise that subscription access works in every
 client. Use Claude Code for the Claude subscription. The title agent uses
 `openai/gpt-6-luna` through the existing ChatGPT connection.
 
+The selected local default is `openrouter/deepseek/deepseek-v4.1-flash`:
+OpenCode prioritizes fast execution alongside the Claude/Codex subscriptions
+already used for difficult work. Switch to MiMo V2.6 Pro for its stronger
+overall benchmark performance or an independent implementation attempt, and
+GLM 5.3 for a terminal-coding challenger. This is a workflow preference, not a
+universal quality ranking; measured speed varies by serving endpoint. Set the
+root `model` field in app-owned `~/.config/opencode/opencode.json` to select
+the default for new sessions; existing sessions retain their model selection.
+
 The managed layer explicitly enables these catalog entries as optional models;
 it does not choose a new default or restrict other providers/models. Connect
 OpenRouter and Fireworks, then use `/models` to select an entry. A project's
