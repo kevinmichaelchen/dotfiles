@@ -14,9 +14,11 @@ if command -v mise >/dev/null 2>&1; then
   fi
 
   echo "Updating runtimes before dependent tools..."
-  mise upgrade --bump --no-prune node python go rust
+  mise upgrade --bump --no-prune node go rust
+  # Parallel CLI's locked PyYAML dependency has no Python 3.15 wheel yet.
+  mise upgrade --bump --no-prune python@3.14
   echo "Updating remaining Mise tools..."
-  mise upgrade --bump --no-prune
+  mise upgrade --bump --no-prune --exclude python
   echo "Refreshing lockfile metadata..."
   mise lock --global --platform macos-arm64
   echo "Verifying available updates..."
