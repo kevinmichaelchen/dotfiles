@@ -211,7 +211,9 @@ OpenCode v2 uses its native provider login and usage statistics; the v1-only
 Codex-auth and TokenScope plugins and dependency seed are removed. Its primary
 model and dependency manifest remain local; the title agent uses GPT-6 Luna.
 See the [OpenCode v2 guide](dotfiles/.config/opencode/README.md) for subscription
-versus API model choices and migration. For an existing v2 background service,
+versus API model choices, the dated objective comparison, and migration. Use the
+project-scoped [OpenCode model curator](.agents/skills/opencode-model-curator/SKILL.md)
+when researching or changing those options. For an existing v2 background service,
 set its managed config environment once with
 `opencode service set env OPENCODE_CONFIG "$HOME/.config/opencode/dotfiles.json"`.
 Mise links Claude's skills directory to `~/.agents/skills`.
