@@ -60,7 +60,10 @@ measure saved event/task IDs and timestamps, delivered notifications after idle
 or restart, malformed tool calls, duplicate writes, latency, and peak RAM using
 test data. Use deterministic outcomes rather than subjective quality scores.
 
-Update the existing guide and its source links together. Format changed Markdown
+Update the existing guide and its source links together. Place descriptive
+reference-style X links inline beside relevant model and integration claims in
+both the Markdown guide and PR body; distinguish lab announcements, demos, and
+community experiments from independently measured evidence. Format changed Markdown
 with oxfmt. For a requested PR, keep the visible model-choice table concise and
 put evidence, setup details, and remaining deployment inputs under For machines;
 honor the user's preference for no PR diagram.

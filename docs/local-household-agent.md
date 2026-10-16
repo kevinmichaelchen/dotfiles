@@ -13,12 +13,12 @@ following, memory use, and end-to-end response latency rather than coding rank.
 This order is a recommendation for the household workload, not a universal
 benchmark ranking. Package sizes are download sizes, not total runtime RAM.
 
-| Model           | Package / quantization                                   | Why it fits                                                                     | Evidence and limitations                                                                                                                                                         |
-| --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **LFM2.5-2.6B** | MLX 8-bit **2.67 GB**; official GGUF Q8_0 also available | First model to try for text-based tool use, extraction, and household workflows | Liquid explicitly documents Hermes and OpenClaw integration. Small enough to try higher precision before extreme compression. No measured speed on this Mac mini.                |
-| **Qwen3.5-9B**  | GGUF Q4_K_M **~5.3 GB**                                  | Main comparison model if LFM struggles with instructions or multi-step tasks    | Hermes documents a Mac setup. A base M4 16 GB community result measured ~20 tokens/s with a different MLX 4-bit pack at 4K context; this is not a speed prediction for the GGUF. |
-| **Bonsai 2 9B** | MLX 2-bit **3.46 GB**, including vision                  | Compact screenshot, receipt, and document understanding, with tool calling      | Released October 15. The headline 2 GB is not the complete MLX pack. Runtime compatibility and multi-turn tool behavior need validation.                                         |
-| **Raptor 0.6**  | JANG 6-bit **3.7 GB**                                    | An alternative if Osaurus's native Mac workflows suit the chosen apps           | Tuned for Osaurus's tools; that does not establish Hermes/OpenClaw compatibility. Requires Osaurus 0.25.0+ for its architecture support.                                         |
+| Model           | Package / quantization                                   | Why it fits                                                                     | Evidence and limitations                                                                                                                                                                                                                                                                     |
+| --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **LFM2.5-2.6B** | MLX 8-bit **2.67 GB**; official GGUF Q8_0 also available | First model to try for text-based tool use, extraction, and household workflows | Liquid explicitly documents Hermes and OpenClaw integration. Small enough to try higher precision before extreme compression. No measured speed on this Mac mini. See the [calendar/memory demo][liquid-x] and [publisher device measurements][lfm-device-x].                                |
+| **Qwen3.5-9B**  | GGUF Q4_K_M **~5.3 GB**                                  | Main comparison model if LFM struggles with instructions or multi-step tasks    | Hermes documents a Mac setup. A base M4 16 GB community result measured ~20 tokens/s with a different MLX 4-bit pack at 4K context; this is not a speed prediction for the GGUF. A [community adapter experiment][qwen-adapters-x] is a reason to compare the base before adding fine-tunes. |
+| **Bonsai 2 9B** | MLX 2-bit **3.46 GB**, including vision                  | Compact screenshot, receipt, and document understanding, with tool calling      | Released October 15. The headline 2 GB is not the complete MLX pack. Runtime compatibility and multi-turn tool behavior need validation. [Lab announcement][prism-x]; [app integration][atomic-x].                                                                                           |
+| **Raptor 0.6**  | JANG 6-bit **3.7 GB**                                    | An alternative if Osaurus's native Mac workflows suit the chosen apps           | Tuned for Osaurus's tools; that does not establish Hermes/OpenClaw compatibility. Requires Osaurus 0.25.0+ for its architecture support. [Official launch][raptor-launch-x]; [native file-tool demo][raptor-files-x].                                                                        |
 
 Sources: [Liquid integration guide][liquid-agents], [LFM MLX formats][lfm-quants],
 [official GGUF files][lfm-gguf], [Hermes Mac guide][hermes-mac],
@@ -28,6 +28,8 @@ Sources: [Liquid integration guide][liquid-agents], [LFM MLX formats][lfm-quants
 The 16 GB budget includes macOS, the agent, tools, model weights, runtime
 buffers, vision components, and context cache. Keep one model loaded initially.
 The actual context allocation matters more than the advertised maximum.
+Liquid also publishes [phone-specific memory/latency results][lfm-device-x];
+those device numbers should not be relabeled as Mac mini measurements.
 Local inference avoids a hosted per-token bill; electricity, disk space, and
 any paid external tools remain separate costs.
 
@@ -63,12 +65,39 @@ Bounded read-only searches on 2026-10-16 retrieved 120 posts for small models an
 25 more for household-agent compatibility. Some results were unrelated and were
 excluded. Raw captures remain under gitignored `.context/x/`; web extracts and
 model-card captures remain under `.context/local-models-2026-10-16/`.
+A follow-up retrieved 44 more posts (14 Osaurus, 15 Liquid, 15 Qwen-query
+results) specifically to add inline references; unrelated results were excluded.
 
 Useful leads included [PrismML's release announcement][prism-x],
 [Atomic Chat's Bonsai integration][atomic-x], and
 [a local calendar/memory demo][liquid-x]. Treat posts as discovery
 and qualitative context. A demo, integration announcement, or popularity count
 does not establish reliability in the chosen agent.
+
+The posts are useful for different decisions:
+
+- **Everyday assistant behavior:** the [calendar, memory, and self-scheduled
+  follow-up demo][liquid-x] describes LFM running on a phone. Liquid's
+  [personal-context announcement][lfm-context-x] describes a separate Snapdragon
+  integration; it is evidence of the product direction, not an available Mac
+  calendar connector.
+- **Harness choice:** a [community Hermes experiment][hermes-experiment-x] and
+  [Hugging Face's cross-harness report][harness-results-x] show why the same
+  model or fine-tune needs evaluation inside its actual harness. Their tasks
+  are data analysis/coding, not household reminders.
+- **Quantization and latency:** Liquid's [QAD checkpoint announcement][lfm-quant-x]
+  discusses quality recovery after compression. Its [DSpark measurements][lfm-speculation-x]
+  report LFM2.5-2.6B on **M4 Max**, not the base M4 mini. They justify checking
+  the quantization/backend rather than predicting a mini speed from a headline.
+- **Bonsai adoption and runtime requirements:** [Atomic Chat][atomic-x],
+  [Locally][bonsai-locally-x], and a [browser integration report][bonsai-browser-x]
+  show app adoption. A [community GGUF setup report][bonsai-runtime-x] explicitly
+  calls out PrismML's fork for that pack. Its RTX 3060 numbers are not Apple
+  Silicon measurements; integration-specific pack sizes need their own labels.
+- **Osaurus's actual scope:** the [Raptor launch][raptor-launch-x],
+  [runtime explanation][raptor-runtime-x], and [document-tool demo][raptor-files-x]
+  support considering it as a native Mac workflow stack. They do not establish
+  support for the user's chosen calendar or reminder account.
 
 Tencent's [Hy-MT2-1.8B][tencent-mt] has a 440 MB extreme variant, but it is a
 translation specialist, so it is not on the general household-agent shortlist.
@@ -183,7 +212,9 @@ subjective autonomy or household-intelligence scores.
 5. Restart the agent and confirm preferences, scheduled work, and task state
    persist. Measure tool calls, not just fluent chat responses.
 
-No cases have been run on the mini yet. Household apps, accounts, notification
+The [Hermes experiment][hermes-experiment-x] and [cross-harness report][harness-results-x]
+are reasons to test the whole agent, not substitute a model leaderboard for
+saved reminders and delivered notifications. No cases have been run on the mini yet. Household apps, accounts, notification
 channel, and agent selection remain deployment inputs. A follow-up that installs
 or configures the selected stack should add only its scoped Mise/app settings.
 
@@ -206,3 +237,16 @@ For future updates, use the project-scoped
 [liquid-x]: https://x.com/ShubhamMal72313/status/2095671912118796450
 [tencent-mt]: https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF
 [llama-server]: https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md
+[lfm-device-x]: https://x.com/liquidai/status/2102084158080045233
+[lfm-context-x]: https://x.com/liquidai/status/2102835494547841242
+[lfm-speculation-x]: https://x.com/liquidai/status/2090491705573458016
+[lfm-quant-x]: https://x.com/liquidai/status/2090078070929760295
+[hermes-experiment-x]: https://x.com/witcheer/status/2109532016098328841
+[harness-results-x]: https://x.com/ClementDelangue/status/2107120717980471638
+[qwen-adapters-x]: https://x.com/baqardie85/status/2109279875144331742
+[raptor-launch-x]: https://x.com/OsaurusAI/status/2100300189668118706
+[raptor-runtime-x]: https://x.com/OsaurusAI/status/2100300192889393244
+[raptor-files-x]: https://x.com/OsaurusAI/status/2102387818958053511
+[bonsai-runtime-x]: https://x.com/DogukanUrker/status/2110824587718017177
+[bonsai-locally-x]: https://x.com/adrgrondin/status/2110831789875016186
+[bonsai-browser-x]: https://x.com/chirag/status/2110851395046056361
