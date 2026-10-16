@@ -289,6 +289,19 @@ checksum = "sha256:de9ab62dd90461cd1df1e37b78e780690d75490f4bab1674cbb4a1f75b90c
 url = "https://github.com/libkrun/krunkit/releases/download/v1.3.2/krunkit-podman-unsigned-1.3.2.tgz"
 url_api = "https://api.github.com/repos/libkrun/krunkit/releases/assets/465341860"
 
+[[tools."github:nyosegawa/speech.cpp"]]
+version = "0.8.8"
+backend = "github:nyosegawa/speech.cpp"
+specifiers = ["0.8.8"]
+
+[tools."github:nyosegawa/speech.cpp".options]
+asset_pattern = "speech-*-macos-arm64-metal.zip"
+
+[tools."github:nyosegawa/speech.cpp"."platforms.macos-arm64"]
+checksum = "sha256:5d9e8d7b42321b000b98d2d35cb938ad547a607f227520d74467c9c4fea25416"
+url = "https://github.com/nyosegawa/speech.cpp/releases/download/v0.8.8/speech-0.8.8-macos-arm64-metal.zip"
+url_api = "https://api.github.com/repos/nyosegawa/speech.cpp/releases/assets/645835165"
+
 [[tools."github:rtk-ai/rtk"]]
 version = "0.51.0"
 backend = "github:rtk-ai/rtk"
