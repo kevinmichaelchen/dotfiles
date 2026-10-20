@@ -200,6 +200,13 @@ applying dotfiles. For clients launched outside that shell, select the Codex
 profile or pass the Claude MCP file explicitly; these defaults are not forced
 into their base configs.
 
+Shared MCP defaults declare only the hosted `executor` server. Keep `nia` and
+`codex` registrations in app-owned local configs when needed; Nia credentials
+stay local. The standalone research, framework, and `executor-desktop` servers
+are no longer part of the default set. Existing local registrations are merged,
+so changing these shared files does not remove old entries from app-owned
+configs. Use `codex mcp list` and `claude mcp list` to check those separately.
+
 The app-owned `~/.claude.json`, `~/.codex/config.toml`, OpenCode's local global
 config and dependency manifest, and Crush's local JSON/data remain unmanaged.
 Shared settings override matching keys through native loading; local choices

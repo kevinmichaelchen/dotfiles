@@ -7,14 +7,6 @@
         "type": "remote",
         "url": "https://executor.sh/kevin-chen-s-organization/mcp",
         "disabled": false
-      },
-      "executor-desktop": {
-        "type": "local",
-        "command": [
-          "executor",
-          "mcp"
-        ],
-        "disabled": false
       }
     }
   },

@@ -72,7 +72,7 @@ with tempfile.TemporaryDirectory(prefix='opencode-v2-check-', dir='/tmp') as tem
         documents = {entry['path']: entry['info'] for entry in sources if entry['type'] == 'document'}
         assert str(local) in documents, 'Local global config was not loaded'
         managed = documents[str(MANAGED)]
-        assert set(managed['mcp']['servers']) == {'executor', 'executor-desktop'}
+        assert set(managed['mcp']['servers']) == {'executor'}
         assert managed['mcp']['servers']['executor']['disabled'] is False
         assert managed['agents']['title']['model'] == {
             'providerID': 'openai', 'model': 'gpt-6-luna'}
