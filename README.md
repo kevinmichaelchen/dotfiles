@@ -7,7 +7,7 @@ config layers that preserve machine-local preferences and runtime state.
 
 - **Mise** manages packages, macOS defaults, developer tools, external Git
   checkouts, and plain dotfiles.
-- **Native app config layers** declare shared Codex, Claude, OpenCode, and Crush
+- **Native app config layers** declare shared Codex, Claude, and OpenCode
   settings; the apps merge those with their own local state.
 - **Skill scripts** install and scan the pinned skills in `skills-lock.json`.
 
@@ -102,7 +102,7 @@ and update locked development tools:
 dot-update
 ```
 
-Codex, OpenCode, Crush, and uv follow `latest`; pnpm stays on major 12 and Bun
+Codex, OpenCode, and uv follow `latest`; pnpm stays on major 12 and Bun
 on major 1. Each opts into automatic updates every six hours. The built-in
 service wakes hourly and updates tools whose interval is due, including tools
 used directly through shell activation. Project-specific tool versions are
@@ -126,7 +126,7 @@ provide release dates. Use `mise install --locked` for a strict install;
 `MISE_LOCKED=1`, offline mode, and CI suppress automatic updates.
 
 To disable background updates, run `mise bootstrap services remove mise-tool-update`
-and remove both the service declaration and the six `auto_update` options;
+and remove both the service declaration and the five `auto_update` options;
 otherwise launching a tool through a shim or `mise exec` can still update it.
 To restore the prior policy fully, also restore the exact tool pins and
 `locked = true` from the previous revision.
@@ -191,7 +191,6 @@ Desired settings live in ordinary config files, linked by Mise:
 | Codex       | `dotfiles/.codex/dotfiles.config.toml`    | `--profile dotfiles` layers over local `~/.codex/config.toml`      |
 | Claude Code | `dotfiles/.config/claude/mcp.json`        | `--mcp-config` adds the declared servers for the session           |
 | OpenCode    | `dotfiles/.config/opencode/dotfiles.json` | `OPENCODE_CONFIG` adds an override layer after local global config |
-| Crush       | `dotfiles/.config/crush/crushrc`          | Native declarations load alongside local `crush.json` and app data |
 
 The shared shell module selects the Codex profile and Claude MCP file for CLI
 sessions and exports the OpenCode override path. Explicit profile/MCP/config
@@ -208,11 +207,9 @@ so changing these shared files does not remove old entries from app-owned
 configs. Use `codex mcp list` and `claude mcp list` to check those separately.
 
 The app-owned `~/.claude.json`, `~/.codex/config.toml`, OpenCode's local global
-config and dependency manifest, and Crush's local JSON/data remain unmanaged.
+config and dependency manifest remain unmanaged.
 Shared settings override matching keys through native loading; local choices
-outside those keys remain intact. Crush uses its supported Bash config DSL to
-declare MCP servers in memory, and optionally sources `crushrc.local` for local
-overrides. No configuration mutation script runs during bootstrap.
+outside those keys remain intact.
 
 OpenCode v2 uses its native provider login and usage statistics; the v1-only
 Codex-auth and TokenScope plugins and dependency seed are removed. Its primary
@@ -227,8 +224,7 @@ Mise links Claude's skills directory to `~/.agents/skills`.
 
 Native loading references: [Codex profiles](https://developers.openai.com/codex/config-basic/),
 [Claude MCP config](https://code.claude.com/docs/en/cli-reference),
-[OpenCode config](https://opencode.ai/v2/docs/config/), and
-[Crush config](https://github.com/charmbracelet/crush/blob/v0.96.1/docs/config/README.md).
+[OpenCode config](https://opencode.ai/v2/docs/config/).
 
 ## External Repositories
 

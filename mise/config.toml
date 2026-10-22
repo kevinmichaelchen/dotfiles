@@ -22,7 +22,6 @@ minimum_release_age = "7d"
 minimum_release_age_excludes = [
   "npm:@openai/codex",
   "npm:@opencode/cli",
-  "aqua:charmbracelet/crush",
 ]
 # Replace corepack: read the pnpm version from each repo's package.json
 # packageManager field so mise installs and selects it directly.
@@ -115,7 +114,6 @@ AppleKeyboardUIMode = 3
 "~/.codex/dotfiles.config.toml" = { source = "~/dotfiles/dotfiles/.codex/dotfiles.config.toml", mode = "symlink" }
 "~/.config/claude/mcp.json" = { source = "~/dotfiles/dotfiles/.config/claude/mcp.json", mode = "symlink" }
 "~/.config/opencode/dotfiles.json" = { source = "~/dotfiles/dotfiles/.config/opencode/dotfiles.json", mode = "symlink" }
-"~/.config/crush/crushrc" = { source = "~/dotfiles/dotfiles/.config/crush/crushrc", mode = "symlink" }
 "~/.claude/skills" = { source = "~/.agents/skills", mode = "symlink" }
 
 [tasks.bootstrap]
@@ -186,7 +184,6 @@ bun = { version = "1", auto_update = "6h" }
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
-"aqua:charmbracelet/crush" = { version = "latest", auto_update = "6h" }
 "aqua:sharkdp/bat" = "0.26.1"                                           # cat replacement with syntax highlighting
 "aqua:dandavison/delta" = "0.20.1"                                      # git diff viewer
 "aqua:sharkdp/fd" = "10.5.0"                                            # find replacement

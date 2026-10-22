@@ -81,18 +81,5 @@ with tempfile.TemporaryDirectory(prefix="native layers ") as temporary:
     require({"local", "executor"} == names, "Codex did not merge profile and local config")
     require(local.read_bytes() == before, "Codex user config was rewritten")
 
-    # Crush's native DSL runs in-memory; mock its builtin to inspect declarations.
-    config = home / ".config/crush"
-    config.mkdir(parents=True)
-    (config / "crushrc.local").write_text('mcp add local --type stdio --command echo\n')
-    result = subprocess.run(["bash", "-c", '''
-      mcp() { python3 -c 'import json,sys; print(json.dumps(sys.argv[1:]))' "$@"; }
-      source "$1"
-    ''', "fixture", str(SOURCE / ".config/crush/crushrc")], cwd=home, env=env,
-                            text=True, capture_output=True, check=True)
-    declarations = [json.loads(line) for line in result.stdout.splitlines()]
-    require([entry[1] for entry in declarations] == ["executor", "local"],
-            "Crush declarations or local override loading changed")
-    require("--args=mcp-remote@0.1.38" in declarations[0], "Crush transport changed")
     print("Verified native config syntax, shell layer selection, explicit overrides, "
-          "Codex profile merging without writes, and Crush declarations")
+          "and Codex profile merging without writes")

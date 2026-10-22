@@ -14,8 +14,7 @@ opencode mcp auth executor
 ```
 
 For Claude Code, launch `claude` from a configured shell and authenticate through
-`/mcp`. Its declared MCP file loads for the session. Crush uses `mcp-remote`,
-which starts its OAuth flow when needed. Each client keeps its own refreshable
+`/mcp`. Its declared MCP file loads for the session. Each client keeps its own refreshable
 session; dotfiles do not distribute bearer tokens.
 
 Desktop connections run `executor mcp` over stdio and need no local HTTP login.

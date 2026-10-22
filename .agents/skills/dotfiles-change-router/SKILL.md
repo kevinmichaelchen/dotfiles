@@ -25,7 +25,7 @@ Route each requested change to the smallest correct file set before editing anyt
 | repo-owned global agent skills | `dotfiles/.agents/skills/` | Use for custom skills needed across repositories |
 | repo-local dotfiles skills | top-level `.agents/skills/` | Use only for skills specific to maintaining this dotfiles repo |
 | personal shell behavior and fast iteration aliases | `dotfiles/.config/shell/*.sh` | Use plain `.sh` for non-secret config |
-| shared app settings | `dotfiles/.codex/` and `dotfiles/.config/{claude,opencode,crush}/` | Prefer native config layers; keep runtime state local |
+| shared app settings | `dotfiles/.codex/` and `dotfiles/.config/{claude,opencode}/` | Prefer native config layers; keep runtime state local |
 | tool authentication | provider CLI or connected app | Keep API keys and bearer tokens out of dotfiles; use browser/OAuth login or provider-owned credential storage |
 | zsh load order/path wiring | `dotfiles/.config/zsh/custom.zsh` | Update when adding a new shell module file |
 | automation workflow scripts | `scripts/*.sh` | Keep idempotent and non-destructive defaults |

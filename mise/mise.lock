@@ -21,17 +21,6 @@ specifiers = ["2.38.1"]
 checksum = "blake3:2ab7bb5c059ca201ca969a112ef2de83e32788a8bc7a3473afe2fda999f03ef6"
 url = "https://awscli.amazonaws.com/AWSCLIV2-2.38.1.pkg"
 
-[[tools."aqua:charmbracelet/crush"]]
-version = "0.98.1"
-backend = "aqua:charmbracelet/crush"
-specifiers = ["latest"]
-
-[tools."aqua:charmbracelet/crush"."platforms.macos-arm64"]
-checksum = "sha256:178710f9e43abd3f1df29756309950f42ed229737e4f2fb9bc5f36aeff07a3c3"
-url = "https://github.com/charmbracelet/crush/releases/download/v0.98.1/crush_0.98.1_Darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/charmbracelet/crush/releases/assets/624883662"
-provenance = "cosign"
-
 [[tools."aqua:charmbracelet/vhs"]]
 version = "0.12.1"
 backend = "aqua:charmbracelet/vhs"

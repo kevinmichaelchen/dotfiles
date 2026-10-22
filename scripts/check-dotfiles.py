@@ -77,7 +77,6 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
         ".codex/config.toml": 'sandbox_mode = "workspace-write"\n',
         ".config/opencode/opencode.json": '{"model":"local/model","plugin":["local-plugin"]}\n',
         ".config/opencode/package.json": '{"dependencies":{"local":"1"}}\n',
-        ".config/crush/crush.json": '{"options":{"tui":{"compact_mode":true}}}\n',
     }
     for relative, content in app_state.items():
         path = home / relative
