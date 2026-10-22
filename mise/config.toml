@@ -2,19 +2,19 @@
 # Authoritative repository config; Mise links it into ~/.config/mise/config.toml
 # Apply workstation state with `mise bootstrap` after changes
 
-min_version = "2026.10.6"
+min_version = "2026.10.12"
 
 [settings]
 dotfiles.root = "~/dotfiles/dotfiles"
 # Save exact versions by default when adding tools with `mise use`.
 pin = true
-# Keep the generated lockfile active, limit future auto-locking to this Mac's
-# platform, and re-check available provenance during installs.
+# Share recorded versions across all three ARM Macs. Routine installs must
+# use the committed lockfile; explicit maintenance opts out of locked mode.
 lockfile = true
+locked = true
+upgrade.auto_prune = false
 lockfile_platforms = ["macos-arm64"]
 locked_verify_provenance = true
-# Automatic updates require unlocked resolution; keep the lockfile above for
-# recorded versions and use `mise install --locked` for strict installs.
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
@@ -26,10 +26,6 @@ minimum_release_age_excludes = [
 # Replace corepack: read the pnpm version from each repo's package.json
 # packageManager field so mise installs and selects it directly.
 idiomatic_version_file_enable_tools = ["pnpm"]
-
-# Check opted-in global tools in the background, including direct PATH use.
-[bootstrap.services.mise-tool-update]
-builtin = "tool-update"
 
 # Machine-global packages remain separate from versioned development tools.
 # mise's built-in Homebrew support can install these without a pre-existing
@@ -144,12 +140,12 @@ rust = "1.99.0"
 # ============================================================================
 # Node.js Tools & Package Managers
 # ============================================================================
-pnpm = { version = "12", auto_update = "6h" }
-bun = { version = "1", auto_update = "6h" }
+pnpm = { version = "12" }
+bun = { version = "1" }
 
 # npm global packages
 "npm:markit-ai" = "0.6.1"
-"npm:@openai/codex" = { version = "latest", auto_update = "6h" }
+"npm:@openai/codex" = { version = "latest" }
 "npm:@nozomioai/nia" = "0.5.2"                                   # Nia CLI only
 "npm:sfw" = "2.0.6"                                              # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.26.3"
@@ -206,7 +202,7 @@ bun = { version = "1", auto_update = "6h" }
 "aqua:starship/starship" = "1.26.0"
 "aqua:golangci/golangci-lint" = "2.14.0"                                # Go linter aggregator
 "aqua:charmbracelet/vhs" = "0.12.1"
-"github:astral-sh/uv" = { version = "latest", auto_update = "6h" }
+"github:astral-sh/uv" = { version = "latest" }
 "aqua:aws/aws-cli" = "2.38.1"
 "aqua:stripe/stripe-cli" = "1.53.1"
 
@@ -215,7 +211,7 @@ bun = { version = "1", auto_update = "6h" }
 # ============================================================================
 # OpenCode v2. Its reviewed postinstall selects/copies the native binary;
 # scripts remain disabled for every other npm tool.
-"npm:@opencode/cli" = { version = "latest", auto_update = "6h", allow_builds = [
+"npm:@opencode/cli" = { version = "latest", allow_builds = [
   "@opencode/cli",
 ] }
 "npm:wrangler" = "4.149.0"

@@ -83,8 +83,8 @@ Subsequent applies need no force flag. Each plain file has its own link, so
 runtime files alongside OpenCode configuration and installed upstream agent
 skills stay in place. Chezmoi is no longer used or installed by this repository.
 The config and lockfile link back to `mise/`, so tool updates use the repository
-sources. The tool-update service refreshes opted-in tools in the background;
-no dotfiles watcher or automatic history synchronization is enabled.
+sources. Tool upgrades are explicit; no dotfiles watcher or automatic history
+synchronization is enabled.
 
 ## Daily Usage
 
@@ -95,41 +95,40 @@ export MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/mise/config.toml"
 mise bootstrap --yes
 ```
 
-Pull the repository, converge machine state, upgrade machine-global packages,
-and update locked development tools:
+Pull with fast-forward only and apply the recorded tool versions on each machine:
 
 ```bash
 dot-update
 ```
 
-Codex, OpenCode, and uv follow `latest`; pnpm stays on major 12 and Bun
-on major 1. Each opts into automatic updates every six hours. The built-in
-service wakes hourly and updates tools whose interval is due, including tools
-used directly through shell activation. Project-specific tool versions are
-not changed. Node and Rust remain pinned, so their bundled npm and Cargo do too.
-Claude Code uses its native updater, invoked by `scripts/update-tools.sh`.
-The script previews unused versions; deletion is a manual operator action.
+The checkout must be clean before updating. This command applies workstation
+state without refreshing developer tool versions or upgrading existing Homebrew
+packages. Mise installs use the committed macOS ARM lockfile by default.
 
-After upgrading Mise to at least `2026.10.6`, activate or inspect the service:
+Run explicit upgrades from one machine, review the generated changes, and
+commit `mise/config.toml`, `mise/mise.lock`, and referenced dependency sidecars:
 
 ```bash
-mise bootstrap services apply --dry-run
-mise bootstrap services apply
-mise bootstrap services status
+dot-update --upgrade             # also upgrade Homebrew packages
+./scripts/update-tools.sh        # developer tools and Claude Code only
 ```
 
-Automatic updates require unlocked resolution. The global lockfile remains
-enabled, and successful updates write new versions into the repository-backed
-`mise/mise.lock`, which can leave the checkout dirty. Review those changes before
-committing. The seven-day minimum release age still applies where backends
-provide release dates. Use `mise install --locked` for a strict install;
-`MISE_LOCKED=1`, offline mode, and CI suppress automatic updates.
+The maintenance script opts out of locked mode for that run, preserves the
+seven-day release-age policy and harness exceptions, and previews pruning.
+Codex and OpenCode follow `latest` during explicit maintenance; normal installs
+use their recorded versions. Claude Code uses its native updater and can still
+update independently. No Mise background tool-update service or `auto_update`
+options are declared.
 
-To disable background updates, run `mise bootstrap services remove mise-tool-update`
-and remove both the service declaration and the five `auto_update` options;
-otherwise launching a tool through a shim or `mise exec` can still update it.
-To restore the prior policy fully, also restore the exact tool pins and
-`locked = true` from the previous revision.
+On previously configured machines, retire the old updater service once:
+
+```bash
+mise bootstrap services remove mise-tool-update
+```
+
+For Crush retirement, the repo no longer declares its binary or config. Remove
+old installations explicitly with `mise uninstall --all aqua:charmbracelet/crush`.
+Its local session data remains available.
 
 Inspect drift without changing the machine:
 
@@ -173,7 +172,7 @@ and policy guidance.
 ## Dotfile Commands
 
 ```bash
-mde ~/.gitconfig   # edit a Mise-managed source
+mde ~/.config/git/shared   # edit shared Git preferences
 mdp               # preview plain-file changes
 mda               # apply plain-file links
 mds               # inspect plain-file status
@@ -181,6 +180,34 @@ mds               # inspect plain-file status
 
 These aliases use `mise dotfiles`, the descriptive spelling supported by the
 installed Mise release. Editing through a target symlink also edits the source.
+
+## Updating the other machines once
+
+Before pulling this migration on a machine with the old symlinks, preserve its
+current Git identity, credentials, and Codex trust state as regular local files.
+Do this **before stashing**, since those links currently point into the checkout:
+
+```bash
+for relative in .gitconfig .codex/dotfiles.config.toml; do
+  target="$HOME/$relative"
+  source="$HOME/dotfiles/dotfiles/$relative"
+  if [ -L "$target" ] && [ "$target" -ef "$source" ]; then
+    saved=$(mktemp "${target}.migration.XXXXXX")
+    cp -p "$target" "$saved"
+    mv "$saved" "$target"
+  fi
+done
+cd ~/dotfiles
+git stash push --include-untracked -m "before multi-machine config migration"
+git pull --ff-only
+mise dotfiles apply '~/.config/git/shared' '~/.gitconfig/shared' \
+  '~/.codex/dotfiles.config.toml/shared'
+```
+
+Review any saved tool/config changes with `git stash show --include-untracked -p`;
+reapply wanted tool edits selectively. The local Git/Codex state is already
+preserved, so avoid restoring it into the shared sources. The stash remains
+available for review.
 
 ## Machine-local Git settings
 

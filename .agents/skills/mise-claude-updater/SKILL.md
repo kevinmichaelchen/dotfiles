@@ -11,9 +11,9 @@ refreshes the lockfile, previews pruning, and invokes `claude update`.
 
 - Authorized updates may change exact pins through `mise upgrade --bump`.
   Preserve the seven-day release-age policy and its declared exceptions.
-- Inspect effective locked mode first. Updates require unlocked resolution;
-  use `MISE_LOCKED=false` for the update command if needed, leaving strict
-  installs available through `mise install --locked`.
+- Routine installs are locked. `scripts/update-tools.sh` explicitly sets
+  `MISE_LOCKED=false` for its maintenance run; targeted upgrades must do the
+  same. Leave the shared `locked = true` default intact.
 - Never execute deletion commands, including uninstall or actual pruning.
   `mise prune --dry-run` is allowed; give the operator exact cleanup commands.
   Do not run scripts that delete files internally.

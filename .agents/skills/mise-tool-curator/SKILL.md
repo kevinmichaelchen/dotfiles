@@ -34,7 +34,7 @@ Manage tool declarations in `mise/config.toml` so runtime ownership stays consis
 ## Apply and verify
 
 Use the narrowest operation: `mise install TOOL` for a declared tool,
-`mise upgrade --bump --no-prune TOOL` for an authorized pin update, and
+`MISE_LOCKED=false mise upgrade --bump --no-prune TOOL` for an authorized pin update, and
 `mise dotfiles apply TARGET` for a managed config. Preview conflicting targets
 before applying. Do not run full `mise bootstrap` for a tool-only change.
 

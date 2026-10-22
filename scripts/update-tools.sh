@@ -5,14 +5,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 export MISE_GLOBAL_CONFIG_FILE="$REPO_DIR/mise/config.toml"
+# This explicit maintenance command may refresh the shared config and lockfile.
+export MISE_LOCKED=false
 cd "$REPO_DIR"
 
 if command -v mise >/dev/null 2>&1; then
-  if [[ "$(mise settings get locked)" == "true" ]]; then
-    echo "Locked mode prevents updates. Rerun with MISE_LOCKED=false." >&2
-    exit 1
-  fi
-
   echo "Updating runtimes before dependent tools..."
   mise upgrade --bump --no-prune node go rust
   # Parallel CLI's locked PyYAML dependency has no Python 3.15 wheel yet.
