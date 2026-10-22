@@ -187,7 +187,7 @@ installed Mise release. Editing through a target symlink also edits the source.
 ## Updating the other machines once
 
 Before pulling this migration on a machine with the old symlinks, preserve its
-current Git identity, credentials, and Codex trust state as regular local files.
+current Git identity, credentials, and Codex trust and UI state as regular local files.
 Do this **before stashing**, since those links currently point into the checkout:
 
 ```bash
@@ -211,6 +211,16 @@ Review any saved tool/config changes with `git stash show --include-untracked -p
 reapply wanted tool edits selectively. The local Git/Codex state is already
 preserved, so avoid restoring it into the shared sources. The stash remains
 available for review.
+
+Verify the migration on each machine:
+
+```bash
+test ! -L ~/.gitconfig && test ! -L ~/.codex/dotfiles.config.toml
+git status --short
+```
+
+Both app-owned files must be regular local files. A remaining Codex profile
+symlink lets UI writes change the shared source and dirty the checkout.
 
 ## Machine-local Git settings
 
