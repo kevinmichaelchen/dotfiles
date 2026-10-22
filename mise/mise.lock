@@ -13,13 +13,13 @@ url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.
 url_api = "https://api.github.com/repos/ajeetdsouza/zoxide/releases/assets/466316174"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.38.1"
+version = "2.38.4"
 backend = "aqua:aws/aws-cli"
-specifiers = ["2.38.1"]
+specifiers = ["2.38.4"]
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-checksum = "blake3:2ab7bb5c059ca201ca969a112ef2de83e32788a8bc7a3473afe2fda999f03ef6"
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.38.1.pkg"
+checksum = "blake3:8d4f5390784c763c9ef63e49d8fca35b89b4e9e66b102d10eb841d83f0f42095"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.38.4.pkg"
 
 [[tools."aqua:charmbracelet/vhs"]]
 version = "0.12.1"
@@ -53,14 +53,14 @@ url = "https://github.com/dandavison/delta/releases/download/0.20.1/delta-0.20.1
 url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/610498923"
 
 [[tools."aqua:dprint/dprint"]]
-version = "0.61.1"
+version = "0.63.0"
 backend = "aqua:dprint/dprint"
-specifiers = ["0.61.1"]
+specifiers = ["0.63.0"]
 
 [tools."aqua:dprint/dprint"."platforms.macos-arm64"]
-checksum = "sha256:3fbf19db032dea2e8eb6e52eebbc8c328954a46d52ffd97d99a95b9c9b81414f"
-url = "https://github.com/dprint/dprint/releases/download/0.61.1/dprint-aarch64-apple-darwin.zip"
-url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/619786284"
+checksum = "sha256:5c0a4a695f9a17754eec0039f28435aedb61e1e1a6b5f448eb098a64e039c857"
+url = "https://github.com/dprint/dprint/releases/download/0.63.0/dprint-aarch64-apple-darwin.zip"
+url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/632125306"
 provenance = "github-attestations"
 
 [[tools."aqua:golangci/golangci-lint"]]
@@ -97,14 +97,14 @@ url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012783"
 provenance = "github-attestations"
 
 [[tools."aqua:junegunn/fzf"]]
-version = "0.74.4"
+version = "0.74.5"
 backend = "aqua:junegunn/fzf"
-specifiers = ["0.74.4"]
+specifiers = ["0.74.5"]
 
 [tools."aqua:junegunn/fzf"."platforms.macos-arm64"]
-checksum = "sha256:4f6a113bfc0c7959e0005c78d566a51afc4fcefc956f43735c62a9deb19e92ae"
-url = "https://github.com/junegunn/fzf/releases/download/v0.74.4/fzf-0.74.4-darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/junegunn/fzf/releases/assets/558287774"
+checksum = "sha256:ada808c7401b9949ce8842274ac16a6b6193fd32dcada396884a6a9a89e5985a"
+url = "https://github.com/junegunn/fzf/releases/download/v0.74.5/fzf-0.74.5-darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/junegunn/fzf/releases/assets/629581702"
 
 [[tools."aqua:koalaman/shellcheck"]]
 version = "0.11.0"
@@ -279,14 +279,14 @@ url = "https://github.com/libkrun/krunkit/releases/download/v1.3.2/krunkit-podma
 url_api = "https://api.github.com/repos/libkrun/krunkit/releases/assets/465341860"
 
 [[tools."github:rtk-ai/rtk"]]
-version = "0.51.0"
+version = "1.0.1"
 backend = "github:rtk-ai/rtk"
-specifiers = ["0.51.0"]
+specifiers = ["1.0.1"]
 
 [tools."github:rtk-ai/rtk"."platforms.macos-arm64"]
-checksum = "sha256:8817d8b71afc02ac8bf06eb24bcc41c306592ab735b68e8fee9db1ba0de7cb59"
-url = "https://github.com/rtk-ai/rtk/releases/download/v0.51.0/rtk-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/rtk-ai/rtk/releases/assets/605695140"
+checksum = "sha256:4aae2f60cfc49c9e81b8c8c57020aa0cb824da608c78b4f0cf5c0988e19e824e"
+url = "https://github.com/rtk-ai/rtk/releases/download/v1.0.1/rtk-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/rtk-ai/rtk/releases/assets/640517530"
 
 [[tools."github:sigoden/projclean"]]
 version = "0.9.0"
@@ -299,14 +299,14 @@ url = "https://github.com/sigoden/projclean/releases/download/v0.9.0/projclean-v
 url_api = "https://api.github.com/repos/sigoden/projclean/releases/assets/414034562"
 
 [[tools."github:vercel-labs/agent-browser"]]
-version = "0.39.0"
+version = "0.39.1"
 backend = "github:vercel-labs/agent-browser"
-specifiers = ["0.39.0"]
+specifiers = ["0.39.1"]
 
 [tools."github:vercel-labs/agent-browser"."platforms.macos-arm64"]
-checksum = "sha256:636fc9aa269e3819b539998aa5b87e1c3953556c19eeb9685053743283464faa"
-url = "https://github.com/vercel-labs/agent-browser/releases/download/v0.39.0/agent-browser-darwin-arm64"
-url_api = "https://api.github.com/repos/vercel-labs/agent-browser/releases/assets/625880288"
+checksum = "sha256:cc18fac41d9dc9821918340a136e643286ea05544c4dd35671b796f1a874cdef"
+url = "https://github.com/vercel-labs/agent-browser/releases/download/v0.39.1/agent-browser-darwin-arm64"
+url_api = "https://api.github.com/repos/vercel-labs/agent-browser/releases/assets/638085651"
 
 [[tools."github:x-motemen/ghq"]]
 version = "1.11.2"
@@ -329,9 +329,9 @@ checksum = "sha256:76812b213b1b2302c978d28fa52fa92d541704b9e7d9d5db8002c50e4018c
 url = "https://dl.google.com/go/go1.27.2.darwin-arm64.tar.gz"
 
 [[tools."go:golang.org/x/vuln/cmd/govulncheck"]]
-version = "1.8.0"
+version = "1.9.0"
 backend = "go:golang.org/x/vuln/cmd/govulncheck"
-specifiers = ["1.8.0"]
+specifiers = ["1.9.0"]
 
 [[tools.node]]
 version = "26.12.0"
@@ -382,10 +382,10 @@ specifiers = ["latest"]
 allow_builds = '["@opencode/cli"]'
 
 [[tools."npm:firecrawl-cli"]]
-version = "1.26.3"
-aube = { path = ".mise/locks/npm-firecrawl-cli/1.26.3", digest = "sha256:51d0f822a01c7b8363ebfba90afb7b71e0340a8daaab382dbb8e535b2f9394f0" }
+version = "1.26.5"
+aube = { path = ".mise/locks/npm-firecrawl-cli/1.26.5", digest = "sha256:4ccfa08e7daf50c28e47d97ad65966ed1360575cbce2a87622e7feb7a39b835e" }
 backend = "npm:firecrawl-cli"
-specifiers = ["1.26.3"]
+specifiers = ["1.26.5"]
 
 [[tools."npm:markit-ai"]]
 version = "0.6.1"
@@ -400,10 +400,10 @@ backend = "npm:sfw"
 specifiers = ["2.0.6"]
 
 [[tools."npm:wrangler"]]
-version = "4.149.0"
-aube = { path = ".mise/locks/npm-wrangler/4.149.0", digest = "sha256:0d8856a5761c1ff9e9a8f1184931d9f1d3cb63b3abc22d681b522da32eabaee5" }
+version = "4.151.0"
+aube = { path = ".mise/locks/npm-wrangler/4.151.0", digest = "sha256:43edf0bf0558525627228202000294bc1d27ae0c6e8446d3d7861b52d392b8c6" }
 backend = "npm:wrangler"
-specifiers = ["4.149.0"]
+specifiers = ["4.151.0"]
 
 [[tools."pipx:parallel-web-tools"]]
 version = "0.9.3"

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       firecrawl-cli:
-        specifier: 1.26.3
-        version: 1.26.3(zod@3.25.76)
+        specifier: 1.26.5
+        version: 1.26.5(zod@3.25.76)
 
 packages:
 
@@ -219,8 +219,8 @@ packages:
   fast-wrap-ansi@0.2.2:
     resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
 
-  firecrawl-cli@1.26.3:
-    resolution: {integrity: sha512-TC4OxNT7GRZFniFOZwoIFaGi08wmYwPC1oMOMkA3QTBEkT4TTBGzUcdYx+mXGQ6CqmdFhhS+RUfjOW0AIGOuHQ==}
+  firecrawl-cli@1.26.5:
+    resolution: {integrity: sha512-5xBrWG+51ubMV8K1sIluj8R91AUTYik+HDP9ty6yXw6LhOwTFp4wHp7Q2hNHDJjsMWeH34727aHgwC6uaB2iGQ==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
@@ -509,7 +509,7 @@ snapshots:
     dependencies:
       fast-string-width: 3.0.2
 
-  firecrawl-cli@1.26.3(zod@3.25.76):
+  firecrawl-cli@1.26.5(zod@3.25.76):
     dependencies:
       '@inquirer/prompts': 8.7.3
       commander: 14.0.3

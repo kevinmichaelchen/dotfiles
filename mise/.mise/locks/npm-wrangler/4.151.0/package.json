@@ -2,6 +2,6 @@
   "name": "mise-npm-install",
   "private": true,
   "dependencies": {
-    "firecrawl-cli": "1.26.3"
+    "wrangler": "4.151.0"
   }
 }
