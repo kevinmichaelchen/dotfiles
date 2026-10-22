@@ -149,6 +149,8 @@ bun = { version = "1", auto_update = "6h" }
 "npm:sfw" = "2.0.6"                                              # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.26.3"
 "npm:@eraserlabs/diagrams-cli" = "0.2.0"
+# Verified public Bird fork; package is newer than the npm new-package threshold.
+"npm:@fisch0920/bird" = { version = "0.7.1", allow_low_downloads = true }
 
 # ============================================================================
 # Python CLI Tools from PyPI

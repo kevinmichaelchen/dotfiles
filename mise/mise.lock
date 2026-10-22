@@ -359,6 +359,18 @@ aube = { path = ".mise/locks/npm-eraserlabs-diagrams-cli/0.2.0", digest = "sha25
 backend = "npm:@eraserlabs/diagrams-cli"
 specifiers = ["0.2.0"]
 
+[[tools."npm:@fisch0920/bird"]]
+version = "0.7.1"
+aube = { path = ".mise/locks/npm-fisch0920-bird/0.7.1~fa5631fb", digest = "sha256:a79cfcfe46f662b018c5fe60a9b40aed0b95722e0d9fa795b6eb100abe62e2c1" }
+backend = "npm:@fisch0920/bird"
+specifiers = [
+    "0.7.1",
+    "latest",
+]
+
+[tools."npm:@fisch0920/bird".options]
+allow_low_downloads = "true"
+
 [[tools."npm:@nozomioai/nia"]]
 version = "0.5.2"
 aube = { path = ".mise/locks/npm-nozomioai-nia/0.5.2", digest = "sha256:dc5e631c68fc8f5c8782992268ed3ada8d028fb626dbc103ebe63c67cfcb32f2" }
