@@ -10,6 +10,7 @@ import tomllib
 REPO = Path(__file__).resolve().parent.parent
 config = tomllib.loads((REPO / "mise/config.toml").read_text())
 assert config["settings"]["locked"] is True
+assert config["settings"]["locked_scopes"] == ["global"]
 assert "mise-tool-update" not in config["bootstrap"].get("services", {})
 assert all(not isinstance(tool, dict) or "auto_update" not in tool
            for tool in config["tools"].values())
@@ -62,4 +63,32 @@ fi
         result, calls = run(*args)
         assert result.returncode == 2 and not calls, calls
 
-print('Verified locked installs, explicit upgrades, fast-forward pull, dirty-checkout guard, and argument validation')
+# Exercise the real resolver offline: a project pin without a lock must work,
+# while the same pin in global config must still require a lock entry.
+with tempfile.TemporaryDirectory(prefix="locked scope ") as temporary:
+    root = Path(temporary)
+    project = root / "project"
+    project.mkdir()
+    tools = f'[tools]\nnode = "{config["tools"]["node"]}"\n'
+    (project / "mise.toml").write_text(tools)
+    global_config = root / "config.toml"
+    settings = '[settings]\nlocked = true\nlocked_scopes = ["global"]\n'
+    global_config.write_text(settings)
+    env = {key: value for key, value in os.environ.items()
+           if not key.startswith("MISE_") or key == "MISE_DATA_DIR"}
+    env.update(MISE_GLOBAL_CONFIG_FILE=str(global_config), MISE_OFFLINE="1",
+               MISE_TRUSTED_CONFIG_PATHS=temporary, MISE_STATE_DIR=str(root / "state"),
+               XDG_STATE_HOME=str(root / "xdg-state"))
+    mise = shutil.which("mise")
+    assert mise, "Validation requires mise on PATH"
+    result = subprocess.run([mise, "-C", str(project), "which", "node"],
+                            env=env, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert "not in the lockfile" not in result.stderr, result.stderr
+    global_config.write_text(settings + tools)
+    result = subprocess.run([mise, "-C", temporary, "which", "node"],
+                            env=env, capture_output=True, text=True)
+    assert result.returncode != 0 and "not in the lockfile" in result.stderr, result.stderr
+
+print('Verified global-only locking, unlocked project resolution, explicit upgrades, '
+      'fast-forward pull, dirty-checkout guard, and argument validation')

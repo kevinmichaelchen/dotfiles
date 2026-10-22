@@ -8,10 +8,11 @@ min_version = "2026.10.12"
 dotfiles.root = "~/dotfiles/dotfiles"
 # Save exact versions by default when adding tools with `mise use`.
 pin = true
-# Share recorded versions across all three ARM Macs. Routine installs must
-# use the committed lockfile; explicit maintenance opts out of locked mode.
+# Share recorded global versions across all three ARM Macs. Project tools
+# follow their own lock policy; explicit maintenance opts out of locked mode.
 lockfile = true
 locked = true
+locked_scopes = ["global"]
 upgrade.auto_prune = false
 lockfile_platforms = ["macos-arm64"]
 locked_verify_provenance = true

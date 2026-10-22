@@ -103,7 +103,10 @@ dot-update
 
 The checkout must be clean before updating. This command applies workstation
 state without refreshing developer tool versions or upgrading existing Homebrew
-packages. Mise installs use the committed macOS ARM lockfile by default.
+packages. Shared global tools use the committed macOS ARM lockfile by default.
+Locked mode is scoped to `global`: project tools, including `packageManager`
+pnpm versions, follow each project's own lock policy. This lets `mise prune`
+resolve tracked project requirements even when those projects have no lockfile.
 
 Run explicit upgrades from one machine, review the generated changes, and
 commit `mise/config.toml`, `mise/mise.lock`, and referenced dependency sidecars:
