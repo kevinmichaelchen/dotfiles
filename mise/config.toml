@@ -111,7 +111,7 @@ AppleKeyboardUIMode = 3
 "~/.zprofile" = { source = "~/dotfiles/dotfiles/.zprofile", mode = "symlink" }
 "~/.zshrc" = { source = "~/dotfiles/dotfiles/.zshrc", mode = "symlink" }
 
-"~/.codex/dotfiles.config.toml" = { source = "~/dotfiles/dotfiles/.codex/dotfiles.config.toml", mode = "symlink" }
+"~/.codex/dotfiles.config.toml/shared" = { source = "~/dotfiles/dotfiles/.codex/dotfiles.config.toml", merge = true }
 "~/.config/claude/mcp.json" = { source = "~/dotfiles/dotfiles/.config/claude/mcp.json", mode = "symlink" }
 "~/.config/opencode/dotfiles.json" = { source = "~/dotfiles/dotfiles/.config/opencode/dotfiles.json", mode = "symlink" }
 "~/.claude/skills" = { source = "~/.agents/skills", mode = "symlink" }

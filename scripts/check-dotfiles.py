@@ -26,6 +26,8 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
         shutil.copytree(REPO / directory, checkout / directory)
     config = checkout / "mise/config.toml"
     entries = tomllib.loads(config.read_text())["dotfiles"]
+    merges = {key: value for key, value in entries.items() if value.get("merge")}
+    entries = {key: value for key, value in entries.items() if not value.get("merge")}
     env = os.environ.copy()
     # Keep configuration, caches, state, and trust records inside the fixture.
     for key in list(env):
@@ -58,6 +60,22 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
         destination = expand(target)
         require(destination.is_symlink(), f"Fresh bootstrap did not link {target}")
         destination.unlink()
+
+    # Exercise migration from an older symlinked Codex profile.
+    for target, entry in merges.items():
+        destination = expand(target.rsplit("/", 1)[0])
+        destination.unlink()
+        source = expand(entry["source"])
+        source.write_text(source.read_text() + '\n[hooks.state.fixture]\ntrusted_hash = "local-only"\n')
+        destination.symlink_to(source)
+        run(MISE, "dotfiles", "apply", target, "--yes")
+        require(not destination.is_symlink(), "Merge did not detach the old profile symlink")
+        source.write_text((REPO / "dotfiles/.codex/dotfiles.config.toml").read_text())
+        before = source.read_bytes()
+        run(MISE, "dotfiles", "apply", target, "--yes")
+        require(tomllib.loads(destination.read_text())["hooks"]["state"]["fixture"]["trusted_hash"] == "local-only",
+                "Merge lost local hook trust")
+        require(source.read_bytes() == before, "Merge modified the shared source")
 
     # Seed real files as an existing Chezmoi workstation would have them.
     for target, entry in entries.items():
@@ -109,5 +127,5 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
     run(MISE, "bootstrap", "repos", "apply", "--dry-run")
     require(not (home / ".tmux/plugins/tpm").exists(), "Repo dry run created a checkout")
     run(MISE, "bootstrap", "--only", "task", "--dry-run")
-    print(f"Verified {len(entries)} links: migration conflicts, dry run, repeated apply, "
+    print(f"Verified {len(entries)} links and {len(merges)} merges: migration conflicts, dry run, repeated apply, "
           "installed-config loading, unmanaged files, lockfile, and repository preview")

@@ -4,12 +4,3 @@ model_reasoning_effort = "medium"
 
 [mcp_servers.executor]
 url = "https://executor.sh/kevin-chen-s-organization/mcp"
-
-[tui]
-screen_reader_detection_done = true
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-"gpt-5.6-sol" = 3
-gpt-6-astra = 4
-"gpt-6.1-sol" = 4

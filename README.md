@@ -184,13 +184,18 @@ installed Mise release. Editing through a target symlink also edits the source.
 
 ## App Settings
 
-Desired settings live in ordinary config files, linked by Mise:
+Desired settings live in ordinary config files, deployed by Mise:
 
 | App         | Managed source                            | Native loading mechanism                                           |
 | ----------- | ----------------------------------------- | ------------------------------------------------------------------ |
-| Codex       | `dotfiles/.codex/dotfiles.config.toml`    | `--profile dotfiles` layers over local `~/.codex/config.toml`      |
+| Codex       | `dotfiles/.codex/dotfiles.config.toml`    | Mise merges shared keys into a local profile; `--profile dotfiles` selects it |
 | Claude Code | `dotfiles/.config/claude/mcp.json`        | `--mcp-config` adds the declared servers for the session           |
 | OpenCode    | `dotfiles/.config/opencode/dotfiles.json` | `OPENCODE_CONFIG` adds an override layer after local global config |
+
+Codex's profile is a regular local file. Mise owns only keys declared in the
+shared source and preserves hook trust, UI state, and other application-written
+keys. Applying the merge entry converts an existing link to that same source
+into a local file. Shared defaults exclude hook approvals and UI state.
 
 The shared shell module selects the Codex profile and Claude MCP file for CLI
 sessions and exports the OpenCode override path. Explicit profile/MCP/config
