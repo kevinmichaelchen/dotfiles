@@ -203,7 +203,7 @@ bun = { version = "1" }
 "aqua:golangci/golangci-lint" = "2.14.0"                                # Go linter aggregator
 "aqua:charmbracelet/vhs" = "0.12.1"
 "github:astral-sh/uv" = { version = "latest" }
-"aqua:aws/aws-cli" = "2.38.4"
+"aqua:aws/aws-cli" = "2.38.1"
 "aqua:stripe/stripe-cli" = "1.53.1"
 
 # ============================================================================

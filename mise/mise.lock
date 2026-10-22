@@ -13,13 +13,13 @@ url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.
 url_api = "https://api.github.com/repos/ajeetdsouza/zoxide/releases/assets/466316174"
 
 [[tools."aqua:aws/aws-cli"]]
-version = "2.38.4"
+version = "2.38.1"
 backend = "aqua:aws/aws-cli"
-specifiers = ["2.38.4"]
+specifiers = ["2.38.1"]
 
 [tools."aqua:aws/aws-cli"."platforms.macos-arm64"]
-checksum = "blake3:8d4f5390784c763c9ef63e49d8fca35b89b4e9e66b102d10eb841d83f0f42095"
-url = "https://awscli.amazonaws.com/AWSCLIV2-2.38.4.pkg"
+checksum = "blake3:2ab7bb5c059ca201ca969a112ef2de83e32788a8bc7a3473afe2fda999f03ef6"
+url = "https://awscli.amazonaws.com/AWSCLIV2-2.38.1.pkg"
 
 [[tools."aqua:charmbracelet/vhs"]]
 version = "0.12.1"
@@ -399,17 +399,14 @@ uv = { path = ".mise/locks/pipx-parallel-web-tools/0.9.3~49db984e", digest = "sh
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.14.0"
+version = "12.13.0"
 backend = "aqua:pnpm/pnpm"
-specifiers = [
-    "12",
-    "12.14.0",
-]
+specifiers = ["12"]
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:50f48e0e17508952790a3fbf58fcf14f3b82efa5f594ca04ad904e29aaf854b0"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.14.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/643957413"
+checksum = "sha256:697961ea2f337fff60bd59ed25991d6165826751bc75ee4b7fad6923b7584c6e"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.13.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/636319811"
 provenance = "github-attestations"
 
 [[tools.python]]
