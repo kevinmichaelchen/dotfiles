@@ -175,7 +175,6 @@ bun = { version = "1" }
 # ============================================================================
 # Tools from GitHub Releases (Go & other binaries)
 # ============================================================================
-"github:rtk-ai/rtk" = "1.0.1"                # Token-efficient CLI for coding agents
 "github:x-motemen/ghq" = "1.11.2"
 "github:cli/cli" = "2.102.0"
 "github:RhysSullivan/executor" = "1.6.10"

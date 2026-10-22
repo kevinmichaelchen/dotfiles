@@ -278,16 +278,6 @@ checksum = "sha256:de9ab62dd90461cd1df1e37b78e780690d75490f4bab1674cbb4a1f75b90c
 url = "https://github.com/libkrun/krunkit/releases/download/v1.3.2/krunkit-podman-unsigned-1.3.2.tgz"
 url_api = "https://api.github.com/repos/libkrun/krunkit/releases/assets/465341860"
 
-[[tools."github:rtk-ai/rtk"]]
-version = "1.0.1"
-backend = "github:rtk-ai/rtk"
-specifiers = ["1.0.1"]
-
-[tools."github:rtk-ai/rtk"."platforms.macos-arm64"]
-checksum = "sha256:4aae2f60cfc49c9e81b8c8c57020aa0cb824da608c78b4f0cf5c0988e19e824e"
-url = "https://github.com/rtk-ai/rtk/releases/download/v1.0.1/rtk-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/rtk-ai/rtk/releases/assets/640517530"
-
 [[tools."github:sigoden/projclean"]]
 version = "0.9.0"
 backend = "github:sigoden/projclean"
