@@ -1,6 +1,4 @@
-[user]
-	name = Kevin Chen
-	email = kevin.chen@aspiraconnect.com
+# Shared Git preferences. Identity and credential helpers belong in ~/.gitconfig.
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
 [core]

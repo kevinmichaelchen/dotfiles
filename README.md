@@ -182,6 +182,26 @@ mds               # inspect plain-file status
 These aliases use `mise dotfiles`, the descriptive spelling supported by the
 installed Mise release. Editing through a target symlink also edits the source.
 
+## Machine-local Git settings
+
+`~/.gitconfig` is a regular local file with a Mise-managed include block for
+`~/.config/git/shared`. The shared file holds preferences; identity and
+credential helpers remain local. The pre-dotfiles hook converts only the old
+repository-owned root symlink and preserves its entire contents. The included
+shared preferences take precedence over inherited copies of those settings.
+
+On a new machine, set the appropriate identity before committing:
+
+```bash
+git config --global user.name "Kevin Chen"
+git config --global user.email "YOUR_EMAIL_FOR_THIS_MACHINE"
+gh auth setup-git
+```
+
+The personal repository identity override remains in the shared conditional
+include. Existing machines retain their identity and credential helpers during
+migration. To change shared Git preferences, edit `dotfiles/.gitconfig`.
+
 ## App Settings
 
 Desired settings live in ordinary config files, deployed by Mise:

@@ -55,7 +55,10 @@ builtin = "tool-update"
 
 # Prepare the source directory for the Claude skills projection.
 [bootstrap.hooks]
-pre-dotfiles = 'mkdir -p "$HOME/.agents/skills"'
+pre-dotfiles = [
+  'mkdir -p "$HOME/.agents/skills"',
+  'bash "$HOME/dotfiles/scripts/migrate-local-gitconfig.sh"',
+]
 
 [bootstrap.user]
 login_shell = "/bin/zsh"
@@ -106,7 +109,11 @@ AppleKeyboardUIMode = 3
 "~/.config/starship.toml" = { source = "~/dotfiles/dotfiles/.config/starship.toml", mode = "symlink" }
 "~/.config/tmux/tmux.conf" = { source = "~/dotfiles/dotfiles/.config/tmux/tmux.conf", mode = "symlink" }
 "~/.config/zsh/custom.zsh" = { source = "~/dotfiles/dotfiles/.config/zsh/custom.zsh", mode = "symlink" }
-"~/.gitconfig" = { source = "~/dotfiles/dotfiles/.gitconfig", mode = "symlink" }
+"~/.config/git/shared" = { source = "~/dotfiles/dotfiles/.gitconfig", mode = "symlink" }
+"~/.gitconfig/shared" = { block = '''
+[include]
+    path = ~/.config/git/shared
+''' }
 "~/.vimrc" = { source = "~/dotfiles/dotfiles/.vimrc", mode = "symlink" }
 "~/.zprofile" = { source = "~/dotfiles/dotfiles/.zprofile", mode = "symlink" }
 "~/.zshrc" = { source = "~/dotfiles/dotfiles/.zshrc", mode = "symlink" }
