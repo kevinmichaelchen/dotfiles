@@ -188,13 +188,13 @@ url = "https://github.com/typst/typst/releases/download/v0.15.1/typst-aarch64-ap
 url_api = "https://api.github.com/repos/typst/typst/releases/assets/480299147"
 
 [[tools.bun]]
-version = "1.4.2"
+version = "1.4.3"
 backend = "core:bun"
 specifiers = ["1"]
 
 [tools.bun."platforms.macos-arm64"]
-checksum = "sha256:90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f"
-url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-darwin-aarch64.zip"
+checksum = "sha256:80afd4c069b46a6fa8f3ec520bebc750a7843e4a8d5b9583d29ad436c00a3403"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.3/bun-darwin-aarch64.zip"
 
 [[tools."cargo:eza"]]
 version = "0.23.5"
@@ -217,14 +217,14 @@ url = "https://github.com/RhysSullivan/executor/releases/download/v1.6.10/execut
 url_api = "https://api.github.com/repos/RhysSullivan/executor/releases/assets/573095900"
 
 [[tools."github:astral-sh/uv"]]
-version = "0.12.24"
+version = "0.13.1"
 backend = "github:astral-sh/uv"
 specifiers = ["latest"]
 
 [tools."github:astral-sh/uv"."platforms.macos-arm64"]
-checksum = "sha256:0c4346de7abdb49495b393b9ec809fe387aa43e586be20fecb972216c1e71732"
-url = "https://github.com/astral-sh/uv/releases/download/0.12.24/uv-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/622872807"
+checksum = "sha256:cfe454573412ff7380d15fc7dae5997ab53ffce72fce0a78e91ddbc84001acd2"
+url = "https://github.com/astral-sh/uv/releases/download/0.13.1/uv-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/639312976"
 provenance = "github-attestations"
 
 [[tools."github:charmbracelet/freeze"]]
@@ -373,8 +373,8 @@ backend = "npm:@openai/codex"
 specifiers = ["latest"]
 
 [[tools."npm:@opencode/cli"]]
-version = "2.0.31"
-aube = { path = ".mise/locks/npm-opencode-cli/2.0.31~009061c2", digest = "sha256:10979f3a0face8a055a35259b8f456bb9529c4721aad8b907c862ca5d0d39236" }
+version = "2.1.2"
+aube = { path = ".mise/locks/npm-opencode-cli/2.1.2~009061c2", digest = "sha256:5c5e06089c3aa5059165282877bb2dc4770fc0fcd45f0c05a882247fb7d80180" }
 backend = "npm:@opencode/cli"
 specifiers = ["latest"]
 
@@ -415,14 +415,17 @@ uv = { path = ".mise/locks/pipx-parallel-web-tools/0.9.3~49db984e", digest = "sh
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.11.2"
+version = "12.14.0"
 backend = "aqua:pnpm/pnpm"
-specifiers = ["12"]
+specifiers = [
+    "12",
+    "12.14.0",
+]
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:2f4701dbd4a7b81827789e94225272355fcc17c4eb9f5add08ed26f943003b67"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.11.2/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/625613178"
+checksum = "sha256:50f48e0e17508952790a3fbf58fcf14f3b82efa5f594ca04ad904e29aaf854b0"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.14.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/643957413"
 provenance = "github-attestations"
 
 [[tools.python]]
