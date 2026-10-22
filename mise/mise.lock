@@ -363,8 +363,8 @@ backend = "npm:@openai/codex"
 specifiers = ["latest"]
 
 [[tools."npm:@opencode/cli"]]
-version = "2.1.2"
-aube = { path = ".mise/locks/npm-opencode-cli/2.1.2~009061c2", digest = "sha256:5c5e06089c3aa5059165282877bb2dc4770fc0fcd45f0c05a882247fb7d80180" }
+version = "2.1.3"
+aube = { path = ".mise/locks/npm-opencode-cli/2.1.3~009061c2", digest = "sha256:d7745dd3a75b33dfb09165f8eaa512c5496c7663368c7c59e9a61d0ad98aa911" }
 backend = "npm:@opencode/cli"
 specifiers = ["latest"]
 
