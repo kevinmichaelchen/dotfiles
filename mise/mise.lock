@@ -399,12 +399,6 @@ aube = { path = ".mise/locks/npm-sfw/2.0.6", digest = "sha256:7c218123a52abedfc9
 backend = "npm:sfw"
 specifiers = ["2.0.6"]
 
-[[tools."npm:wrangler"]]
-version = "4.151.0"
-aube = { path = ".mise/locks/npm-wrangler/4.151.0", digest = "sha256:43edf0bf0558525627228202000294bc1d27ae0c6e8446d3d7861b52d392b8c6" }
-backend = "npm:wrangler"
-specifiers = ["4.151.0"]
-
 [[tools."pipx:parallel-web-tools"]]
 version = "0.9.3"
 backend = "pipx:parallel-web-tools"

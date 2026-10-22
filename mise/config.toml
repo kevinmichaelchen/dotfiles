@@ -214,7 +214,6 @@ bun = { version = "1" }
 "npm:@opencode/cli" = { version = "latest", allow_builds = [
   "@opencode/cli",
 ] }
-"npm:wrangler" = "4.151.0"
 
 # ============================================================================
 # Notes on Workstation Ownership
