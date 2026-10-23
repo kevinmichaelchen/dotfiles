@@ -34,6 +34,13 @@ settings to app-owned `cli.json` when needed.
 
 ## Authentication
 
+For occasional live authentication checks, use the project-scoped
+[OpenCode authentication smoke test](../../../.agents/skills/opencode-auth-smoketest/SKILL.md)
+at `.agents/skills/opencode-auth-smoketest/SKILL.md` from the repository root.
+It sends minimal requests through the requested providers and distinguishes
+stored credentials from successful inference. Tests use provider credits and
+create local OpenCode sessions.
+
 ```bash
 opencode auth list
 opencode auth login openai       # choose ChatGPT Pro/Plus, not API key billing
