@@ -244,6 +244,16 @@ migration. To change shared Git preferences, edit `dotfiles/.gitconfig`.
 
 ## App Settings
 
+Agent harnesses use their native installers rather than Mise:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+curl -fsSL https://opencode.ai/v2/install | bash
+```
+
+Claude Code also uses its native installation (`claude update` for updates).
+The shell includes `~/.local/bin` and `~/.opencode/bin` on PATH.
+
 Desired settings live in ordinary config files, deployed by Mise:
 
 | App         | Managed source                            | Native loading mechanism                                           |

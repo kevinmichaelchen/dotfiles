@@ -8,7 +8,8 @@ description: Research and maintain this dotfiles repository's OpenCode v2 model 
 Read `dotfiles/.config/opencode/README.md` for the current shortlist, dated
 comparison, billing routes, and subscription context. Shared settings belong in
 `dotfiles/.config/opencode/dotfiles.json`; this skill stays project-scoped under
-`.agents/skills/`. Mise owns the CLI installation, not model selection.
+`.agents/skills/`. The official native installer owns the CLI installation;
+Mise only deploys shared configuration.
 
 ## Research before changing the shortlist
 

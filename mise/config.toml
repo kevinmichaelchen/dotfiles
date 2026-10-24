@@ -19,11 +19,6 @@ locked_verify_provenance = true
 # Avoid resolving brand-new releases before they have had basic ecosystem soak
 # time. This also applies to supported package-manager backends during install.
 minimum_release_age = "7d"
-# Agent harnesses track new releases without the general ecosystem soak delay.
-minimum_release_age_excludes = [
-  "npm:@openai/codex",
-  "npm:@opencode/cli",
-]
 # Replace corepack: read the pnpm version from each repo's package.json
 # packageManager field so mise installs and selects it directly.
 idiomatic_version_file_enable_tools = ["pnpm"]
@@ -146,7 +141,6 @@ bun = { version = "1" }
 
 # npm global packages
 "npm:markit-ai" = "0.6.1"
-"npm:@openai/codex" = { version = "latest" }
 "npm:@nozomioai/nia" = "0.5.2"                                   # Nia CLI only
 "npm:sfw" = "2.0.6"                                              # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.26.5"
@@ -207,13 +201,11 @@ bun = { version = "1" }
 "aqua:stripe/stripe-cli" = "1.53.1"
 
 # ============================================================================
-# Tools from npm (Node.js packages)
+# Agent Harnesses (installed outside Mise)
 # ============================================================================
-# OpenCode v2. Its reviewed postinstall selects/copies the native binary;
-# scripts remain disabled for every other npm tool.
-"npm:@opencode/cli" = { version = "latest", allow_builds = [
-  "@opencode/cli",
-] }
+# Codex: curl -fsSL https://chatgpt.com/codex/install.sh | sh
+# OpenCode: curl -fsSL https://opencode.ai/v2/install | bash
+# Claude Code: native installer; updates with `claude update`.
 
 # ============================================================================
 # Notes on Workstation Ownership

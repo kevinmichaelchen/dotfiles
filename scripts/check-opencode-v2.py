@@ -4,6 +4,7 @@
 import json
 import os
 from pathlib import Path
+import shutil
 import socket
 import subprocess
 import sys
@@ -11,9 +12,11 @@ import tempfile
 
 REPO = Path(__file__).resolve().parent.parent
 MANAGED = REPO / 'dotfiles/.config/opencode/dotfiles.json'
-# Resolve before isolating XDG paths, which also affect Mise's install directory.
-exe = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(subprocess.check_output(
-    ['mise', '-C', str(REPO / 'mise'), 'which', 'opencode'], text=True).strip()).resolve()
+# Resolve the native installation before isolating app state.
+binary = sys.argv[1] if len(sys.argv) > 1 else shutil.which('opencode')
+if binary is None:
+    raise SystemExit('Install OpenCode v2 before running this check')
+exe = Path(binary).resolve()
 version = subprocess.check_output([str(exe), '--version'], text=True).strip()
 if not version.startswith('opencode v2.'):
     raise SystemExit(f'Expected OpenCode v2, got {version}')
@@ -77,7 +80,7 @@ with tempfile.TemporaryDirectory(prefix='opencode-v2-check-', dir='/tmp') as tem
         assert managed['agents']['title']['model'] == {
             'providerID': 'openai', 'model': 'gpt-6-luna'}
         assert managed['providers']['openrouter']['body']['provider']['data_collection'] == 'deny'
-        assert managed['update'] == 'disable', 'Mise must own upgrades'
+        assert 'update' not in managed, 'Native installation must control upgrades'
         assert 'model' not in managed, 'Primary model must remain local'
         assert not any(k in managed for k in ('provider', 'plugin', 'small_model'))
         available = catalog()
