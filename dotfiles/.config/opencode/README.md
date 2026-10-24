@@ -46,11 +46,17 @@ opencode auth list
 opencode auth login openai       # choose ChatGPT Pro/Plus, not API key billing
 opencode auth login openrouter   # enter your existing key interactively
 opencode auth login fireworks-ai # enter your existing key interactively
+opencode auth login venice       # enter your Venice AI key interactively
 opencode mcp auth executor
 ```
 
 Existing supported logins migrate automatically; log in again only if needed.
 Credentials belong to OpenCode's local SQLite store, never the repository.
+Venice AI is a built-in provider (`venice`); it needs no custom provider block
+in the managed layer. Generate a key in the [Venice AI console](https://venice.ai/),
+connect with the command above (or `/connect` → Venice AI), then use `/models`
+to select an available Venice model. See the
+[Venice AI setup instructions](https://opencode.ai/docs/providers/#venice-ai).
 Environment keys must reach the server, not just an already-running client's
 shell. `/connect` and `/models` provide the corresponding interactive controls.
 

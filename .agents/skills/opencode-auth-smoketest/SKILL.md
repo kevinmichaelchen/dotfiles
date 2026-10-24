@@ -1,13 +1,14 @@
 ---
 name: opencode-auth-smoketest
-description: Smoke-test this repository's OpenCode provider authentication with minimal live inference through Fireworks AI and OpenRouter, using the requested model and snapshot. Use for checking whether stored credentials actually work; not for model benchmarks or shortlist maintenance.
+description: Smoke-test this repository's OpenCode provider authentication with minimal live inference through Fireworks AI, OpenRouter, and Venice AI, using the requested model and snapshot. Use for checking whether stored credentials actually work; not for model benchmarks or shortlist maintenance.
 ---
 
 # OpenCode Authentication Smoke Test
 
 Read `dotfiles/.config/opencode/README.md` for the shared configuration layer
 and native credential ownership. Test the user's requested providers and model;
-when unspecified, use Fireworks AI and OpenRouter with DeepSeek V4.1 Flash 1017.
+when unspecified, test all three routes below: Fireworks AI and OpenRouter with
+DeepSeek V4.1 Flash 1017, and Venice AI with DeepSeek V4.1 Flash Uncensored.
 A smoke-test request authorizes small paid inference requests on those routes.
 Do not change defaults, configuration, credentials, or provider routing to make
 a check pass. Never print keys, tokens, or raw credential files.
@@ -21,7 +22,7 @@ apply:
 opencode --version
 opencode auth list
 opencode run --help
-opencode models | rg '^(fireworks-ai|openrouter)/.*deepseek.*flash.*1017'
+opencode models | rg '^((fireworks-ai|openrouter)/.*deepseek.*flash.*1017|venice/deepseek-v4-1-flash-uncensored)$'
 ```
 
 `auth list` shows stored connections, not proof of valid authentication.
@@ -39,6 +40,7 @@ or another snapshot if the requested entry disappears:
 | --- | --- |
 | Fireworks AI | `fireworks-ai/accounts/fireworks/models/deepseek-v4p1-flash-1017` |
 | OpenRouter | `openrouter/deepseek/deepseek-v4.1-flash-1017` |
+| Venice AI | `venice/deepseek-v4-1-flash-uncensored` |
 
 ## Send minimal requests
 
@@ -58,6 +60,12 @@ opencode run \
   --title 'Authentication smoke test: OpenRouter' \
   --format json \
   'Authentication smoke test. Do not use any tools or read or modify files. Reply with exactly: AUTH_OK'
+
+opencode run \
+  --model venice/deepseek-v4-1-flash-uncensored \
+  --title 'Authentication smoke test: Venice AI' \
+  --format json \
+  'Authentication smoke test. Do not use any tools or read or modify files. Reply with exactly: AUTH_OK'
 ```
 
 Adapt only the model/provider selection when the user requests other routes.
@@ -65,7 +73,8 @@ Do not pass `--continue`, attach files, enable automatic tool approvals, or run
 coding tasks. OpenCode can still include its normal agent context, generate
 session titles, and write session/log state; this is not a zero-token API ping.
 Direct Fireworks requests spend Fireworks credits; OpenRouter requests spend
-OpenRouter credits. Preserve OpenRouter's existing `data_collection: "deny"`.
+OpenRouter credits; Venice requests use the account's USD or Diem balance.
+Preserve OpenRouter's existing `data_collection: "deny"`.
 This test does not pin or prove the underlying serving provider on OpenRouter.
 
 One completed request per route is enough. Bound a hanging request to roughly
@@ -85,6 +94,8 @@ Classify failures using the actual provider error:
 
 - Invalid, expired, or missing credentials: authentication failed or unavailable.
 - Insufficient credits: inference blocked by billing; do not label the key invalid.
+  Venice HTTP 402 with "Insufficient USD or Diem balance" requires funding at
+  `https://venice.ai/settings/api`. Retry after funding or when the user asks.
 - Model/access denial, missing endpoint, or routing/privacy conflict: report the
   access or routing issue without claiming credentials are invalid.
 - Rate limits, network failures, or timeouts: inconclusive for authentication.
