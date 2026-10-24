@@ -54,6 +54,7 @@ source ~/.orbstack/shell/init.zsh 2>/dev/null || :
 # Only append to PATH if these directories aren't already there
 [[ -x "$HOME/.fiberplane/bin/fp" ]] && [[ ":$PATH:" != *":$HOME/.fiberplane/bin:"* ]] && export PATH="$PATH:$HOME/.fiberplane/bin"
 [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$PATH:$HOME/.local/bin"
+[[ ":$PATH:" != *":$HOME/.opencode/bin:"* ]] && export PATH="$PATH:$HOME/.opencode/bin"
 [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$PATH:$HOME/.cargo/bin"
 [[ ":$PATH:" != *":$HOME/go/bin:"* ]] && export PATH="$PATH:$HOME/go/bin"
 [[ ":$PATH:" != *":$HOME/.deno/bin:"* ]] && export PATH="$PATH:$HOME/.deno/bin"

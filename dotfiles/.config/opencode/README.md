@@ -1,9 +1,13 @@
 # OpenCode v2
 
-Mise owns the official `npm:@opencode/cli` package, tracking `latest` through
-Mise. The old `github:anomalyco/opencode` declaration and v1-only plugins are
-removed. The package's reviewed postinstall selects its platform binary; this
-package alone opts into npm install scripts. `update: "disable"` leaves upgrades to Mise.
+The official native installer owns the CLI at `~/.opencode/bin/opencode`:
+
+```bash
+curl -fsSL https://opencode.ai/v2/install | bash
+```
+
+Mise does not install the agent harness or control its updates. The shared
+config leaves update behavior to OpenCode's native defaults.
 
 ## Configuration and state
 
@@ -47,6 +51,7 @@ opencode auth login openai       # choose ChatGPT Pro/Plus, not API key billing
 opencode auth login openrouter   # enter your existing key interactively
 opencode auth login fireworks-ai # enter your existing key interactively
 opencode auth login venice       # enter your Venice AI key interactively
+opencode auth login deepseek     # enter your DeepSeek API key interactively
 opencode mcp auth executor
 ```
 
@@ -57,6 +62,16 @@ in the managed layer. Generate a key in the [Venice AI console](https://venice.a
 connect with the command above (or `/connect` → Venice AI), then use `/models`
 to select an available Venice model. See the
 [Venice AI setup instructions](https://opencode.ai/docs/providers/#venice-ai).
+
+DeepSeek is also a built-in provider (`deepseek`); it needs no custom provider
+block in the managed layer. Create an API key in the
+[DeepSeek console](https://platform.deepseek.com/), connect with
+`opencode auth login deepseek` (or `/connect` → DeepSeek), then use `/models`
+to select a model under the direct DeepSeek provider. This route uses your
+DeepSeek API balance; the DeepSeek entries in the shortlist below use OpenRouter
+or Fireworks credits. See the
+[DeepSeek setup instructions](https://opencode.ai/docs/providers/#deepseek).
+
 Environment keys must reach the server, not just an already-running client's
 shell. `/connect` and `/models` provide the corresponding interactive controls.
 

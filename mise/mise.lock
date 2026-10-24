@@ -356,21 +356,6 @@ aube = { path = ".mise/locks/npm-nozomioai-nia/0.5.2", digest = "sha256:dc5e631c
 backend = "npm:@nozomioai/nia"
 specifiers = ["0.5.2"]
 
-[[tools."npm:@openai/codex"]]
-version = "0.163.0"
-aube = { path = ".mise/locks/npm-openai-codex/0.163.0", digest = "sha256:4af0e1f21460d257cd753ed486e7f7eee03fdc539209e5deb765956c46144aaf" }
-backend = "npm:@openai/codex"
-specifiers = ["latest"]
-
-[[tools."npm:@opencode/cli"]]
-version = "2.1.3"
-aube = { path = ".mise/locks/npm-opencode-cli/2.1.3~009061c2", digest = "sha256:d7745dd3a75b33dfb09165f8eaa512c5496c7663368c7c59e9a61d0ad98aa911" }
-backend = "npm:@opencode/cli"
-specifiers = ["latest"]
-
-[tools."npm:@opencode/cli".options]
-allow_builds = '["@opencode/cli"]'
-
 [[tools."npm:firecrawl-cli"]]
 version = "1.26.5"
 aube = { path = ".mise/locks/npm-firecrawl-cli/1.26.5", digest = "sha256:4ccfa08e7daf50c28e47d97ad65966ed1360575cbce2a87622e7feb7a39b835e" }
