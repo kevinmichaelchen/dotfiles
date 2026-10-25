@@ -20,6 +20,7 @@ Route each requested change to the smallest correct file set before editing anyt
 | --- | --- | --- |
 | macOS defaults, Homebrew brews/casks | `mise/config.toml` | Use Mise bootstrap declarations for machine state |
 | dev runtimes and CLI toolchain versions | `mise/config.toml` | Prefer Mise for node/python/go/rust and CLIs |
+| agent harness binaries | native installers/updaters | Keep Codex, Claude Code, OpenCode, and similar harnesses outside Mise; shared app config remains in `dotfiles/` |
 | shared aliases and environment | `dotfiles/.config/shell/*.sh` | Keep shell-agnostic behavior in focused modules |
 | shared upstream agent skills | `skills-lock.json` and `scripts/agent-skills/` | Pin and scan upstream sources; do not vendor them by default |
 | repo-owned global agent skills | `dotfiles/.agents/skills/` | Use for custom skills needed across repositories |

@@ -64,14 +64,14 @@ url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/632125306"
 provenance = "github-attestations"
 
 [[tools."aqua:golangci/golangci-lint"]]
-version = "2.14.0"
+version = "2.15.0"
 backend = "aqua:golangci/golangci-lint"
-specifiers = ["2.14.0"]
+specifiers = ["2.15.0"]
 
 [tools."aqua:golangci/golangci-lint"."platforms.macos-arm64"]
-checksum = "sha256:5ef5f36a7147e91dc58ef9ef4d11bb7bad5ead0c76eb6c01327a73c641d1dcc3"
-url = "https://github.com/golangci/golangci-lint/releases/download/v2.14.0/golangci-lint-2.14.0-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/golangci/golangci-lint/releases/assets/585813591"
+checksum = "sha256:d1e409481a8ca846c4bc97e781eb5cb1bd5c23353a0b3977a1cbda1b1b6447d5"
+url = "https://github.com/golangci/golangci-lint/releases/download/v2.15.0/golangci-lint-2.15.0-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/golangci/golangci-lint/releases/assets/647132534"
 provenance = "github-attestations"
 
 [[tools."aqua:j178/prek"]]
@@ -384,14 +384,14 @@ uv = { path = ".mise/locks/pipx-parallel-web-tools/0.9.3~49db984e", digest = "sh
 extras = "cli"
 
 [[tools.pnpm]]
-version = "12.13.0"
+version = "12.14.0"
 backend = "aqua:pnpm/pnpm"
 specifiers = ["12"]
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:697961ea2f337fff60bd59ed25991d6165826751bc75ee4b7fad6923b7584c6e"
-url = "https://github.com/pnpm/pnpm/releases/download/v12.13.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/636319811"
+checksum = "sha256:50f48e0e17508952790a3fbf58fcf14f3b82efa5f594ca04ad904e29aaf854b0"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.14.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/643957413"
 provenance = "github-attestations"
 
 [[tools.python]]
@@ -405,6 +405,6 @@ url = "https://github.com/astral-sh/python-build-standalone/releases/download/20
 provenance = "github-attestations"
 
 [[tools.rust]]
-version = "1.99.0"
+version = "1.99.1"
 backend = "core:rust"
-specifiers = ["1.99.0"]
+specifiers = ["1.99.1"]

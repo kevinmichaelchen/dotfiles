@@ -28,6 +28,7 @@ Manage tool declarations in `mise/config.toml` so runtime ownership stays consis
 ## Guardrails
 - Keep versioned developer tools in Mise rather than ad hoc installers.
 - Keep comments that explain why a tool is intentionally managed outside Mise.
+- Keep agent harness binaries (Codex, Claude Code, OpenCode, and similar tools) outside Mise; use native installers and updaters. Mise may still manage their shared app config.
 - Prefer minimal edits in existing section layout.
 - Do not leak secret tokens into this file.
 

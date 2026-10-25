@@ -117,11 +117,28 @@ dot-update --upgrade             # also upgrade Homebrew packages
 ```
 
 The maintenance script opts out of locked mode for that run, preserves the
-seven-day release-age policy and harness exceptions, and previews pruning.
-Codex and OpenCode follow `latest` during explicit maintenance; normal installs
-use their recorded versions. Claude Code uses its native updater and can still
-update independently. No Mise background tool-update service or `auto_update`
+seven-day release-age policy, and previews pruning. Agent harness binaries use
+their native installers and updaters outside Mise. Claude Code already uses
+its native installer; the maintenance script invokes `claude update`.
+
+Install Codex and OpenCode with:
+
+```bash
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+curl -fsSL https://opencode.ai/v2/install | bash
+```
+
+Codex installs into `~/.local/bin` and OpenCode into `~/.opencode/bin`; the
+shared shell config includes both on PATH. Mise continues to manage shared
+app configuration. No Mise background tool-update service or `auto_update`
 options are declared.
+
+The seven-day release-age filter applies when Mise selects versions from a
+range or `latest`, where the backend provides release dates. Exact versions
+and lockfile entries bypass the filter, so resolve upgrades under the policy
+before committing them. Native harness installers and updaters follow their
+own release policies; Mise's delay does not govern them. See the
+[Mise release-age settings](https://mise.jdx.dev/configuration/settings.html#minimum_release_age).
 
 On previously configured machines, retire the old updater service once:
 
