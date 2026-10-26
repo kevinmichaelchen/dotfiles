@@ -378,6 +378,11 @@ Project skills live in `.agents/skills/`; shared upstream skills are pinned in
 uninstall, prune, or scripts that delete files internally. They provide the
 exact cleanup commands for the operator instead. Dry-run previews are allowed.
 
+Exception: "ship it" authorizes merging the intended PR, switching to `main`,
+pulling latest with `--ff-only`, and pruning verified stale Git branches. Follow
+the project-scoped [ship-it skill](.agents/skills/ship-it/SKILL.md). This exception
+does not authorize package pruning or filesystem cleanup.
+
 Commit `mise/config.toml`, `mise/mise.lock`, and generated `mise/.mise/locks/`
 dependency sidecars together. They are reproducibility inputs, not caches.
 

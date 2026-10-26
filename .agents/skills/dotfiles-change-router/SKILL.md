@@ -41,7 +41,7 @@ Route each requested change to the smallest correct file set before editing anyt
 - Do not add system macOS defaults into shell files.
 
 ## Deployment constraints
-- Never execute deletion commands, uninstall, actual pruning, or scripts that delete files internally. Provide exact commands for the operator. Dry-run previews are allowed.
+- Never execute deletion commands, uninstall, actual pruning, or scripts that delete files internally. Provide exact commands for the operator. Dry-run previews are allowed. Exception: when the user requests "ship it" or Git branch cleanup, follow [ship-it](../ship-it/SKILL.md) for verified merged-branch deletion and remote-tracking pruning; this does not authorize package or filesystem cleanup.
 - Preview targeted dotfiles with `mise dotfiles apply --dry-run TARGET`. Use declared links instead of hand-written `ln` commands. Leave conflicting destinations for operator cleanup when applying would remove them.
 - Do not run `scripts/update.sh` or full bootstrap for a scoped change: they include broad workstation actions and skill installers with deletion steps.
 - Keep repo-local maintenance skills in `.agents/skills/`. Skill references must name files that actually exist.
