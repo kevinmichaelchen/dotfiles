@@ -40,6 +40,7 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 "brew:zsh-autosuggestions" = "latest"
 "brew:zsh-syntax-highlighting" = "latest"
 "brew-cask:ghostty" = "latest"
+"brew-cask:tailscale-app" = "latest"
 
 # Mise refuses dirty checkouts or conflicting origins.
 [bootstrap.repos]
