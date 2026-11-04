@@ -24,6 +24,50 @@ checksum_source = "mise-versions"
 url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.10.0-x86_64-unknown-linux-musl.tar.gz"
 url_api = "https://api.github.com/repos/ajeetdsouza/zoxide/releases/assets/466316293"
 
+[[tools."aqua:charmbracelet/vhs"]]
+version = "0.12.1"
+backend = "aqua:charmbracelet/vhs"
+specifiers = ["0.12.1"]
+
+[tools."aqua:charmbracelet/vhs"."platforms.linux-x64"]
+checksum = "sha256:eb33787a5b1cebf91fe0b18bd231e2d71d36c1ff4babd99ddac1a6ab411efd10"
+url = "https://github.com/charmbracelet/vhs/releases/download/v0.12.1/vhs_0.12.1_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/vhs/releases/assets/585610189"
+provenance = "cosign"
+
+[[tools."aqua:chmln/sd"]]
+version = "1.1.0"
+backend = "aqua:chmln/sd"
+specifiers = ["1.1.0"]
+
+[tools."aqua:chmln/sd"."platforms.linux-x64"]
+checksum = "sha256:3613eca74cd686739bb5a6d68319aa56c747e7315274d02323a2ca2b1c5d82d2"
+checksum_source = "mise-versions"
+url = "https://github.com/chmln/sd/releases/download/v1.1.0/sd-v1.1.0-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/chmln/sd/releases/assets/362325296"
+
+[[tools."aqua:dandavison/delta"]]
+version = "0.20.1"
+backend = "aqua:dandavison/delta"
+specifiers = ["0.20.1"]
+
+[tools."aqua:dandavison/delta"."platforms.linux-x64"]
+checksum = "sha256:50f08c879f84c81ceb220e476491a7f492d2c9c671e79918cc44badf961a6240"
+checksum_source = "mise-versions"
+url = "https://github.com/dandavison/delta/releases/download/0.20.1/delta-0.20.1-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/dandavison/delta/releases/assets/610498121"
+
+[[tools."aqua:dprint/dprint"]]
+version = "0.63.0"
+backend = "aqua:dprint/dprint"
+specifiers = ["0.63.0"]
+
+[tools."aqua:dprint/dprint"."platforms.linux-x64"]
+checksum = "sha256:f58b5d7c13ccd613cfa264f1ae82d4e5db1373f8fe20462bc1126051d111b0ce"
+url = "https://github.com/dprint/dprint/releases/download/0.63.0/dprint-x86_64-unknown-linux-gnu.zip"
+url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/632125303"
+provenance = "github-attestations"
+
 [[tools."aqua:eza-community/eza"]]
 version = "0.23.5"
 backend = "aqua:eza-community/eza"
@@ -34,6 +78,28 @@ checksum = "sha256:35c70c5c43c29108075e58b893234c67ef585f0b53a7eaf8e9e7d4eec9f33
 checksum_source = "mise-versions"
 url = "https://github.com/eza-community/eza/releases/download/v0.23.5/eza_x86_64-unknown-linux-gnu.tar.gz"
 url_api = "https://api.github.com/repos/eza-community/eza/releases/assets/471228887"
+
+[[tools."aqua:golangci/golangci-lint"]]
+version = "2.15.0"
+backend = "aqua:golangci/golangci-lint"
+specifiers = ["2.15.0"]
+
+[tools."aqua:golangci/golangci-lint"."platforms.linux-x64"]
+checksum = "sha256:9b7fe6a6bf6334b98decf8d86b11415ea7889afdabdd1959fdce23af2a9ebcea"
+url = "https://github.com/golangci/golangci-lint/releases/download/v2.15.0/golangci-lint-2.15.0-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/golangci/golangci-lint/releases/assets/647132535"
+provenance = "github-attestations"
+
+[[tools."aqua:j178/prek"]]
+version = "0.5.5"
+backend = "aqua:j178/prek"
+specifiers = ["0.5.5"]
+
+[tools."aqua:j178/prek"."platforms.linux-x64"]
+checksum = "sha256:5470e4aa0fc0ad9d3de7dfaf088fb746d59c2eda3b173c06418e7c8861a520eb"
+url = "https://github.com/j178/prek/releases/download/v0.5.5/prek-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/j178/prek/releases/assets/611684555"
+provenance = "github-attestations"
 
 [[tools."aqua:jqlang/jq"]]
 version = "1.8.2"
@@ -57,6 +123,39 @@ checksum_source = "mise-versions"
 url = "https://github.com/junegunn/fzf/releases/download/v0.74.5/fzf-0.74.5-linux_amd64.tar.gz"
 url_api = "https://api.github.com/repos/junegunn/fzf/releases/assets/629581740"
 
+[[tools."aqua:koalaman/shellcheck"]]
+version = "0.11.0"
+backend = "aqua:koalaman/shellcheck"
+specifiers = ["0.11.0"]
+
+[tools."aqua:koalaman/shellcheck"."platforms.linux-x64"]
+checksum = "sha256:8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
+checksum_source = "mise-versions"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056942"
+
+[[tools."aqua:mikefarah/yq"]]
+version = "4.54.1"
+backend = "aqua:mikefarah/yq"
+specifiers = ["4.54.1"]
+
+[tools."aqua:mikefarah/yq"."platforms.linux-x64"]
+checksum = "sha256:8e34fc298390875de416e6a4afcb8cabeceb25d9aa8506c1a2f9353cf702ea5f"
+url = "https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_amd64"
+url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/597222595"
+provenance = "cosign"
+
+[[tools."aqua:sharkdp/bat"]]
+version = "0.26.1"
+backend = "aqua:sharkdp/bat"
+specifiers = ["0.26.1"]
+
+[tools."aqua:sharkdp/bat"."platforms.linux-x64"]
+checksum = "sha256:726f04c8f576a7fd18b7634f1bbf2f915c43494c1c0f013baa3287edb0d5a2a3"
+checksum_source = "mise-versions"
+url = "https://github.com/sharkdp/bat/releases/download/v0.26.1/bat-v0.26.1-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/sharkdp/bat/releases/assets/323549181"
+
 [[tools."aqua:sharkdp/fd"]]
 version = "10.5.0"
 backend = "aqua:sharkdp/fd"
@@ -67,6 +166,109 @@ checksum = "sha256:a1259cd129636efbc3fef123525c1b49e88fe5088c012630983c310e52fdf
 checksum_source = "mise-versions"
 url = "https://github.com/sharkdp/fd/releases/download/v10.5.0/fd-v10.5.0-x86_64-unknown-linux-gnu.tar.gz"
 url_api = "https://api.github.com/repos/sharkdp/fd/releases/assets/530481615"
+
+[[tools."aqua:terrastruct/d2"]]
+version = "0.9.0"
+backend = "aqua:terrastruct/d2"
+specifiers = ["0.9.0"]
+
+[tools."aqua:terrastruct/d2"."platforms.linux-x64"]
+checksum = "sha256:5669ddc46b99e942cc96078f4a4e36d5e62103348f4c05179ede27802fdd87a9"
+checksum_source = "mise-versions"
+url = "https://github.com/d2lang/d2/releases/download/v0.9.0/d2-v0.9.0-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/d2lang/d2/releases/assets/549448945"
+
+[[tools."aqua:typst/typst"]]
+version = "0.15.1"
+backend = "aqua:typst/typst"
+specifiers = ["0.15.1"]
+
+[tools."aqua:typst/typst"."platforms.linux-x64"]
+checksum = "sha256:a6d077d0a95eed5a2eba715b2dae06be954f624ccbf85758a03f389ded33118c"
+checksum_source = "mise-versions"
+url = "https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz"
+url_api = "https://api.github.com/repos/typst/typst/releases/assets/480300761"
+
+[[tools.bun]]
+version = "1.4.4"
+backend = "core:bun"
+specifiers = ["1"]
+
+[tools.bun."platforms.linux-x64"]
+checksum = "sha256:bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-linux-x64.zip"
+
+[tools.bun."platforms.linux-x64-baseline"]
+checksum = "sha256:e0446eb55995772eb9894bebae9a6be368d985a8b9271ee124486f9946eedd76"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-linux-x64-baseline.zip"
+
+[tools.bun."platforms.linux-x64-musl"]
+checksum = "sha256:a5a8ccc5e74dcb883fe974f125a7bdb3b41e5195ed1b870e73f17effd3eb2b2d"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-linux-x64-musl.zip"
+
+[tools.bun."platforms.linux-x64-musl-baseline"]
+checksum = "sha256:6e9c37098b293920aed28bfb51ab240e26d23bfdd9bbfecb3ad428ac166549bc"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-linux-x64-musl-baseline.zip"
+
+[[tools."cargo:tokei"]]
+version = "15.0.0"
+backend = "cargo:tokei"
+specifiers = ["15.0.0"]
+
+[[tools."github:RhysSullivan/executor"]]
+version = "1.6.10"
+backend = "github:RhysSullivan/executor"
+specifiers = ["1.6.10"]
+
+[tools."github:RhysSullivan/executor"."platforms.linux-x64"]
+checksum = "sha256:1f55f35b33089a01aa27fa11b91f6bbd927288401f3567690bf7a98910c3882f"
+checksum_source = "mise-versions"
+url = "https://github.com/RhysSullivan/executor/releases/download/v1.6.10/executor-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/RhysSullivan/executor/releases/assets/573096022"
+
+[[tools."github:astral-sh/uv"]]
+version = "0.13.6"
+backend = "github:astral-sh/uv"
+specifiers = ["latest"]
+
+[tools."github:astral-sh/uv"."platforms.linux-x64"]
+checksum = "sha256:f29c3e94ffabd7e6f3ba521dba169a9b7ec12100bf3257087f0f24f6123f3645"
+url = "https://github.com/astral-sh/uv/releases/download/0.13.6/uv-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/679980644"
+provenance = "github-attestations"
+
+[[tools."github:charmbracelet/freeze"]]
+version = "0.2.2"
+backend = "github:charmbracelet/freeze"
+specifiers = ["0.2.2"]
+
+[tools."github:charmbracelet/freeze"."platforms.linux-x64"]
+checksum = "sha256:012fdbdd16c0c19570f9052aac34d16d93d7d0d3b565b05374cc59492f53539b"
+checksum_source = "mise-versions"
+url = "https://github.com/charmbracelet/freeze/releases/download/v0.2.2/freeze_0.2.2_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/freeze/releases/assets/242747186"
+
+[[tools."github:charmbracelet/glow"]]
+version = "3.0.0"
+backend = "github:charmbracelet/glow"
+specifiers = ["3.0.0"]
+
+[tools."github:charmbracelet/glow"."platforms.linux-x64"]
+checksum = "sha256:13e05e4b2acc18d2aee44291aefe6325b077ec321b631a0cfa780e8e3bc33f78"
+checksum_source = "mise-versions"
+url = "https://github.com/charmbracelet/glow/releases/download/v3.0.0/glow_3.0.0_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/glow/releases/assets/510466923"
+
+[[tools."github:charmbracelet/gum"]]
+version = "2.0.2"
+backend = "github:charmbracelet/gum"
+specifiers = ["2.0.2"]
+
+[tools."github:charmbracelet/gum"."platforms.linux-x64"]
+checksum = "sha256:d842e06d93dbed90af48cb8dd10698db6f22e331fc40346bb37bbc753109edc2"
+checksum_source = "mise-versions"
+url = "https://github.com/charmbracelet/gum/releases/download/v2.0.2/gum_2.0.2_Linux_x86_64.tar.gz"
+url_api = "https://api.github.com/repos/charmbracelet/gum/releases/assets/585508723"
 
 [[tools."github:cli/cli"]]
 version = "2.102.0"
@@ -79,6 +281,28 @@ url = "https://github.com/cli/cli/releases/download/v2.102.0/gh_2.102.0_linux_am
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/599854672"
 provenance = "github-attestations"
 
+[[tools."github:sigoden/projclean"]]
+version = "0.9.0"
+backend = "github:sigoden/projclean"
+specifiers = ["0.9.0"]
+
+[tools."github:sigoden/projclean"."platforms.linux-x64"]
+checksum = "sha256:36cd9e822dd9e3018e630f93ccc0ba08924af9ec0b64114f5c6cb9f0482b41b1"
+checksum_source = "mise-versions"
+url = "https://github.com/sigoden/projclean/releases/download/v0.9.0/projclean-v0.9.0-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/sigoden/projclean/releases/assets/414033511"
+
+[[tools."github:vercel-labs/agent-browser"]]
+version = "0.39.1"
+backend = "github:vercel-labs/agent-browser"
+specifiers = ["0.39.1"]
+
+[tools."github:vercel-labs/agent-browser"."platforms.linux-x64"]
+checksum = "sha256:6906d3a2a67b05809932a93d99e53d1132373f0a52a617b2d6032dbb954df6fc"
+checksum_source = "mise-versions"
+url = "https://github.com/vercel-labs/agent-browser/releases/download/v0.39.1/agent-browser-linux-x64"
+url_api = "https://api.github.com/repos/vercel-labs/agent-browser/releases/assets/638085715"
+
 [[tools."github:x-motemen/ghq"]]
 version = "1.11.2"
 backend = "github:x-motemen/ghq"
@@ -89,3 +313,94 @@ checksum = "sha256:efa5c1de4e763565b71649229449d8123ceb7131a8d0ed25755aaee73969c
 url = "https://github.com/x-motemen/ghq/releases/download/v1.11.2/ghq_linux_amd64.zip"
 url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/598741424"
 provenance = "github-attestations"
+
+[[tools.go]]
+version = "1.27.2"
+backend = "core:go"
+specifiers = ["1.27.2"]
+
+[tools.go."platforms.linux-x64"]
+checksum = "sha256:ecbadb99091a3f46e31f5f934b068b1864eafa7995211b39eaddf76996045fe5"
+url = "https://dl.google.com/go/go1.27.2.linux-amd64.tar.gz"
+
+[[tools."go:golang.org/x/vuln/cmd/govulncheck"]]
+version = "1.9.0"
+backend = "go:golang.org/x/vuln/cmd/govulncheck"
+specifiers = ["1.9.0"]
+
+[[tools.node]]
+version = "26.12.1"
+backend = "core:node"
+specifiers = ["26.12.1"]
+
+[tools.node."platforms.linux-x64"]
+checksum = "sha256:0fd1eb7770598f52a21995edf6ed35fc690400fa437c2386af329519e9143132"
+url = "https://nodejs.org/dist/v26.12.1/node-v26.12.1-linux-x64.tar.gz"
+
+[[tools."npm:@fisch0920/bird"]]
+version = "0.7.1"
+aube = { path = ".mise/locks/npm-fisch0920-bird/0.7.1~fa5631fb", digest = "sha256:a79cfcfe46f662b018c5fe60a9b40aed0b95722e0d9fa795b6eb100abe62e2c1" }
+backend = "npm:@fisch0920/bird"
+specifiers = ["0.7.1"]
+
+[tools."npm:@fisch0920/bird".options]
+allow_low_downloads = "true"
+
+[[tools."npm:@nozomioai/nia"]]
+version = "0.5.2"
+aube = { path = ".mise/locks/npm-nozomioai-nia/0.5.2", digest = "sha256:dc5e631c68fc8f5c8782992268ed3ada8d028fb626dbc103ebe63c67cfcb32f2" }
+backend = "npm:@nozomioai/nia"
+specifiers = ["0.5.2"]
+
+[[tools."npm:firecrawl-cli"]]
+version = "1.26.5"
+aube = { path = ".mise/locks/npm-firecrawl-cli/1.26.5", digest = "sha256:a78208e20b2d9b36992621081896a49d2e67d8bcc8d34ee1ddb0dca76eb9f1ab" }
+backend = "npm:firecrawl-cli"
+specifiers = ["1.26.5"]
+
+[[tools."npm:markit-ai"]]
+version = "0.6.1"
+aube = { path = ".mise/locks/npm-markit-ai/0.6.1", digest = "sha256:70f04261631d9fc4b3648a25b634e68cc0a99e623ceafe4ed2d0eddcb435ea0b" }
+backend = "npm:markit-ai"
+specifiers = ["0.6.1"]
+
+[[tools."npm:sfw"]]
+version = "2.0.6"
+aube = { path = ".mise/locks/npm-sfw/2.0.6", digest = "sha256:7c218123a52abedfc91f90b96a407813f0df8cbd3a44ee152768086d024a5085" }
+backend = "npm:sfw"
+specifiers = ["2.0.6"]
+
+[[tools."pipx:parallel-web-tools"]]
+version = "0.9.3"
+backend = "pipx:parallel-web-tools"
+specifiers = ["0.9.3"]
+uv = { path = ".mise/locks/pipx-parallel-web-tools/0.9.3~49db984e", digest = "sha256:231687aac5a9164cae71124d52cac8f9f1f5d106bd9a32e6a18e512b92dc42a3" }
+
+[tools."pipx:parallel-web-tools".options]
+extras = "cli"
+
+[[tools.pnpm]]
+version = "12.16.1"
+backend = "aqua:pnpm/pnpm"
+specifiers = ["12"]
+
+[tools.pnpm."platforms.linux-x64"]
+checksum = "sha256:565ff81174a14f6f7bd5d84c1b17e51031a80230d370a1fe24be5d16bd02a825"
+url = "https://github.com/pnpm/pnpm/releases/download/v12.16.1/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/681916059"
+provenance = "github-attestations"
+
+[[tools.python]]
+version = "3.14.8"
+backend = "core:python"
+specifiers = ["3.14.8"]
+
+[tools.python."platforms.linux-x64"]
+checksum = "sha256:b88a4ac994ac55c35a03a3672103618d5c5d5bf342db7b2093b8d328b6516b42"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261020/cpython-3.14.8+20261020-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[[tools.rust]]
+version = "1.99.1"
+backend = "core:rust"
+specifiers = ["1.99.1"]

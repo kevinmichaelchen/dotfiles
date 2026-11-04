@@ -52,7 +52,9 @@ with tempfile.TemporaryDirectory(prefix='dotfiles-ubuntu-') as temporary:
     assert 'dotfiles/mise/config.toml' not in result.stdout, result.stdout
     run(MISE, 'dotfiles', 'status')
     tools = run(MISE, 'ls', '--json').stdout
-    assert 'node' not in tools and 'krunkit' not in tools, tools
+    assert 'node' in tools and 'rust' in tools and 'krunkit' not in tools, tools
+    assert 'firecrawl' in tools and 'agent-browser' in tools and 'aws-cli' not in tools, tools
+    assert not (home / '.config/shell/testcontainers-ubuntu.sh').exists()
     assert 'ripgrep' in tools and 'zoxide' in tools, tools
 
     # A real pre-existing config is a conflict, never an implicit overwrite.
@@ -67,8 +69,18 @@ lock = tomllib.loads((REPO / 'platforms/ubuntu/mise.lock').read_text())
 assert set(config['tools']) == set(lock['tools'])
 for entries in lock['tools'].values():
     for entry in entries:
-        platform = entry['platforms.linux-x64']
-        assert platform['url'] and platform['checksum']
+        platform = entry.get('platforms.linux-x64')
+        if platform is not None:
+            assert platform.get('url') and platform.get('checksum')
+        elif entry['backend'].startswith(('npm:', 'pipx:')):
+            sidecar = entry['aube' if entry['backend'].startswith('npm:') else 'uv']
+            assert sidecar['digest'].startswith('sha256:')
+            assert (REPO / 'platforms/ubuntu' / sidecar['path']).is_dir()
+        else:
+            # Rustup and source-built tools have no release archive URL.
+            assert entry['backend'] in {
+                'core:rust', 'cargo:tokei', 'go:golang.org/x/vuln/cmd/govulncheck',
+            }, entry
 
 if os.uname().sysname == 'Linux':
     for name in ('bootstrap.sh', 'update.sh', 'update-tools.sh'):

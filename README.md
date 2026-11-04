@@ -341,10 +341,24 @@ Existing installations on other machines are not automatically uninstalled.
 
 ### Ubuntu / WSL
 
-`platforms/ubuntu/config.toml` and its own `mise.lock` provide an intentionally
-small Linux x86_64 baseline: gh, ghq, jq, ripgrep, zoxide, fzf, eza, and fd (for fzf file
-selection). The macOS entry point and lockfile remain in `mise/`. macOS setup
-and update scripts refuse to run on Linux.
+`platforms/ubuntu/config.toml` and its own `mise.lock` provide the Linux x86_64
+development environment. The macOS entry point and lockfile remain in `mise/`;
+macOS setup and update scripts refuse to run on Linux.
+
+- Runtimes: Rust/Cargo, Node/npm, pnpm, Bun, Go, Python, and uv.
+- Development: dprint, prek, ShellCheck, golangci-lint, and govulncheck.
+- Utilities: gh, ghq, jq, ripgrep, zoxide, fzf, eza, fd, bat, delta, sd, yq,
+  tokei, and projclean.
+- Documents/media: Typst, D2, Glow, Gum, Freeze, VHS, FFmpeg, and WebP.
+- Agent/research CLIs: MarkIt, Nia, Socket Firewall, Firecrawl, Bird, Parallel,
+  Executor, and agent-browser. Provider authentication stays local.
+- System dependencies: C/C++ build tools, OpenSSL/PostgreSQL development
+  libraries, PostgreSQL client, Vim, archive tools, and rootless Podman/Compose.
+
+Mise manages versioned tools and declares apt packages under `bootstrap.packages`.
+The apt step requires sudo; Tokei builds from source and needs the compiler first.
+Cloud/service CLIs (including Eraser) and agent app settings remain excluded
+from this Ubuntu setup.
 
 Install Mise, clone this repo to `~/dotfiles`, then preview the Ubuntu setup:
 
@@ -363,8 +377,29 @@ The Ubuntu config owns its global config/lock links, a machine-local Mise
 discovery exclusion for the macOS config, and small blocks in the existing
 `.profile` and `.bashrc`. The rest of those startup files stays local. Bash
 loads zoxide, fzf Ctrl-R history search, and eza aliases only interactively.
-The login shell, Git credentials, container setup, and agent app settings are
-not changed by this baseline.
+Shared Cargo, bat, dprint, Vim, and Git/pnpm aliases are linked too. Ubuntu Git
+uses delta and Vim while preserving the existing conditional author identities
+and local authentication settings. The login shell stays Bash.
+
+For an existing installation, install the system dependencies in your own terminal:
+
+```bash
+cd ~/dotfiles
+mise bootstrap packages apply --yes
+mise install
+mise dotfiles apply --dry-run
+mise dotfiles apply --yes
+```
+
+After installing the CLIs, download agent-browser's browser runtime with
+`agent-browser install`. If Linux browser libraries are missing, run
+`agent-browser install --with-deps` in a terminal where you can enter sudo.
+Parallel's command is `parallel-cli`. Socket Firewall (`sfw`) downloads its
+native binary on first use; that binary has its own version/update lifecycle.
+Research-provider authentication is handled by each CLI, not by dotfiles.
+
+Podman and Compose are available for local containers. No Testcontainers helper
+or environment configuration is installed on Ubuntu.
 
 Mise shims on PATH serve new shells and GUI processes that inherit that PATH.
 An already-running GUI may need restarting or an explicit environment setting;

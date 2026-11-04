@@ -1,4 +1,4 @@
-# Ubuntu/WSL baseline. Keep the macOS config and lockfile independent.
+# Ubuntu/WSL development workstation. Keep the macOS config and lockfile independent.
 min_version = "2026.11.0"
 
 [settings]
@@ -9,6 +9,7 @@ locked_scopes = ["global"]
 lockfile_platforms = ["linux-x64"]
 minimum_release_age = "7d"
 upgrade.auto_prune = false
+idiomatic_version_file_enable_tools = ["pnpm"]
 
 [tools]
 "github:x-motemen/ghq" = "1.11.2"
@@ -19,6 +20,64 @@ upgrade.auto_prune = false
 "aqua:junegunn/fzf" = "0.74.5"
 "aqua:eza-community/eza" = "0.23.5"
 "aqua:sharkdp/fd" = "10.5.0"
+
+# Development toolchains, utilities, and document/media tools.
+"node" = "26.12.1"
+"python" = "3.14.8"
+"go" = "1.27.2"
+"rust" = "1.99.1"
+"pnpm" = { version = "12" }
+"bun" = { version = "1" }
+"github:charmbracelet/freeze" = "0.2.2"
+"github:charmbracelet/glow" = "3.0.0"
+"github:charmbracelet/gum" = "2.0.2"
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.9.0"
+"github:sigoden/projclean" = "0.9.0"
+"aqua:sharkdp/bat" = "0.26.1"
+"aqua:dandavison/delta" = "0.20.1"
+"aqua:dprint/dprint" = "0.63.0"
+"aqua:j178/prek" = "0.5.5"
+"aqua:chmln/sd" = "1.1.0"
+"aqua:koalaman/shellcheck" = "0.11.0"
+"aqua:mikefarah/yq" = "4.54.1"
+"aqua:terrastruct/d2" = "0.9.0"
+"aqua:typst/typst" = "0.15.1"
+"aqua:golangci/golangci-lint" = "2.15.0"
+"aqua:charmbracelet/vhs" = "0.12.1"
+"github:astral-sh/uv" = { version = "latest" }
+"cargo:tokei" = "15.0.0"
+
+# Agent and research CLIs; authentication stays local.
+"npm:markit-ai" = "0.6.1"
+"npm:@nozomioai/nia" = "0.5.2"                                            # Nia CLI only
+"npm:sfw" = "2.0.6"                                                       # Socket Firewall wrapper for package manager network filtering
+"npm:firecrawl-cli" = "1.26.5"
+"npm:@fisch0920/bird" = { version = "0.7.1", allow_low_downloads = true }
+"pipx:parallel-web-tools" = { version = "0.9.3", extras = "cli" }
+"github:RhysSullivan/executor" = "1.6.10"
+"github:vercel-labs/agent-browser" = "0.39.1"
+
+[bootstrap.packages]
+# Chrome runtime libraries for agent-browser.
+"apt:libnspr4" = "latest"
+"apt:libnss3" = "latest"
+"apt:build-essential" = "latest"
+"apt:pkg-config" = "latest"
+"apt:libssl-dev" = "latest"
+"apt:libpq-dev" = "latest"
+"apt:postgresql-client" = "latest"
+"apt:podman" = "latest"
+"apt:podman-compose" = "latest"
+"apt:uidmap" = "latest"
+"apt:slirp4netns" = "latest"
+"apt:fuse-overlayfs" = "latest"
+"apt:ffmpeg" = "latest"
+"apt:ttyd" = "latest"
+"apt:webp" = "latest"
+"apt:libwebp-dev" = "latest"
+"apt:unzip" = "latest"
+"apt:zip" = "latest"
+"apt:vim" = "latest"
 
 [dotfiles]
 
@@ -35,3 +94,15 @@ upgrade.auto_prune = false
 "~/.profile/mise-path" = { block = 'export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"' }
 "~/.bashrc/mise-path" = { block = 'export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"' }
 "~/.bashrc/dotfiles-interactive" = { block = '[ ! -r "$HOME/.config/bash/interactive.bash" ] || source "$HOME/.config/bash/interactive.bash"' }
+"~/.cargo/config.toml" = { source = "~/dotfiles/dotfiles/.cargo/config.toml", mode = "symlink" }
+"~/.config/bat/config" = { source = "~/dotfiles/dotfiles/.config/bat/config", mode = "symlink" }
+"~/.config/dprint/dprint.jsonc" = { source = "~/dotfiles/dotfiles/.config/dprint/dprint.jsonc", mode = "symlink" }
+"~/.vimrc" = { source = "~/dotfiles/dotfiles/.vimrc", mode = "symlink" }
+"~/.config/shell/git.sh" = { source = "~/dotfiles/dotfiles/.config/shell/git.sh", mode = "symlink" }
+"~/.config/shell/github.sh" = { source = "~/dotfiles/dotfiles/.config/shell/github.sh", mode = "symlink" }
+"~/.config/shell/pnpm.sh" = { source = "~/dotfiles/dotfiles/.config/shell/pnpm.sh", mode = "symlink" }
+"~/.config/git/ubuntu" = { source = "~/dotfiles/platforms/ubuntu/gitconfig", mode = "symlink" }
+"~/.gitconfig/ubuntu" = { block = '''
+[include]
+    path = ~/.config/git/ubuntu
+''' }
