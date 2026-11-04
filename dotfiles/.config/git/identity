@@ -1,0 +1,10 @@
+# Shared author policy for ghq's ~/dev/github.com/OWNER/REPO layout.
+[user]
+    name = Kevin Chen
+    email = kevinmichaelchen@gmail.com
+[ghq]
+    root = ~/dev
+[includeIf "gitdir/i:~/dev/github.com/AspiraVentures/"]
+    path = ~/.config/git/aspira
+[includeIf "gitdir/i:~/dev/github.com/Aspira-Secure/"]
+    path = ~/.config/git/aspira

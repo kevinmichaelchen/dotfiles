@@ -1,4 +1,4 @@
-# Shared Git preferences. Identity and credential helpers belong in ~/.gitconfig.
+# macOS Git preferences. Author policy is in ~/.config/git/identity; credentials stay local.
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
 [core]

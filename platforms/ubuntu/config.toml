@@ -11,6 +11,7 @@ minimum_release_age = "7d"
 upgrade.auto_prune = false
 
 [tools]
+"github:x-motemen/ghq" = "1.11.2"
 "github:cli/cli" = "2.102.0"
 "aqua:jqlang/jq" = "1.8.2"
 "aqua:BurntSushi/ripgrep" = "15.2.0"
@@ -20,6 +21,13 @@ upgrade.auto_prune = false
 "aqua:sharkdp/fd" = "10.5.0"
 
 [dotfiles]
+
+"~/.config/git/identity" = { source = "~/dotfiles/dotfiles/.config/git/identity", mode = "symlink" }
+"~/.config/git/aspira" = { source = "~/dotfiles/dotfiles/.config/git/aspira", mode = "symlink" }
+"~/.gitconfig/identity" = { block = '''
+[include]
+    path = ~/.config/git/identity
+''' }
 "~/.config/mise/config.toml" = { source = "~/dotfiles/platforms/ubuntu/config.toml", mode = "symlink" }
 "~/.config/mise/mise.lock" = { source = "~/dotfiles/platforms/ubuntu/mise.lock", mode = "symlink" }
 "~/.config/mise/miserc.toml/ubuntu" = { merge = true, source = "~/dotfiles/platforms/ubuntu/miserc.toml" }

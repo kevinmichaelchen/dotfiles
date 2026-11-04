@@ -69,6 +69,13 @@ AppleKeyboardUIMode = 3
 
 # Plain files are owned only by Mise. Per-file links leave runtime state alone.
 [dotfiles]
+
+"~/.config/git/identity" = { source = "~/dotfiles/dotfiles/.config/git/identity", mode = "symlink" }
+"~/.config/git/aspira" = { source = "~/dotfiles/dotfiles/.config/git/aspira", mode = "symlink" }
+"~/.gitconfig/identity" = { block = '''
+[include]
+    path = ~/.config/git/identity
+''' }
 "~/.config/mise/config.toml" = { source = "~/dotfiles/mise/config.toml", mode = "symlink" }
 "~/.config/mise/mise.lock" = { source = "~/dotfiles/mise/mise.lock", mode = "symlink" }
 "~/.agents/skills/README.md" = { source = "~/dotfiles/dotfiles/.agents/skills/README.md", mode = "symlink" }

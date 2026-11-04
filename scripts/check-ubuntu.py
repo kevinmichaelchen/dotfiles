@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix='dotfiles-ubuntu-') as temporary:
         assert content.startswith(b'# existing machine settings\nexport KEEP_ME=yes\n')
     assert (home / '.config/mise/config.toml').resolve() == checkout / 'platforms/ubuntu/config.toml'
     assert not (home / '.zshrc').exists()
-    assert not (home / '.gitconfig').exists()
+    assert (home / '.gitconfig').is_file()
     assert not (home / '.codex').exists()
 
     # After deployment, normal discovery must exclude the Mac config without

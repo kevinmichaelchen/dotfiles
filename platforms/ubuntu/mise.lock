@@ -78,3 +78,14 @@ checksum = "sha256:bb766f710eef8ede859c18578c72c327597cd4c8a85b06001b1f3843c6019
 url = "https://github.com/cli/cli/releases/download/v2.102.0/gh_2.102.0_linux_amd64.tar.gz"
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/599854672"
 provenance = "github-attestations"
+
+[[tools."github:x-motemen/ghq"]]
+version = "1.11.2"
+backend = "github:x-motemen/ghq"
+specifiers = ["1.11.2"]
+
+[tools."github:x-motemen/ghq"."platforms.linux-x64"]
+checksum = "sha256:efa5c1de4e763565b71649229449d8123ceb7131a8d0ed25755aaee73969cdf1"
+url = "https://github.com/x-motemen/ghq/releases/download/v1.11.2/ghq_linux_amd64.zip"
+url_api = "https://api.github.com/repos/x-motemen/ghq/releases/assets/598741424"
+provenance = "github-attestations"

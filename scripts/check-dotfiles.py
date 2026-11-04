@@ -127,7 +127,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
     def git_value(key):
         return subprocess.check_output(["git", "config", "--global", "--includes", "--get", key],
                                        env=git_env, cwd=home, text=True).strip()
-    require(git_value("user.email") == "local@example.test", "Git identity was lost")
+    require(git_value("user.email") == "kevinmichaelchen@gmail.com", "Shared default identity was not loaded")
     require(git_value("credential.https://github.com.helper") == "!gh auth git-credential",
             "Git credential helper was lost")
     require(git_value("merge.conflictStyle") == "zdiff3", "Shared Git include was not loaded")

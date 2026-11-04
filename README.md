@@ -242,22 +242,35 @@ symlink lets UI writes change the shared source and dirty the checkout.
 ## Machine-local Git settings
 
 `~/.gitconfig` is a regular local file with a Mise-managed include block for
-`~/.config/git/shared`. The shared file holds preferences; identity and
-credential helpers remain local. The pre-dotfiles hook converts only the old
+`~/.config/git/shared` on macOS. Credential helpers remain local. A separate
+managed include declares the shared author identity and ghq root on both platforms. The pre-dotfiles hook converts only the old
 repository-owned root symlink and preserves its entire contents. The included
 shared preferences take precedence over inherited copies of those settings.
 
-On a new machine, set the appropriate identity before committing:
+The shared identity policy sets `Kevin Chen <kevinmichaelchen@gmail.com>` by
+default, including for the bootstrap checkout at `~/dotfiles`. Under ghq's
+`~/dev/github.com/AspiraVentures/` and `~/dev/github.com/Aspira-Secure/`
+directories it selects `Kevin Chen <kevin.chen@aspiraconnect.com>`. Directory
+matching is case-insensitive and applies to nested repositories and linked
+worktrees whose main repository is in those directories. It matches checkout
+paths, not GitHub remote URLs; work clones elsewhere need a repository-local
+identity override or should be moved into the matching ghq directory.
+
+`ghq.root` is `~/dev`. Both platform configs deploy this identity include while
+leaving authentication settings local. Ubuntu does not load the Mac-specific
+shared Git settings (SSH URL rewrites, Sublime Text, and delta).
 
 ```bash
-git config --global user.name "Kevin Chen"
-git config --global user.email "YOUR_EMAIL_FOR_THIS_MACHINE"
-gh auth setup-git
+ghq get https://github.com/kevinmichaelchen/skills
+ghq get https://github.com/AspiraVentures/REPO
+ghq get https://github.com/Aspira-Secure/REPO
+ghq root
+git var GIT_AUTHOR_IDENT   # run inside the checkout to verify the selected identity
 ```
 
-The personal repository identity override remains in the shared conditional
-include. Existing machines retain their identity and credential helpers during
-migration. To change shared Git preferences, edit `dotfiles/.gitconfig`.
+Existing local Git settings are retained. The managed identity include supplies
+the defaults; repository-local `git config user.email ...` settings take
+precedence. GitHub CLI authentication stays in its local credential store.
 
 ## App Settings
 
@@ -329,7 +342,7 @@ Existing installations on other machines are not automatically uninstalled.
 ### Ubuntu / WSL
 
 `platforms/ubuntu/config.toml` and its own `mise.lock` provide an intentionally
-small Linux x86_64 baseline: gh, jq, ripgrep, zoxide, fzf, eza, and fd (for fzf file
+small Linux x86_64 baseline: gh, ghq, jq, ripgrep, zoxide, fzf, eza, and fd (for fzf file
 selection). The macOS entry point and lockfile remain in `mise/`. macOS setup
 and update scripts refuse to run on Linux.
 
@@ -384,6 +397,7 @@ zsh -n dotfiles/.zshrc dotfiles/.config/zsh/custom.zsh
 python3 scripts/check-dotfiles.py
 python3 scripts/check-repos.py
 python3 scripts/check-ubuntu.py
+python3 scripts/check-git-identities.py
 python3 scripts/check-native-config.py
 mkdir -p /tmp/dotfiles-mise-check
 cp mise/config.toml /tmp/dotfiles-mise-check/mise.toml
