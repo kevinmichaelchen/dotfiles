@@ -2,6 +2,11 @@
 # Update developer tools; deletion is a manual operator action.
 set -euo pipefail
 
+if [[ "$(uname -s)" != Darwin ]]; then
+  echo "This command manages the macOS workstation. On Ubuntu, use scripts/bootstrap-ubuntu.sh." >&2
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 export MISE_GLOBAL_CONFIG_FILE="$REPO_DIR/mise/config.toml"

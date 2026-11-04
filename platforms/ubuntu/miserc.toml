@@ -1,0 +1,2 @@
+# Prevent repository-local discovery from loading the Mac workstation config.
+ignored_config_paths = ["~/dotfiles/mise/config.toml"]

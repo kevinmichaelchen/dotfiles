@@ -3,6 +3,11 @@
 
 set -euo pipefail
 
+if [[ "$(uname -s)" != Darwin ]]; then
+  echo "This command manages the macOS workstation. On Ubuntu, use scripts/bootstrap-ubuntu.sh." >&2
+  exit 1
+fi
+
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
 MISE_BIN="${MISE_BIN:-$HOME/.local/bin/mise}"
 

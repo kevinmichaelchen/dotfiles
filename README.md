@@ -326,19 +326,44 @@ remains the macOS terminal. tmux/TPM, Starship, mosh, Zsh autosuggestions, and
 Zsh syntax highlighting are no longer installed or loaded by this repository.
 Existing installations on other machines are not automatically uninstalled.
 
-Ubuntu/WSL is being brought up incrementally. Until the complete workstation
-configuration supports Linux, install only the initial CLI baseline into the
-machine-local Mise configuration (do not run the full bootstrap on Ubuntu):
+### Ubuntu / WSL
+
+`platforms/ubuntu/config.toml` and its own `mise.lock` provide an intentionally
+small Linux x86_64 baseline: gh, jq, ripgrep, zoxide, fzf, eza, and fd (for fzf file
+selection). The macOS entry point and lockfile remain in `mise/`. macOS setup
+and update scripts refuse to run on Linux.
+
+Install Mise, clone this repo to `~/dotfiles`, then preview the Ubuntu setup:
 
 ```bash
-# Run outside the repository and without MISE_GLOBAL_CONFIG_FILE set.
-mise use --global --pin --minimum-release-age 7d \
-  github:cli/cli@2.102.0 aqua:jqlang/jq@1.8.2 aqua:BurntSushi/ripgrep@latest
+mise trust ~/dotfiles/platforms/ubuntu/config.toml
+bash ~/dotfiles/scripts/bootstrap-ubuntu.sh --dry-run
+bash ~/dotfiles/scripts/bootstrap-ubuntu.sh --apply
 ```
 
-For GUI-launched development processes, expose Mise's shims directory on their
-PATH or invoke commands through `mise exec -- COMMAND`. Interactive activation
-alone does not configure an already-running GUI process.
+Existing real files that conflict with declared links are never replaced by
+this script. Back them up and review a targeted `mise dotfiles apply --force
+--dry-run TARGET` before explicitly replacing them. Re-run `--apply` to converge
+the recorded versions; it does not pull Git changes or upgrade versions.
+
+The Ubuntu config owns its global config/lock links, a machine-local Mise
+discovery exclusion for the macOS config, and small blocks in the existing
+`.profile` and `.bashrc`. The rest of those startup files stays local. Bash
+loads zoxide, fzf Ctrl-R history search, and eza aliases only interactively.
+The login shell, Git credentials, container setup, and agent app settings are
+not changed by this baseline.
+
+Mise shims on PATH serve new shells and GUI processes that inherit that PATH.
+An already-running GUI may need restarting or an explicit environment setting;
+verify `command -v gh jq rg` in its own execution environment. An alternative
+for individual commands is `mise exec -- COMMAND`.
+
+To refresh the Ubuntu lock without touching Mac versions:
+
+```bash
+MISE_GLOBAL_CONFIG_FILE="$HOME/dotfiles/platforms/ubuntu/config.toml" \
+  MISE_LOCKED=false mise lock --global --platform linux-x64
+```
 
 ## Agent Skills
 
@@ -358,6 +383,7 @@ shellcheck scripts/bootstrap.sh scripts/update.sh dotfiles/.config/shell/agents.
 zsh -n dotfiles/.zshrc dotfiles/.config/zsh/custom.zsh
 python3 scripts/check-dotfiles.py
 python3 scripts/check-repos.py
+python3 scripts/check-ubuntu.py
 python3 scripts/check-native-config.py
 mkdir -p /tmp/dotfiles-mise-check
 cp mise/config.toml /tmp/dotfiles-mise-check/mise.toml

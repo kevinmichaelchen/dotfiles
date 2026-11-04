@@ -3,6 +3,11 @@
 
 set -euo pipefail
 
+if [[ "$(uname -s)" != Darwin ]]; then
+  echo "This command manages the macOS workstation. On Ubuntu, use scripts/bootstrap-ubuntu.sh." >&2
+  exit 1
+fi
+
 UPGRADE=false
 case "${1:-}" in
   "") ;;

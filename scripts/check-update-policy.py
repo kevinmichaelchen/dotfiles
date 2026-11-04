@@ -34,6 +34,11 @@ if [[ "${0##*/}" == git && "${3:-}" == status && "${DIRTY:-}" == 1 ]]; then
 fi
 ''')
         path.chmod(0o755)
+    # The legacy updater is intentionally macOS-only, even when this test
+    # runs on Ubuntu. Emulate the host without invoking workstation actions.
+    uname = binaries / "uname"
+    uname.write_text('#!/bin/bash\nprintf "Darwin\\n"\n')
+    uname.chmod(0o755)
     updater = scripts / "update-tools.sh"
     updater.write_text('#!/bin/bash\necho tool-upgrades >> "$CALL_LOG"\n')
     updater.chmod(0o755)
