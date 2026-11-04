@@ -1,0 +1,84 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@nozomioai/nia':
+        specifier: 0.5.2
+        version: 0.5.2
+
+packages:
+
+  '@nozomioai/nia-darwin-arm64@0.5.2':
+    resolution: {integrity: sha512-WbnnF4GrDGyJa0SII0oEF99SO/X/BWaKhWet6pPmHCk+GUhEkfVWkhX5mN+yfLu6bln7DmW2Vz+LR0tEAPBVMg==}
+    cpu: [arm64]
+    os: [darwin]
+    hasBin: true
+
+  '@nozomioai/nia-darwin-x64@0.5.2':
+    resolution: {integrity: sha512-ovF4a7r7S24MJbwBoPmkV5lb8mTrNeUDrp2/h8UKIa/oTIjIw3dYu4UP0TthTiqFZwpxYU5zIcHcawFdgv7meA==}
+    cpu: [x64]
+    os: [darwin]
+    hasBin: true
+
+  '@nozomioai/nia-linux-arm64@0.5.2':
+    resolution: {integrity: sha512-PSO/c0M3O1ZccnB+0HcGRRPCQ1euVW/Ozh/83VJ9DYUcVxM7wLvpEQwtubTjZHMtSoNv+UxgblUYV0TrUc45yg==}
+    cpu: [arm64]
+    os: [linux]
+    hasBin: true
+
+  '@nozomioai/nia-linux-x64@0.5.2':
+    resolution: {integrity: sha512-dPyvL01/zrJCPHun9hDUoyDA5JTLKW6ArkNxuesGKDE44qox3Fg/r7p16/T3axkl0qk4MoNxjL/B8TamvXDDYw==}
+    cpu: [x64]
+    os: [linux]
+    hasBin: true
+
+  '@nozomioai/nia-windows-arm64@0.5.2':
+    resolution: {integrity: sha512-sKbZnwCa0rz+qxj2H5PEHPKnsMMZWT2xvq8wPS5jAvrnp9VHRtOoDmfHGeQqPUxW6XBSC6ir1Ugj4UmGOaNLHw==}
+    cpu: [arm64]
+    os: [win32]
+    hasBin: true
+
+  '@nozomioai/nia-windows-x64@0.5.2':
+    resolution: {integrity: sha512-mJQl4JEUOWrprwUX8bLGdd1qLPfxfbYDplP33M92RWjEI4EbFy/ytezB5TwerswdZuJ8oASRZbTLTGGAmuEZzQ==}
+    cpu: [x64]
+    os: [win32]
+    hasBin: true
+
+  '@nozomioai/nia@0.5.2':
+    resolution: {integrity: sha512-8uUPpFIvfAelh5CPpryFqBS+ySQR7bn3J204PFIwVQOoh8p+57djRDkmKxJnlC3RRbD30O7Ta1bqqykqabZ+Ew==}
+    hasBin: true
+
+snapshots:
+
+  '@nozomioai/nia-darwin-arm64@0.5.2':
+    optional: true
+
+  '@nozomioai/nia-darwin-x64@0.5.2':
+    optional: true
+
+  '@nozomioai/nia-linux-arm64@0.5.2':
+    optional: true
+
+  '@nozomioai/nia-linux-x64@0.5.2':
+    optional: true
+
+  '@nozomioai/nia-windows-arm64@0.5.2':
+    optional: true
+
+  '@nozomioai/nia-windows-x64@0.5.2':
+    optional: true
+
+  '@nozomioai/nia@0.5.2':
+    optionalDependencies:
+      '@nozomioai/nia-darwin-arm64': 0.5.2
+      '@nozomioai/nia-darwin-x64': 0.5.2
+      '@nozomioai/nia-linux-arm64': 0.5.2
+      '@nozomioai/nia-linux-x64': 0.5.2
+      '@nozomioai/nia-windows-arm64': 0.5.2
+      '@nozomioai/nia-windows-x64': 0.5.2

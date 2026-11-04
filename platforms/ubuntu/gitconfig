@@ -1,0 +1,16 @@
+# Linux preferences; credentials and author rules are separate includes.
+[core]
+    editor = vim
+    pager = delta
+[pager]
+    branch = false
+[init]
+    defaultBranch = main
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true
+    line-numbers = true
+    true-color = always
+[merge]
+    conflictStyle = zdiff3

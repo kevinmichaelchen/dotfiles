@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Preview or apply only the Ubuntu CLI and Bash baseline.
+# Preview or apply Ubuntu packages, developer tools, and Bash configuration.
 set -euo pipefail
 
 case "${1:---dry-run}" in
@@ -21,10 +21,12 @@ export MISE_GLOBAL_CONFIG_FILE="$REPO_DIR/platforms/ubuntu/config.toml"
 export MISE_IGNORED_CONFIG_PATHS="$REPO_DIR/mise/config.toml${MISE_IGNORED_CONFIG_PATHS:+:$MISE_IGNORED_CONFIG_PATHS}"
 
 if [[ "$APPLY" == true ]]; then
+  "$MISE_BIN" bootstrap packages apply --yes
   "$MISE_BIN" install
   # Conflicting real files require explicit operator review/replacement.
   "$MISE_BIN" dotfiles apply --yes
 else
+  "$MISE_BIN" bootstrap packages apply --dry-run
   "$MISE_BIN" install --dry-run
   "$MISE_BIN" dotfiles apply --dry-run
 fi

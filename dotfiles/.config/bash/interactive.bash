@@ -26,3 +26,14 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 alias dot='cd ~/dotfiles'
+
+# Shared aliases have no startup-time tool or network calls.
+for module in git github pnpm; do
+  # shellcheck disable=SC1090
+  [[ ! -r "$HOME/.config/shell/$module.sh" ]] || source "$HOME/.config/shell/$module.sh"
+done
+unset module
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --paging=never'
+  alias bathelp='bat --plain --language=help'
+fi
