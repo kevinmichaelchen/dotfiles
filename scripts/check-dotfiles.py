@@ -147,7 +147,6 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
 
     # Repository declarations parse and preview without network or checkout writes.
     run(MISE, "bootstrap", "repos", "apply", "--dry-run")
-    require(not (home / ".tmux/plugins/tpm").exists(), "Repo dry run created a checkout")
     run(MISE, "bootstrap", "--only", "task", "--dry-run")
     print(f"Verified {len(entries)} links and {len(merges)} merge entries: migration conflicts, dry run, repeated apply, "
           "installed-config loading, unmanaged files, lockfile, and repository preview")

@@ -30,20 +30,12 @@ idiomatic_version_file_enable_tools = ["pnpm"]
 "brew:git" = "latest"
 "brew:jira-cli" = "latest"
 "brew:libpq" = "latest"
-"brew:mosh" = "latest"
 "brew:podman" = "latest"
 "brew:podman-compose" = "latest"
 "brew:replicate/tap/replicate" = "latest"
 "brew:ripgrep" = "latest"
-"brew:tmux" = "latest"
 "brew:webp" = "latest"
-"brew:zsh-autosuggestions" = "latest"
-"brew:zsh-syntax-highlighting" = "latest"
 "brew-cask:ghostty" = "latest"
-
-# Mise refuses dirty checkouts or conflicting origins.
-[bootstrap.repos]
-"~/.tmux/plugins/tpm" = { url = "https://github.com/tmux-plugins/tpm.git", ref = "master" }
 
 # Prepare the source directory for the Claude skills projection.
 [bootstrap.hooks]
@@ -98,8 +90,6 @@ AppleKeyboardUIMode = 3
 "~/.config/shell/python.sh" = { source = "~/dotfiles/dotfiles/.config/shell/python.sh", mode = "symlink" }
 "~/.config/shell/testcontainers.sh" = { source = "~/dotfiles/dotfiles/.config/shell/testcontainers.sh", mode = "symlink" }
 "~/.config/shell/zed.sh" = { source = "~/dotfiles/dotfiles/.config/shell/zed.sh", mode = "symlink" }
-"~/.config/starship.toml" = { source = "~/dotfiles/dotfiles/.config/starship.toml", mode = "symlink" }
-"~/.config/tmux/tmux.conf" = { source = "~/dotfiles/dotfiles/.config/tmux/tmux.conf", mode = "symlink" }
 "~/.config/zsh/custom.zsh" = { source = "~/dotfiles/dotfiles/.config/zsh/custom.zsh", mode = "symlink" }
 "~/.config/git/shared" = { source = "~/dotfiles/dotfiles/.gitconfig", mode = "symlink" }
 "~/.gitconfig/shared" = { block = '''
@@ -141,8 +131,8 @@ bun = { version = "1" }
 
 # npm global packages
 "npm:markit-ai" = "0.6.1"
-"npm:@nozomioai/nia" = "0.5.2"                                   # Nia CLI only
-"npm:sfw" = "2.0.6"                                              # Socket Firewall wrapper for package manager network filtering
+"npm:@nozomioai/nia" = "0.5.2"           # Nia CLI only
+"npm:sfw" = "2.0.6"                      # Socket Firewall wrapper for package manager network filtering
 "npm:firecrawl-cli" = "1.26.5"
 "npm:@eraserlabs/diagrams-cli" = "0.2.0"
 # Verified public Bird fork; package is newer than the npm new-package threshold.
@@ -162,7 +152,7 @@ bun = { version = "1" }
 # ============================================================================
 # Go Tools from GitHub (charmbracelet tools are Go, not Rust)
 # ============================================================================
-"github:charmbracelet/freeze" = "0.2.2"         # Code and terminal screenshots
+"github:charmbracelet/freeze" = "0.2.2"          # Code and terminal screenshots
 "github:charmbracelet/glow" = "3.0.0"
 "github:charmbracelet/gum" = "2.0.2"             # shell prompt tool (Go)
 "go:golang.org/x/vuln/cmd/govulncheck" = "1.9.0"
@@ -174,27 +164,26 @@ bun = { version = "1" }
 "github:cli/cli" = "2.102.0"
 "github:RhysSullivan/executor" = "1.6.10"
 "github:vercel-labs/agent-browser" = "0.39.1"
-"github:sigoden/projclean" = "0.9.0"                                                                                                                                       # Project build artifact cleaner
-"github:libkrun/krunkit" = "1.3.2"                                                                                                                                         # Podman libkrun VM provider
+"github:sigoden/projclean" = "0.9.0"          # Project build artifact cleaner
+"github:libkrun/krunkit" = "1.3.2"            # Podman libkrun VM provider
 "aqua:jqlang/jq" = "1.8.2"
 
 # ============================================================================
 # Tools from Aqua (GitHub releases with verification)
 # ============================================================================
-"aqua:sharkdp/bat" = "0.26.1"                                           # cat replacement with syntax highlighting
-"aqua:dandavison/delta" = "0.20.1"                                      # git diff viewer
-"aqua:sharkdp/fd" = "10.5.0"                                            # find replacement
+"aqua:sharkdp/bat" = "0.26.1"                  # cat replacement with syntax highlighting
+"aqua:dandavison/delta" = "0.20.1"             # git diff viewer
+"aqua:sharkdp/fd" = "10.5.0"                   # find replacement
 "aqua:junegunn/fzf" = "0.74.5"
 "aqua:ajeetdsouza/zoxide" = "0.10.0"
 "aqua:dprint/dprint" = "0.63.0"
 "aqua:j178/prek" = "0.5.5"
-"aqua:chmln/sd" = "1.1.0"                                               # sed replacement (simpler syntax)
-"aqua:koalaman/shellcheck" = "0.11.0"                                   # Shell script static analyzer
+"aqua:chmln/sd" = "1.1.0"                      # sed replacement (simpler syntax)
+"aqua:koalaman/shellcheck" = "0.11.0"          # Shell script static analyzer
 "aqua:mikefarah/yq" = "4.54.1"
-"aqua:terrastruct/d2" = "0.9.0"                                         # Diagram language
+"aqua:terrastruct/d2" = "0.9.0"                # Diagram language
 "aqua:typst/typst" = "0.15.1"
-"aqua:starship/starship" = "1.26.0"
-"aqua:golangci/golangci-lint" = "2.15.0"                                # Go linter aggregator
+"aqua:golangci/golangci-lint" = "2.15.0"       # Go linter aggregator
 "aqua:charmbracelet/vhs" = "0.12.1"
 "github:astral-sh/uv" = { version = "latest" }
 "aqua:aws/aws-cli" = "2.38.1"

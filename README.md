@@ -318,17 +318,27 @@ Native loading references: [Codex profiles](https://developers.openai.com/codex/
 [Claude MCP config](https://code.claude.com/docs/en/cli-reference),
 [OpenCode config](https://opencode.ai/v2/docs/config/).
 
-## External Repositories
+## Terminal essentials
 
-`[bootstrap.repos]` follows TPM's `master` branch because the tmux config loads
-TPM and the Rose Pine plugin through it. Mise clones or updates TPM during
-bootstrap. Dirty checkouts or conflicting origins fail instead of discarding
-local work.
+Zsh uses a built-in working-directory prompt. zoxide navigation, fzf history
+search and file selection, and eza listings/tree views remain enabled. Ghostty
+remains the macOS terminal. tmux/TPM, Starship, mosh, Zsh autosuggestions, and
+Zsh syntax highlighting are no longer installed or loaded by this repository.
+Existing installations on other machines are not automatically uninstalled.
+
+Ubuntu/WSL is being brought up incrementally. Until the complete workstation
+configuration supports Linux, install only the initial CLI baseline into the
+machine-local Mise configuration (do not run the full bootstrap on Ubuntu):
 
 ```bash
-mise bootstrap repos apply --dry-run
-mise bootstrap repos apply --yes
+# Run outside the repository and without MISE_GLOBAL_CONFIG_FILE set.
+mise use --global --pin --minimum-release-age 7d \
+  github:cli/cli@2.102.0 aqua:jqlang/jq@1.8.2 aqua:BurntSushi/ripgrep@latest
 ```
+
+For GUI-launched development processes, expose Mise's shims directory on their
+PATH or invoke commands through `mise exec -- COMMAND`. Interactive activation
+alone does not configure an already-running GUI process.
 
 ## Agent Skills
 
@@ -363,7 +373,6 @@ older executable fails with update guidance instead of misinterpreting it.
 - [Executor setup and ownership](docs/executor.md)
 - [Local household agent on the 16 GB M4 Mac mini](docs/local-household-agent.md)
 - [Podman VM provider](vfkit.md)
-- [tmux setup](docs/tmux.md)
 
 - [mise dotfiles](https://mise.jdx.dev/dotfiles.html)
 - [mise bootstrap](https://mise.jdx.dev/cli/bootstrap.html)

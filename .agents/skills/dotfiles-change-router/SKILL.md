@@ -31,7 +31,6 @@ Route each requested change to the smallest correct file set before editing anyt
 | zsh load order/path wiring | `dotfiles/.config/zsh/custom.zsh` | Update when adding a new shell module file |
 | automation workflow scripts | `scripts/*.sh` | Keep idempotent and non-destructive defaults |
 | operator guidance for scripts | `scripts/agent-skills/README.md or README.md` | Update when behavior/contracts change |
-| tmux docs/config guidance | `docs/tmux.md` and/or `dotfiles/.config/tmux/tmux.conf` | Keep docs and runtime behavior aligned |
 
 ## Hard Rules
 - Do not introduce a second package or machine-configuration owner alongside Mise.
