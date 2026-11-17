@@ -109,6 +109,7 @@ AppleKeyboardUIMode = 3
 
 "~/.codex/dotfiles.config.toml/shared" = { source = "~/dotfiles/dotfiles/.codex/dotfiles.config.toml", merge = true }
 "~/.config/claude/mcp.json" = { source = "~/dotfiles/dotfiles/.config/claude/mcp.json", mode = "symlink" }
+"~/.claude.json/shared" = { source = "~/dotfiles/dotfiles/.config/claude/shared.json", merge = true }
 "~/.config/opencode/dotfiles.json" = { source = "~/dotfiles/dotfiles/.config/opencode/dotfiles.json", mode = "symlink" }
 "~/.claude/skills" = { source = "~/.agents/skills", mode = "symlink" }
 
