@@ -309,10 +309,15 @@ Shared MCP defaults declare only the hosted `executor` server. Keep `nia` and
 stay local. The standalone research, framework, and `executor-desktop` servers
 are no longer part of the default set. Existing local registrations are merged,
 so changing these shared files does not remove old entries from app-owned
-configs. Use `codex mcp list` and `claude mcp list` to check those separately.
+configs; remove a stray registration with the application's own command, such
+as `claude mcp remove`. Use `codex mcp list` and `claude mcp list` to check
+those separately.
 
-The app-owned `~/.claude.json`, `~/.codex/config.toml`, OpenCode's local global
-config and dependency manifest remain unmanaged.
+Mise owns only the `mcpServers.executor` key in `~/.claude.json`, through a
+merge entry, so Claude's user-scope Executor server follows the shared URL
+while every other key, including credentials such as `arc`, stays app-owned.
+The app-owned `~/.codex/config.toml`, OpenCode's local global config and
+dependency manifest remain unmanaged.
 Shared settings override matching keys through native loading; local choices
 outside those keys remain intact.
 
