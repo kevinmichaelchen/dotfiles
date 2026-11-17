@@ -4,7 +4,7 @@
     "servers": {
       "executor": {
         "type": "remote",
-        "url": "https://executor.sh/kevin-chen-s-organization/mcp",
+        "url": "https://mcp.executor.sh/mcp",
         "disabled": false
       }
     }

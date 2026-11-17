@@ -3,4 +3,4 @@ model = "gpt-6.1-sol"
 model_reasoning_effort = "medium"
 
 [mcp_servers.executor]
-url = "https://executor.sh/kevin-chen-s-organization/mcp"
+url = "https://mcp.executor.sh/mcp"
