@@ -1,5 +1,5 @@
 # Shared defaults layered over ~/.codex/config.toml by --profile dotfiles.
-model = "gpt-6.1-sol"
+model = "gpt-6.2-sol"
 model_reasoning_effort = "medium"
 
 [mcp_servers.executor]

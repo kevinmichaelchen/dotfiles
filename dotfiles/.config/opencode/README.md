@@ -83,8 +83,8 @@ through OpenRouter use separately billed API credits.
 ## Model choices
 
 The primary model stays in app-owned config. Kevin currently uses Opus 5.5 for
-his toughest work, GPT-6.1 Sol and GPT-6 Astra for difficult work and reviews,
-and Sonnet 5.5 / GPT-6 Luna for lighter tasks. Treat this as workflow context,
+his toughest work, GPT-6.2 Sol for difficult work and reviews, and
+Sonnet 5.5 / GPT-6 Luna for lighter tasks. Treat this as workflow context,
 not a benchmark ranking or a promise that subscription access works in every
 client. Use Claude Code for the Claude subscription. The title agent uses
 `openai/gpt-6-luna` through the existing ChatGPT connection.
