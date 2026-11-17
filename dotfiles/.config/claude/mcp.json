@@ -2,7 +2,7 @@
   "mcpServers": {
     "executor": {
       "type": "http",
-      "url": "https://executor.sh/kevin-chen-s-organization/mcp"
+      "url": "https://mcp.executor.sh/mcp"
     }
   }
 }
