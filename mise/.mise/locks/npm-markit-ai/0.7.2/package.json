@@ -2,6 +2,6 @@
   "name": "mise-npm-install",
   "private": true,
   "dependencies": {
-    "@eraserlabs/diagrams-cli": "0.2.0"
+    "markit-ai": "0.7.2"
   }
 }

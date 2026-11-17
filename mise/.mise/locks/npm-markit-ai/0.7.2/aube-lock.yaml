@@ -1,0 +1,107 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      markit-ai:
+        specifier: 0.7.2
+        version: 0.7.2
+
+packages:
+
+  '@shiftlabs/markit-darwin-arm64@0.7.2':
+    resolution: {integrity: sha512-ZxMHuvbB6O9UczU818knpFi+bh3Wb8jx9gzp45kIMyeGY6+WlAcefBX/Gl6/jvuFzdWSSqdnP/+9IZsA9dtHLw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@shiftlabs/markit-darwin-x64@0.7.2':
+    resolution: {integrity: sha512-yYPyupAJJmlSpwhYaQJoWbpJmulKWD+MdsY1yerJn+2QjUiUgaQFCG2SdTeQNWHxEA0W30Uz5IdAkUrCZNLpnw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@shiftlabs/markit-linux-arm64-gnu@0.7.2':
+    resolution: {integrity: sha512-61aD1YhwMDTrxcv9k2OhSQbKUw4wZQyhmfvEAV/TYmqgOBwa1LHnIQxgfvcEfdQ6N1/zek/+CbRoaqjaG1jwSw==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@shiftlabs/markit-linux-arm64-musl@0.7.2':
+    resolution: {integrity: sha512-9lbk1jDyqNe+hj/MViZvRO9sqfRrpk/d8I5XeKqU3/ZUeht+5yB/r+/DqwddPXQBHrQgySwcURoE1KD/LczO9g==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@shiftlabs/markit-linux-x64-gnu@0.7.2':
+    resolution: {integrity: sha512-F+1v3kmAbIMp7ufJ/P7zsQYZV8Ac6JxASgrju5CMe1do71YdTUzH3lL1Yx2AZKFrrMQX917HkDAwqrwGp765Hw==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@shiftlabs/markit-linux-x64-musl@0.7.2':
+    resolution: {integrity: sha512-1ySeAMW7X9PLZYe7eT7I1SlN3nN1aCyIvpKNTpnaVIfH4rTg0N5WQR3zeT2w5AbeAi+8A47tkDbGaLcpAMhQpw==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@shiftlabs/markit@0.7.2':
+    resolution: {integrity: sha512-EvYViI28w72Qb4yeS4myII3sd4luQTzlCokq3Wtt1KUbs3zjstHMvcioySJCsdzk12+uQWyrPVITpGx44Bk+oA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+
+  chalk@5.6.2:
+    resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+
+  commander@14.0.3:
+    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
+    engines: {node: '>=20'}
+
+  markit-ai@0.7.2:
+    resolution: {integrity: sha512-BndUWlp+vLGNznYNq6ptMEhdBYSVgtoN+F0eC1nCa9K7p1EDbulId5wrtYqjFMOcTErYAoQrhdVIrUTeyEqStw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+
+snapshots:
+
+  '@shiftlabs/markit-darwin-arm64@0.7.2':
+    optional: true
+
+  '@shiftlabs/markit-darwin-x64@0.7.2':
+    optional: true
+
+  '@shiftlabs/markit-linux-arm64-gnu@0.7.2':
+    optional: true
+
+  '@shiftlabs/markit-linux-arm64-musl@0.7.2':
+    optional: true
+
+  '@shiftlabs/markit-linux-x64-gnu@0.7.2':
+    optional: true
+
+  '@shiftlabs/markit-linux-x64-musl@0.7.2':
+    optional: true
+
+  '@shiftlabs/markit@0.7.2':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.3
+    optionalDependencies:
+      '@shiftlabs/markit-darwin-arm64': 0.7.2
+      '@shiftlabs/markit-darwin-x64': 0.7.2
+      '@shiftlabs/markit-linux-arm64-gnu': 0.7.2
+      '@shiftlabs/markit-linux-arm64-musl': 0.7.2
+      '@shiftlabs/markit-linux-x64-gnu': 0.7.2
+      '@shiftlabs/markit-linux-x64-musl': 0.7.2
+
+  chalk@5.6.2: {}
+
+  commander@14.0.3: {}
+
+  markit-ai@0.7.2:
+    dependencies:
+      '@shiftlabs/markit': 0.7.2
