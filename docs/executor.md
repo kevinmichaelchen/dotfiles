@@ -2,24 +2,35 @@
 
 Executor Cloud owns the shared tool catalog, sources, credentials, policies,
 workspaces, and execution history. Dotfiles own the CLI declaration in
-[mise/config.toml](../mise/config.toml) and the client connection wiring.
+[mise/config.toml](../mise/config.toml); each harness reaches Executor through
+its own plugin, connector, or MCP layer.
 
 ## Connect clients
 
-After bootstrap, authenticate the Cloud endpoint in each client:
+Codex needs no entry in `~/.codex/config.toml`. Enable the
+`executor@openai-curated-remote` plugin once from the Codex plugin marketplace:
 
 ```bash
-codex mcp login executor
+codex plugin add executor@openai-curated-remote
+```
+
+The plugin contributes the hosted `https://mcp.executor.sh/mcp` server and its
+skill, so sessions see `mcp__codex_apps__executor`.
+
+OpenCode has no connector store, so the shared override layer declares that same
+hosted server and each machine authenticates it once:
+
+```bash
 opencode mcp auth executor
 ```
 
-For Claude Code, launch `claude` from a configured shell and authenticate through
-`/mcp`. Its declared MCP file loads for the session. Each client keeps its own refreshable
-session; dotfiles do not distribute bearer tokens.
+For Claude Code there is nothing to wire: the account connector registered in
+the Claude account already supplies Executor, so no `~/.claude.json` entry and no
+`--mcp-config` file are needed, and every machine shares one connection. Open
+`/mcp` in a session only to check or re-authenticate the connector.
 
-Desktop connections run `executor mcp` over stdio and need no local HTTP login.
-`executor login` is separate: use it when the Executor CLI itself needs hosted
-API access.
+No client registers `executor mcp` over stdio by default. `executor login` is
+separate: use it when the Executor CLI itself needs hosted API access.
 
 See [App Settings](../README.md#app-settings) for the managed client files and
 how their native config layers load.

@@ -51,11 +51,10 @@ with tempfile.TemporaryDirectory(prefix="native layers ") as temporary:
         require(invoke(shell, "codex", "-p", "local", "exec", "prompt") ==
                 ["-p", "local", "exec", "prompt"], "Short Codex profile overwritten")
         require(invoke(shell, "claude", "--print", "a prompt with spaces") ==
-                ["--print", "a prompt with spaces", "--mcp-config", str(home / ".config/claude/mcp.json")],
-                "Claude prompt or MCP layer changed")
+                ["--print", "a prompt with spaces"], "Claude arguments changed")
         require(invoke(shell, "claude", "mcp", "list") == ["mcp", "list"], "Claude management command changed")
         require(invoke(shell, "claude", "--mcp-config", "local.json") ==
-                ["--mcp-config", "local.json"], "Explicit Claude MCP config overwritten")
+                ["--mcp-config", "local.json"], "Explicit Claude MCP config changed")
         require(invoke(shell, "claude", "--", "literal prompt") ==
                 ["--", "literal prompt"], "Claude end-of-options marker changed")
         result = subprocess.run([shell, "-c", '. "$AGENT_SHELL"; printf "%s" "$OPENCODE_CONFIG"'],
@@ -78,7 +77,7 @@ with tempfile.TemporaryDirectory(prefix="native layers ") as temporary:
                             env=dict(env, CODEX_HOME=str(codex_home)), text=True, capture_output=True, timeout=30)
     require(result.returncode == 0, result.stderr)
     names = {entry["name"] for entry in json.loads(result.stdout)}
-    require({"local", "executor"} == names, "Codex did not merge profile and local config")
+    require(names == {"local"}, "Codex did not layer the profile over local config")
     require(local.read_bytes() == before, "Codex user config was rewritten")
 
     print("Verified native config syntax, shell layer selection, explicit overrides, "

@@ -289,35 +289,40 @@ Desired settings live in ordinary config files, deployed by Mise:
 | App         | Managed source                            | Native loading mechanism                                           |
 | ----------- | ----------------------------------------- | ------------------------------------------------------------------ |
 | Codex       | `dotfiles/.codex/dotfiles.config.toml`    | Mise merges shared keys into a local profile; `--profile dotfiles` selects it |
-| Claude Code | `dotfiles/.config/claude/mcp.json`        | `--mcp-config` adds the declared servers for the session           |
+| Claude Code | none                                      | Account connectors supply MCP servers; no client-side declaration   |
 | OpenCode    | `dotfiles/.config/opencode/dotfiles.json` | `OPENCODE_CONFIG` adds an override layer after local global config |
 
 Codex's profile is a regular local file. Mise owns only keys declared in the
 shared source and preserves hook trust, UI state, and other application-written
 keys. Applying the merge entry converts an existing link to that same source
-into a local file. Shared defaults exclude hook approvals and UI state.
+into a local file. Shared defaults exclude hook approvals, UI state, and any MCP
+server, so harness-native plugins and connectors stay authoritative.
 
-The shared shell module selects the Codex profile and Claude MCP file for CLI
-sessions and exports the OpenCode override path. Explicit profile/MCP/config
-choices take precedence over these shell defaults. Start a new shell after
-applying dotfiles. For clients launched outside that shell, select the Codex
-profile or pass the Claude MCP file explicitly; these defaults are not forced
+The shared shell module selects the Codex profile for CLI sessions and exports
+the OpenCode override path. Explicit profile/config choices take precedence over
+these shell defaults. Start a new shell after applying dotfiles. Claude Code has
+no shell default: for clients launched outside that shell, select the Codex
+profile or pass the OpenCode override explicitly; these defaults are not forced
 into their base configs.
 
-Shared MCP defaults declare only the hosted `executor` server. Keep `nia` and
-`codex` registrations in app-owned local configs when needed; Nia credentials
-stay local. The standalone research, framework, and `executor-desktop` servers
-are no longer part of the default set. Existing local registrations are merged,
-so changing these shared files does not remove old entries from app-owned
-configs; remove a stray registration with the application's own command, such
-as `claude mcp remove`. Use `codex mcp list` and `claude mcp list` to check
-those separately.
+Executor comes from each harness's own distribution channel, so dotfiles declare
+no MCP server for any of them. Codex enables the `executor@openai-curated-remote`
+plugin from its plugin marketplace, which contributes the hosted
+`https://mcp.executor.sh/mcp` server and its skill; Claude Code uses the Executor
+account connector; OpenCode has no connector store, so its override layer
+declares that same hosted server and authenticates per machine with
+`opencode mcp auth executor`. Keep `nia` and other local registrations in
+app-owned configs; Nia credentials stay local. The standalone research,
+framework, and `executor-desktop` servers are not part of the default set.
 
-Mise owns only the `mcpServers.executor` key in `~/.claude.json`, through a
-merge entry, so Claude's user-scope Executor server follows the shared URL
-while every other key, including credentials such as `arc`, stays app-owned.
-The app-owned `~/.codex/config.toml`, OpenCode's local global config and
-dependency manifest remain unmanaged.
+Hand-rolled `mcp_servers` entries are not removed by applying dotfiles, because
+a merge only sets keys that the shared source declares. Delete a stray entry
+with the application's own command, such as `codex mcp remove` or
+`claude mcp remove`, and use `codex mcp list` and `opencode mcp list` to check
+what each client sees.
+
+The app-owned `~/.claude.json`, `~/.codex/config.toml`, OpenCode's local global
+config and dependency manifest remain unmanaged.
 Shared settings override matching keys through native loading; local choices
 outside those keys remain intact.
 
@@ -333,7 +338,7 @@ set its managed config environment once with
 Mise links Claude's skills directory to `~/.agents/skills`.
 
 Native loading references: [Codex profiles](https://developers.openai.com/codex/config-basic/),
-[Claude MCP config](https://code.claude.com/docs/en/cli-reference),
+[Claude connectors](https://code.claude.com/docs/en/mcp),
 [OpenCode config](https://opencode.ai/v2/docs/config/).
 
 ## Terminal essentials
