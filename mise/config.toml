@@ -2,7 +2,7 @@
 # Authoritative repository config; Mise links it into ~/.config/mise/config.toml
 # Apply workstation state with `mise bootstrap` after changes
 
-min_version = "2026.10.12"
+min_version = "2026.11.6"
 
 [settings]
 dotfiles.root = "~/dotfiles/dotfiles"
