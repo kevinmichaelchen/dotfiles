@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Exercise dotfile convergence in a temporary home, without tools or hooks."""
 
-import json
 import os
 from pathlib import Path
 import shutil
@@ -71,34 +70,20 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
         require(destination.is_symlink(), f"Fresh bootstrap did not link {target}")
         destination.unlink()
 
-    # Exercise migration from an older symlinked profile, in each merge's format.
-    def add_local_key(source):
-        original = source.read_bytes()
-        if source.suffix == ".json":
-            payload = json.loads(original)
-            payload.setdefault("localOnly", {})["fixture"] = "local-only"
-            source.write_text(json.dumps(payload, indent=2) + "\n")
-        else:
-            source.write_text(original.decode() + '\n[hooks.state.fixture]\ntrusted_hash = "local-only"\n')
-        return original
-
-    def local_key(destination):
-        if destination.suffix == ".json":
-            return json.loads(destination.read_text()).get("localOnly", {}).get("fixture")
-        return tomllib.loads(destination.read_text())["hooks"]["state"]["fixture"]["trusted_hash"]
-
+    # Exercise migration from an older symlinked Codex profile.
     for target, entry in merges.items():
         destination = expand(target.rsplit("/", 1)[0])
         destination.unlink()
         source = expand(entry["source"])
-        original = add_local_key(source)
+        source.write_text(source.read_text() + '\n[hooks.state.fixture]\ntrusted_hash = "local-only"\n')
         destination.symlink_to(source)
         run(MISE, "dotfiles", "apply", target, "--yes")
         require(not destination.is_symlink(), "Merge did not detach the old profile symlink")
-        source.write_bytes(original)
+        source.write_text((REPO / "dotfiles/.codex/dotfiles.config.toml").read_text())
         before = source.read_bytes()
         run(MISE, "dotfiles", "apply", target, "--yes")
-        require(local_key(destination) == "local-only", "Merge lost a local-only key")
+        require(tomllib.loads(destination.read_text())["hooks"]["state"]["fixture"]["trusted_hash"] == "local-only",
+                "Merge lost local hook trust")
         require(source.read_bytes() == before, "Merge modified the shared source")
 
     # Seed real files as an existing Chezmoi workstation would have them.
@@ -113,14 +98,9 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
             shutil.copy2(source, destination)
     neighbor = home / ".config/opencode/runtime-local.json"
     neighbor.write_text('{"keep": true}\n')
-    # A merge target keeps the keys the application owns; only the shared key is managed.
-    claude = home / ".claude.json"
-    claude.write_text(json.dumps({
-        "preferences": {"theme": "local"},
-        "mcpServers": {"arc": {"type": "http", "url": "https://uiarc.dev/api/mcp"}},
-    }, indent=2) + "\n")
     # App-owned configuration is not a Mise target and must survive every apply.
     app_state = {
+        ".claude.json": '{"preferences":{"theme":"local"}}\n',
         ".codex/config.toml": 'sandbox_mode = "workspace-write"\n',
         ".config/opencode/opencode.json": '{"model":"local/model","plugin":["local-plugin"]}\n',
         ".config/opencode/package.json": '{"dependencies":{"local":"1"}}\n',
@@ -161,12 +141,6 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-check-") as temporary:
     run(MISE, "dotfiles", "status")
     for relative, content in app_state.items():
         require((home / relative).read_text() == content, f"Local app state changed: {relative}")
-    claude_state = json.loads(claude.read_text())
-    require(claude_state["preferences"]["theme"] == "local", "Claude app key was lost")
-    require(claude_state["mcpServers"]["arc"]["url"] == "https://uiarc.dev/api/mcp",
-            "Claude app-owned MCP server was lost")
-    require(claude_state["mcpServers"]["executor"]["url"] == "https://mcp.executor.sh/mcp",
-            "Claude shared Executor server was not merged")
     require(neighbor.read_text() == '{"keep": true}\n', "Unmanaged neighbor changed")
     require((checkout / "mise/mise.lock").read_bytes() == (REPO / "mise/mise.lock").read_bytes(),
             "Validation changed lockfile contents")
