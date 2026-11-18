@@ -449,8 +449,9 @@ cp mise/config.toml /tmp/dotfiles-mise-check/mise.toml
 (cd /tmp/dotfiles-mise-check && mise fmt --check)
 ```
 
-This configuration requires mise `2026.10.6` or newer, the release used to validate
-the automatic tool-update service. Mise marks the bootstrap features experimental. The config declares that minimum explicitly so an
+This configuration requires mise `2026.11.6` or newer, the release used to validate
+the automatic tool-update service and the lockfile revision this repository
+ships. Mise marks the bootstrap features experimental. The config declares that minimum explicitly so an
 older executable fails with update guidance instead of misinterpreting it.
 
 ## Resources

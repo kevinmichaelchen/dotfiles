@@ -2,7 +2,7 @@
 # Authoritative repository config; Mise links it into ~/.config/mise/config.toml
 # Apply workstation state with `mise bootstrap` after changes
 
-min_version = "2026.10.12"
+min_version = "2026.11.6"
 
 [settings]
 dotfiles.root = "~/dotfiles/dotfiles"
@@ -192,10 +192,10 @@ bun = { version = "1" }
 "aqua:golangci/golangci-lint" = "2.15.0"       # Go linter aggregator
 "aqua:charmbracelet/vhs" = "0.12.1"
 "github:astral-sh/uv" = { version = "latest" }
-"aqua:aws/aws-cli" = "2.39.7"
-"aqua:stripe/stripe-cli" = "1.55.9"
-"github:tw93/Mole" = "V1.70.0"                # macOS cleaner/optimizer (`mo`); tags use capital V
-"github:dathere/qsv" = "29.0.0"                 # CSV toolkit (prebuilt release binary; crates.io stops at 16.1.0)
+"aqua:aws/aws-cli" = "2.40.0"
+"aqua:stripe/stripe-cli" = "1.55.10"
+"github:tw93/Mole" = "V1.71.0"                 # macOS cleaner/optimizer (`mo`); tags use capital V
+"github:dathere/qsv" = "28.0.0"                # CSV toolkit (prebuilt release binary; crates.io stops at 16.1.0)
 "npm:@excalidraw/cli" = "0.3.0"
 # Atlassian Teamwork Graph CLI: raw binary on Atlassian's CDN (no GitHub/aqua
 # release). Checksums: https://teamwork-graph.atlassian.com/cli/SHA256SUMS-v<version>
